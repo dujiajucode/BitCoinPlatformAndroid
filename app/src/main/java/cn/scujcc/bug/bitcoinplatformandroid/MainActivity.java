@@ -17,7 +17,6 @@ import cn.scujcc.bug.bitcoinplatformandroid.fragment.QuotationInformationFragmen
 
 public class MainActivity extends AppCompatActivity {
 
-    private FragmentTabHost mTabHost;
 
     //定义一个布局
     private LayoutInflater layoutInflater;
@@ -31,17 +30,19 @@ public class MainActivity extends AppCompatActivity {
 //            R.drawable.tab_square_btn, R.drawable.tab_more_btn};
 
     //Tab选项卡的文字
-    private String mTextviewArray[] = {"首页", "消息", "好友", "广场", "更多"};
+    private String mTextviewArray[] = {"现货交易", "专业交易", "行情资讯", "个人中心"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FragmentTabHost mTabHost;
         layoutInflater = LayoutInflater.from(this);
 
         //实例化TabHost对象，得到TabHost
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        if (mTabHost == null) return;
         mTabHost.setup(this, getFragmentManager(), R.id.realtabcontent);
 
         //得到fragment的个数
@@ -63,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
      * 给Tab按钮设置图标和文字
      */
     private View getTabItemView(int index) {
-        View view = layoutInflater.inflate(R.layout.activity_main_tabbar_item_view, null);
+        View view = layoutInflater.inflate(R.layout.tabbar_item, null);
 
         ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-       // imageView.setImageResource(mImageViewArray[index]);
+        // imageView.setImageResource(mImageViewArray[index]);
 
         TextView textView = (TextView) view.findViewById(R.id.textview);
         textView.setText(mTextviewArray[index]);

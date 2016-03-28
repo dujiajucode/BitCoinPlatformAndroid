@@ -5,5 +5,5 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
  * <p/>
  * 行情资讯
  */
-public class QuotationInformationFragment {
+public class QuotationInformationFragment extends BaseFragment {
 }

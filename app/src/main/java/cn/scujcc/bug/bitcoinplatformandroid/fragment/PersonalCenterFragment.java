@@ -5,5 +5,5 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
  * <p/>
  * 个人中心
  */
-public class PersonalCenterFragment {
+public class PersonalCenterFragment extends BaseFragment{
 }

@@ -5,5 +5,5 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
  * <p/>
  * 专业交易
  */
-public class ProfessionalTransactionFragment {
+public class ProfessionalTransactionFragment extends BaseFragment{
 }

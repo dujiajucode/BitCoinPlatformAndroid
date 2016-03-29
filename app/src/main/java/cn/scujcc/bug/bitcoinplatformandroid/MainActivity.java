@@ -1,5 +1,4 @@
 /*
- * Copyright (c) Bug 2016.
  *                                  Apache License
  *                            Version 2.0, January 2004
  *                         http://www.apache.org/licenses/
@@ -177,30 +176,9 @@
  *
  *    END OF TERMS AND CONDITIONS
  *
- *    APPENDIX: How to apply the Apache License to your work.
  *
- *       To apply the Apache License to your work, attach the following
- *       boilerplate notice, with the fields enclosed by brackets "{}"
- *       replaced with your own identifying information. (Don't include
- *       the brackets!)  The text should be enclosed in the appropriate
- *       comment syntax for the file format. We also recommend that a
- *       file or class name and description of purpose be included on the
- *       same "printed page" as the copyright notice for easier
- *       identification within third-party archives.
+ *    Copyright  (c) Bug 2016.
  *
- *    Copyright {yyyy} {name of copyright owner}
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
  *
  */
 package cn.scujcc.bug.bitcoinplatformandroid;
@@ -229,9 +207,9 @@ public class MainActivity extends AppCompatActivity {
     private Class fragmentArray[] = {ActualTransactionFragment.class, ProfessionalTransactionFragment
             .class, QuotationInformationFragment.class, PersonalCenterFragment.class};
 
-//    //定义数组来存放按钮图片
-//    private int mImageViewArray[] = {R.drawable.tab_home_btn, R.drawable.tab_message_btn, R.drawable.tab_selfinfo_btn,
-//            R.drawable.tab_square_btn, R.drawable.tab_more_btn};
+    //    //定义数组来存放按钮图片
+    private int mImageViewArray[] = {R.drawable.tabbar_button_actualtransaction, R.drawable.tabbar_button_professionaltransaction, R.drawable.tabbar_button_quotationinformation,
+            R.drawable.tabbar_button_personalcenter};
 
     //Tab选项卡的文字
     private String mTextviewArray[] = {"现货交易", "专业交易", "行情资讯", "个人中心"};
@@ -258,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
             //将Tab按钮添加进Tab选项卡中
             mTabHost.addTab(tabSpec, fragmentArray[i], null);
             //设置Tab按钮的背景
-            // mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.selector_tab_background);
+            //mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.selector_tab_background);
         }
 
 
@@ -271,10 +249,12 @@ public class MainActivity extends AppCompatActivity {
         View view = layoutInflater.inflate(R.layout.tabbar_item, null);
 
         ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-        // imageView.setImageResource(mImageViewArray[index]);
+        imageView.setImageResource(mImageViewArray[index]);
 
         TextView textView = (TextView) view.findViewById(R.id.textview);
         textView.setText(mTextviewArray[index]);
+
+
 
         return view;
     }

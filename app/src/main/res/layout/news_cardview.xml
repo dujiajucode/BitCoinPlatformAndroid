@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~                                  Apache License
   ~                            Version 2.0, January 2004
@@ -183,29 +184,34 @@
   ~
   -->
 
-<manifest package="cn.scujcc.bug.bitcoinplatformandroid"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="4dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="2dp"
+                                    card_view:cardElevation="2dp">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        <ImageView
+            android:id="@+id/news_imageview"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+        <TextView
+            android:id="@+id/news_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@id/news_imageview"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-        <activity
-            android:name=".activity.NewsDetailsActivity"
-            android:parentActivityName=".MainActivity"/>
-    </application>
 
-</manifest>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

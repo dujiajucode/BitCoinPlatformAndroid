@@ -183,14 +183,47 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.activity.NewsDetailsActivity;
+import cn.scujcc.bug.bitcoinplatformandroid.model.News;
 
 /**
  * Created by lilujia on 16/3/27.
@@ -198,6 +231,20 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
  * 行情资讯
  */
 public class QuotationInformationFragment extends BaseFragment {
+
+    private final String NEWS_RSS_URL = "http://www.bitecoin.com/feed";
+
+    private final String NEWS_CACHE_NAME = "news_cache";
+
+    private final String TAG = "QuotationInformation";
+
+    private ProgressBar mProgressBar;
+
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -206,16 +253,356 @@ public class QuotationInformationFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hello, container, false);
+        View view = inflater.inflate(R.layout.fragmnet_quotationinformation, container, false);
 
         setHasOptionsMenu(true);
 
         getActivity().setTitle("行情资讯");
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 
-        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-        tv.setText("行情资讯");
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
+        //如果内容高度不发生变化,则开启此优化
+        mRecyclerView.setHasFixedSize(true);
+
+
+        // 使用线性布局
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+
+        //设置Adapter
+        mAdapter = new CardAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+
+
+        //从网络获取数据
+        NewsAsyncTask task = new NewsAsyncTask();
+        task.execute();
 
         return view;
+    }
+
+    public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> implements View.OnClickListener {
+        private List<News> mLists;
+
+        @Override
+        public void onClick(View v) {
+            //Item Click
+            int pos = (int) v.getTag();
+            News news = mLists.get(pos);
+
+            Intent intent = new Intent();
+            intent.setClass(getActivity(), NewsDetailsActivity.class);
+            intent.putExtra("news", news);
+            startActivity(intent);
+
+            //Log.e("TAG", "POS" + news.getTitle());
+        }
+
+        /**
+         * 采用ViewHolder可以优化性能
+         */
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            public View mView;
+
+
+            public ImageView ivPic;
+
+            public TextView tvTitle;
+
+            public ViewHolder(View v) {
+                super(v);
+                mView = v;
+
+                mView.setOnClickListener(CardAdapter.this);
+
+                ivPic = (ImageView) mView.findViewById(R.id.news_imageview);
+                tvTitle = (TextView) mView.findViewById(R.id.news_title_textview);
+
+            }
+        }
+
+        public CardAdapter() {
+            mLists = null;
+        }
+
+        public CardAdapter(List<News> list) {
+            mLists = list;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent,
+                                             int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.news_cardview, parent, false);
+
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+            //设置信息
+            News news = mLists.get(position);
+
+            holder.mView.setTag(position);
+
+            //异步加载图片
+            //holder.ivPic.setImageResource();
+            holder.tvTitle.setText(news.getTitle());
+
+            holder.ivPic.setTag(news.getImage());
+
+
+//
+        }
+
+        @Override
+        public int getItemCount() {
+            return mLists == null ? 0 : mLists.size();
+        }
+    }
+
+
+    class NewsAsyncTask extends AsyncTask<Void, Void, List<News>> {
+
+        /**
+         * 在开始线程前,做些事情,请注意是工作在主线程上
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.e(TAG, "onPreExecute");
+        }
+
+        @Override
+        protected List<News> doInBackground(Void... params) {
+            List<News> list = readNewsFromCache();//   =new ArrayList<News>();
+
+
+            //判断是否有缓存数据,如果有检查时间是否过期
+            if (list != null) {
+                return list;
+            }
+
+            try {
+                String xmlString = getUrlString(NEWS_RSS_URL);
+
+                list = getNews(xmlString);
+                //保存数据
+                writeNewsToCache(list);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            return list;
+        }
+
+
+        /**
+         * 拿到数据后,加载数据
+         *
+         * @param newses
+         */
+        @Override
+        protected void onPostExecute(List<News> newses) {
+            super.onPostExecute(newses);
+
+            if (newses != null && newses.size() > 0) {
+                //Do Something
+                mProgressBar.setVisibility(View.GONE);
+                mAdapter = new CardAdapter(newses);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        }
+    }
+
+    private List<News> getNews(String xmlString) throws IOException, XmlPullParserException {
+        List<News> list;
+        News news = null;
+
+        // 构建XmlPullParserFactory
+        XmlPullParserFactory pullParserFactory = XmlPullParserFactory.newInstance();
+
+        // 获取XmlPullParser的实例
+        XmlPullParser xmlPullParser = pullParserFactory.newPullParser();
+        // 设置输入流 xml文件
+        xmlPullParser.setInput(new StringReader(xmlString));
+        list = new ArrayList<News>();
+        // 开始
+        int eventType = xmlPullParser.getEventType();
+        while (true) {
+            if (eventType == XmlPullParser.START_TAG) {
+                String nodeName = xmlPullParser.getName();
+
+                if (nodeName.equals("item")) {
+                    break;
+                }
+            }
+            eventType = xmlPullParser.next();
+        }
+
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+
+            String nodeName = xmlPullParser.getName();
+
+            switch (eventType) {
+                // 文档开始
+                case XmlPullParser.START_DOCUMENT:
+                    break;
+                // 开始节点
+                case XmlPullParser.START_TAG:
+
+                    // 判断如果其实节点为student
+                    if ("item".equals(nodeName)) {
+
+                        // 实例化student对象
+                        news = new News();
+                        // news.setTitle(xmlPullParser.nextText());
+
+                    } else if ("title".equals(nodeName)) {
+
+                        news.setTitle(xmlPullParser.nextText());
+
+                    } else if ("link".equals(nodeName)) {
+                        String url = xmlPullParser.nextText();
+                        //Log.e("tag", "ttt" + url);
+                        if (url != null) {
+                            //JSOUP
+                            try {
+                                getImageAndContent(url, news);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                        //news.setContent();
+                    }
+                    break;
+                // 结束节点
+                case XmlPullParser.END_TAG:
+                    if ("item".equals(nodeName)) {
+                        //获得节点
+                        list.add(news);
+                        news = null;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            eventType = xmlPullParser.next();
+        }
+
+
+        return list;
+    }
+
+    private String getUrlString(String myurl) throws IOException {
+        InputStream is = null;
+        // Only display the first 500 characters of the retrieved
+        // web page content.
+        // int len = 500;
+
+        try {
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+            // Log.e(TAG, "The response is: " + response);
+            is = conn.getInputStream();
+
+            // Convert the InputStream into a string
+            return readIt(is, 10240);
+
+
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+
+    public void getImageAndContent(String url, News news) throws Exception {
+
+        Document doc = Jsoup.connect(url).get();
+
+        Elements image = doc.select(".entry-content img");
+        news.setImage(image.attr("src"));
+
+        Elements content = doc.select(".entry-content");
+        news.setContent(content.html());
+
+    }
+
+    public List<News> readNewsFromCache() {
+        File file = new File(
+                getActivity().getFileStreamPath(NEWS_CACHE_NAME).getPath());
+        if (file.exists()) {
+            long t = 24 * 60 * 60 * 1000;//1天的毫秒数
+            if (System.currentTimeMillis() - file.lastModified() >= t) {
+                Log.e(TAG, "缓存过期" + "\t" + System.currentTimeMillis() + "\t" + file.lastModified());
+                return null;
+            }
+            try {
+                FileInputStream fin = getActivity().openFileInput(NEWS_CACHE_NAME);
+                ObjectInputStream in = new ObjectInputStream(fin);
+                List<News> list = (List<News>) in.readObject();
+                in.close();
+
+                return list;
+            } catch (Exception e) {
+                e.printStackTrace();
+                deleteCache();
+
+            }
+        }
+
+
+        return null;
+    }
+
+    public void deleteCache() {
+        File file = new File(
+                getActivity().getFileStreamPath(NEWS_CACHE_NAME).getPath());
+
+
+        file.deleteOnExit();
+    }
+
+    public void writeNewsToCache(List<News> list) {
+        try {
+            FileOutputStream fot = getActivity().openFileOutput(NEWS_CACHE_NAME, Context.MODE_PRIVATE);
+            ObjectOutputStream out = new ObjectOutputStream(fot);
+            out.writeObject(list);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+        InputStreamReader read = new InputStreamReader(
+                stream, "UTF-8");//考虑到编码格式
+        BufferedReader bufferedReader = new BufferedReader(read);
+        String lineTxt = "";
+        StringBuilder sb = new StringBuilder();
+        while ((lineTxt = bufferedReader.readLine()) != null) {
+            sb.append(lineTxt);
+        }
+        bufferedReader.close();
+        return sb.toString();
     }
 }

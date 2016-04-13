@@ -184,10 +184,15 @@
 
 package cn.scujcc.bug.bitcoinplatformandroid.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
+import cn.scujcc.bug.bitcoinplatformandroid.MainActivity;
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.fragment.NewsDetailsFragment;
 
 /**
  * Created by lilujia on 16/4/13.
@@ -197,6 +202,25 @@ public class NewsDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragmnet_quotationinformation);
+        setContentView(R.layout.activity_fragment);
+
+        FragmentManager fragmentManager = getFragmentManager();
+
+        Fragment fragment = fragmentManager.findFragmentById(R.id.fragmentContainer);
+        if (fragment == null) {
+            fragment = new NewsDetailsFragment();
+            fragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).commit();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                MainActivity.MAIN_INDEX = 2;
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

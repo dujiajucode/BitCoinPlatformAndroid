@@ -199,6 +199,9 @@ import cn.scujcc.bug.bitcoinplatformandroid.fragment.QuotationInformationFragmen
 
 public class MainActivity extends AppCompatActivity {
 
+    public static int MAIN_INDEX = 0;
+
+    private FragmentTabHost mTabHost;
 
     //定义一个布局
     private LayoutInflater layoutInflater;
@@ -214,12 +217,25 @@ public class MainActivity extends AppCompatActivity {
     //Tab选项卡的文字
     private String mTextviewArray[] = {"现货交易", "专业交易", "行情资讯", "个人中心"};
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //
+        mTabHost.setCurrentTab(MAIN_INDEX);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentTabHost mTabHost;
+
         layoutInflater = LayoutInflater.from(this);
 
         //实例化TabHost对象，得到TabHost

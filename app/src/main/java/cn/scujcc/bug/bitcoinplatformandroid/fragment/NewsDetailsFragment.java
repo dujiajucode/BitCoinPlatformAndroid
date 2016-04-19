@@ -216,16 +216,13 @@ public class NewsDetailsFragment extends BaseFragment {
         if (news != null) {
             setHasOptionsMenu(true);
             setTitle(view, news.getTitle());
-            setShowPeopleCenter();
 
             AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-
             if (appCompatActivity.getSupportActionBar() != null) {
                 appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
             WebView webView = (WebView) view.findViewById(R.id.news_content_webview);
-
             webView.loadData(news.getHTMLContent(), "text/html; charset=UTF-8", null);
 
         }

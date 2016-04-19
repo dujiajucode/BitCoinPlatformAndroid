@@ -211,21 +211,20 @@ public class NewsDetailsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_newsdetails, container, false);
 
-        setHasOptionsMenu(true);
-
-        //AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-
-        //appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        setTitle(view, "专业交易");
-
-        WebView webView = (WebView) view.findViewById(R.id.news_content_webview);
-
         Intent intent = getActivity().getIntent();
-
         News news = (News) intent.getSerializableExtra("news");
-
         if (news != null) {
+            setHasOptionsMenu(true);
+
+            setTitle(view, news.getTitle());
+
+            AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+
+            if (appCompatActivity.getSupportActionBar() != null) {
+                appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+
+            WebView webView = (WebView) view.findViewById(R.id.news_content_webview);
 
             webView.loadData(news.getHTMLContent(), "text/html; charset=UTF-8", null);
 

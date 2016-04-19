@@ -184,6 +184,7 @@
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -201,6 +202,8 @@ public class BaseFragment extends Fragment {
             Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
             if (toolbar != null) {
                 toolbar.setTitle(title);
+                AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+                appCompatActivity.setSupportActionBar(toolbar);
             }
         }
 

@@ -194,7 +194,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 个人中心
  */
 public class PersonalCenterFragment extends BaseFragment {
@@ -210,7 +210,7 @@ public class PersonalCenterFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        getActivity().setTitle("个人中心");
+        setTitle(view, "个人中心");
 
         TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
         tv.setText("个人中心");

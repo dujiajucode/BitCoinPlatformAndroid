@@ -194,7 +194,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 专业交易
  */
 public class ProfessionalTransactionFragment extends BaseFragment {
@@ -211,7 +211,7 @@ public class ProfessionalTransactionFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        getActivity().setTitle("专业交易");
+        setTitle(view, "专业交易");
 
         TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
         tv.setText("专业交易");

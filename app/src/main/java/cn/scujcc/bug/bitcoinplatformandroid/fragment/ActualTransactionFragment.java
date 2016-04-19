@@ -194,7 +194,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment {
@@ -211,7 +211,7 @@ public class ActualTransactionFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        getActivity().setTitle("现货交易");
+        setTitle(view, "现货交易");
 
         TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
         tv.setText("现货交易");

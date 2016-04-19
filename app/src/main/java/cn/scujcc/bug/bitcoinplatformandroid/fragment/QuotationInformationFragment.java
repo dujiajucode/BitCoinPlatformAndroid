@@ -227,7 +227,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 行情资讯
  */
 public class QuotationInformationFragment extends BaseFragment {
@@ -257,7 +257,8 @@ public class QuotationInformationFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        getActivity().setTitle("行情资讯");
+        setTitle(view, "行情资讯");
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);

@@ -213,11 +213,11 @@ public class NewsDetailsFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+        //AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
 
-        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        getActivity().setTitle("专业交易");
+        setTitle(view, "专业交易");
 
         WebView webView = (WebView) view.findViewById(R.id.news_content_webview);
 

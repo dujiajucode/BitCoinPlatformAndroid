@@ -184,12 +184,35 @@
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.Fragment;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 父类
  */
 public class BaseFragment extends Fragment {
 
+    protected void setTitle(View view, String title) {
+        if (view != null) {
+            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+            if (toolbar != null) {
+                toolbar.setTitle(title);
+            }
+        }
+
+    }
+
+    protected void setTitle(View view, int title) {
+        if (view != null) {
+            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+            if (toolbar != null) {
+                toolbar.setTitle(title);
+            }
+        }
+
+    }
 }

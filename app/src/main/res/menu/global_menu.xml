@@ -181,9 +181,15 @@
   ~
   ~
   -->
-
-<resources>
-    <string name="app_name">BitCoinPlatformAndroid</string>
-
-    <string name="fragment_personal_center_title">个人中心</string>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    　　
+    <group android:id="@+id/MAIN_MENU">
+        　　
+        <item
+            android:id="@+id/menu_refresh_id"
+            android:icon="@drawable/ic_menu"
+            android:title="@string/fragment_personal_center_title"/>
+        　　
+    </group>
+    　　
+</menu>

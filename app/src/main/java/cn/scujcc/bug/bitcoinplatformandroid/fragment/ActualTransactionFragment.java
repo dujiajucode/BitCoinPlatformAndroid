@@ -210,8 +210,8 @@ public class ActualTransactionFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_hello, container, false);
 
         setHasOptionsMenu(true);
-
         setTitle(view, "现货交易");
+        setShowPeopleCenter();
 
         TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
         tv.setText("现货交易");

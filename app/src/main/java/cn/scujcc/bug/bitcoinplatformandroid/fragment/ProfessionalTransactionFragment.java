@@ -210,8 +210,9 @@ public class ProfessionalTransactionFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_hello, container, false);
 
         setHasOptionsMenu(true);
-
         setTitle(view, "专业交易");
+        setShowPeopleCenter();
+
 
         TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
         tv.setText("专业交易");

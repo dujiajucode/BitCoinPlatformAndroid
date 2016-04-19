@@ -256,8 +256,8 @@ public class QuotationInformationFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragmnet_quotationinformation, container, false);
 
         setHasOptionsMenu(true);
-
         setTitle(view, "行情资讯");
+        setShowPeopleCenter();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 

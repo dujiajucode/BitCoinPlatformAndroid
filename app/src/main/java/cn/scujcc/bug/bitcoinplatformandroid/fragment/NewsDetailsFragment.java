@@ -215,8 +215,8 @@ public class NewsDetailsFragment extends BaseFragment {
         News news = (News) intent.getSerializableExtra("news");
         if (news != null) {
             setHasOptionsMenu(true);
-
             setTitle(view, news.getTitle());
+            setShowPeopleCenter();
 
             AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
 

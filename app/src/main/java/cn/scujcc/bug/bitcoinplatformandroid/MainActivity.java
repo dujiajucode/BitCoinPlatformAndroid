@@ -212,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
             .class, QuotationInformationFragment.class};
 
     //定义数组来存放按钮图片
-    private int mImageViewArray[] = {R.drawable.tabbar_button_actualtransaction, R.drawable.tabbar_button_professionaltransaction, R.drawable.tabbar_button_quotationinformation};
+    private int mImageViewArray[] = {R.drawable.actualtransaction, R.drawable.professionaltransaction,
+            R.drawable.quotationinformation};
 
     //Tab选项卡的文字
     private String mTextviewArray[] = {"现货交易", "专业交易", "行情资讯"};

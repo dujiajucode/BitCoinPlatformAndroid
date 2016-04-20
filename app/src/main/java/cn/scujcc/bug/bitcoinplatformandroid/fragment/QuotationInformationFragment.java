@@ -628,7 +628,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
             if (isForce) {
 
                 mSwipeRefreshWidget.setRefreshing(false);
-                Snackbar.make(mView, "刷新成功", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mRecyclerView, "刷新成功", Snackbar.LENGTH_SHORT).show();
                 isForce = false;
             }
             if (newses != null && newses.size() > 0) {

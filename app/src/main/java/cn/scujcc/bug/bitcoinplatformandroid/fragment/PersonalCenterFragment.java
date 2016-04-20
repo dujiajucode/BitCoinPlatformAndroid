@@ -202,7 +202,6 @@ public class PersonalCenterFragment extends BaseFragment {
     TextView tv;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

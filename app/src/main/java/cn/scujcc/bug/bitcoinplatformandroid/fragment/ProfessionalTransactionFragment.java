@@ -228,10 +228,10 @@ public class ProfessionalTransactionFragment extends BaseFragment {
         ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
 
-        fragments.add(new PersonalCenterFragment());
-        fragments.add(new PersonalCenterFragment());
-        fragments.add(new PersonalCenterFragment());
-        fragments.add(new PersonalCenterFragment());
+        fragments.add(new Fragment1());
+        fragments.add(new Fragment2());
+        fragments.add(new Fragment3());
+        fragments.add(new Fragment4());
 
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager(),

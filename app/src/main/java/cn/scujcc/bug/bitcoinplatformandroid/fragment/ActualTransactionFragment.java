@@ -183,21 +183,29 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment {
+
+    private String mTextviewArray[] = {"综合", "买入", "卖出", "挂单"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -207,16 +215,56 @@ public class ActualTransactionFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hello, container, false);
+        View view = inflater.inflate(R.layout.fragment_tab, container, false);
 
         setHasOptionsMenu(true);
         setTitle(view, "现货交易");
         setShowPeopleCenter();
 
-        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-        tv.setText("现货交易");
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tablayout);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
 
+        // 设置ViewPager
+        ArrayList<Fragment> fragments = new ArrayList<Fragment>();
+
+
+        fragments.add(new PersonalCenterFragment());
+        fragments.add(new PersonalCenterFragment());
+        fragments.add(new PersonalCenterFragment());
+        fragments.add(new PersonalCenterFragment());
+
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager(),
+                fragments);
+        viewPager.setOffscreenPageLimit(fragments.size());
+        viewPager.setAdapter(viewPagerAdapter);
+        // 设置SlidingTab
+        slidingTabLayout.setViewPager(viewPager);
 
         return view;
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private ArrayList<Fragment> fragments;
+
+        public ViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
+            super(fm);
+            this.fragments = fragments;
+        }
+
+        @Override
+        public Fragment getItem(int pos) {
+            return fragments.get(pos);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mTextviewArray[position];
+        }
     }
 }

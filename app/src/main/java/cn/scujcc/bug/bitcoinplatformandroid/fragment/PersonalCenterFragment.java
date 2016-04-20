@@ -194,10 +194,15 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 个人中心
  */
 public class PersonalCenterFragment extends BaseFragment {
+    private String mTitle = "个人中心";
+    TextView tv;
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -208,14 +213,13 @@ public class PersonalCenterFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hello, container, false);
 
-        setHasOptionsMenu(true);
 
-        setTitle(view, "个人中心");
-
-        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
+        tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
         tv.setText("个人中心");
 
 
         return view;
     }
+
+
 }

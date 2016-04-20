@@ -181,124 +181,196 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid;
 
-import android.os.Bundle;
-import android.support.v13.app.FragmentTabHost;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
+package cn.scujcc.bug.bitcoinplatformandroid.view;
+
+import android.R;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionFragment;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.ProfessionalTransactionFragment;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.QuotationInformationFragment;
+class SlidingTabStrip extends LinearLayout {
 
-public class MainActivity extends AppCompatActivity {
+    private static final int DEFAULT_BOTTOM_BORDER_THICKNESS_DIPS = 2;
+    private static final byte DEFAULT_BOTTOM_BORDER_COLOR_ALPHA = 0x26;
+    private static final int SELECTED_INDICATOR_THICKNESS_DIPS = 8;
+    private static final int DEFAULT_SELECTED_INDICATOR_COLOR = 0xFF33B5E5;
 
-    public static int MAIN_INDEX = 0;
+    private static final int DEFAULT_DIVIDER_THICKNESS_DIPS = 1;
+    private static final byte DEFAULT_DIVIDER_COLOR_ALPHA = 0x20;
+    private static final float DEFAULT_DIVIDER_HEIGHT = 0.5f;
 
-    private FragmentTabHost mTabHost;
+    private final int mBottomBorderThickness;
+    private final Paint mBottomBorderPaint;
 
-    //Test for commit
+    private final int mSelectedIndicatorThickness;
+    private final Paint mSelectedIndicatorPaint;
 
-    //定义一个布局
-    private LayoutInflater layoutInflater;
+    private final int mDefaultBottomBorderColor;
 
-    //定义数组来存放Fragment界面
-    private Class fragmentArray[] = {ActualTransactionFragment.class, ProfessionalTransactionFragment
-            .class, QuotationInformationFragment.class};
+    private final Paint mDividerPaint;
+    private final float mDividerHeight;
 
-    //定义数组来存放按钮图片
-    private int mImageViewArray[] = {R.drawable.a1_1, R.drawable.a2_1, R.drawable.a3_1};
+    private int mSelectedPosition;
+    private float mSelectionOffset;
 
-    //定义数组来存放按钮图片
-    private int mImageViewArray2[] = {R.drawable.a1_2, R.drawable.a2_2, R.drawable.a3_2};
+    private SlidingTabLayout.TabColorizer mCustomTabColorizer;
+    private final SimpleTabColorizer mDefaultTabColorizer;
 
-    //Tab选项卡的文字
-    private String mTextviewArray[] = {"现货交易", "专业交易", "行情资讯"};
+    SlidingTabStrip(Context context) {
+        this(context, null);
+    }
 
+    SlidingTabStrip(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setWillNotDraw(false);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+        final float density = getResources().getDisplayMetrics().density;
+
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorForeground, outValue, true);
+        final int themeForegroundColor = outValue.data;
+
+        mDefaultBottomBorderColor = setColorAlpha(themeForegroundColor,
+                DEFAULT_BOTTOM_BORDER_COLOR_ALPHA);
+
+        mDefaultTabColorizer = new SimpleTabColorizer();
+        mDefaultTabColorizer.setIndicatorColors(DEFAULT_SELECTED_INDICATOR_COLOR);
+        mDefaultTabColorizer.setDividerColors(setColorAlpha(themeForegroundColor,
+                DEFAULT_DIVIDER_COLOR_ALPHA));
+
+        mBottomBorderThickness = (int) (DEFAULT_BOTTOM_BORDER_THICKNESS_DIPS * density);
+        mBottomBorderPaint = new Paint();
+        mBottomBorderPaint.setColor(mDefaultBottomBorderColor);
+
+        mSelectedIndicatorThickness = (int) (SELECTED_INDICATOR_THICKNESS_DIPS * density);
+        mSelectedIndicatorPaint = new Paint();
+
+        mDividerHeight = DEFAULT_DIVIDER_HEIGHT;
+        mDividerPaint = new Paint();
+        mDividerPaint.setStrokeWidth((int) (DEFAULT_DIVIDER_THICKNESS_DIPS * density));
+    }
+
+    void setCustomTabColorizer(SlidingTabLayout.TabColorizer customTabColorizer) {
+        mCustomTabColorizer = customTabColorizer;
+        invalidate();
+    }
+
+    void setSelectedIndicatorColors(int... colors) {
+        // Make sure that the custom colorizer is removed
+        mCustomTabColorizer = null;
+        mDefaultTabColorizer.setIndicatorColors(colors);
+        invalidate();
+    }
+
+    void setDividerColors(int... colors) {
+        // Make sure that the custom colorizer is removed
+        mCustomTabColorizer = null;
+        mDefaultTabColorizer.setDividerColors(colors);
+        invalidate();
+    }
+
+    void onViewPagerPageChanged(int position, float positionOffset) {
+        mSelectedPosition = position;
+        mSelectionOffset = positionOffset;
+        invalidate();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        //
-        mTabHost.setCurrentTab(MAIN_INDEX);
-    }
+    protected void onDraw(Canvas canvas) {
+        final int height = getHeight();
+        final int childCount = getChildCount();
+        final int dividerHeightPx = (int) (Math.min(Math.max(0f, mDividerHeight), 1f) * height);
+        final SlidingTabLayout.TabColorizer tabColorizer = mCustomTabColorizer != null
+                ? mCustomTabColorizer
+                : mDefaultTabColorizer;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // Thick colored underline below the current selection
+        if (childCount > 0) {
+            View selectedTitle = getChildAt(mSelectedPosition);
+            int left = selectedTitle.getLeft();
+            int right = selectedTitle.getRight();
+            int color = tabColorizer.getIndicatorColor(mSelectedPosition);
 
+            if (mSelectionOffset > 0f && mSelectedPosition < (getChildCount() - 1)) {
+                int nextColor = tabColorizer.getIndicatorColor(mSelectedPosition + 1);
+                if (color != nextColor) {
+                    color = blendColors(nextColor, color, mSelectionOffset);
+                }
 
-        layoutInflater = LayoutInflater.from(this);
+                // Draw the selection partway between the tabs
+                View nextTitle = getChildAt(mSelectedPosition + 1);
+                left = (int) (mSelectionOffset * nextTitle.getLeft() +
+                        (1.0f - mSelectionOffset) * left);
+                right = (int) (mSelectionOffset * nextTitle.getRight() +
+                        (1.0f - mSelectionOffset) * right);
+            }
 
-        //实例化TabHost对象，得到TabHost
-        mTabHost = (FragmentTabHost) findViewById(R.id.tabhost);
-        if (mTabHost == null) return;
-        mTabHost.setup(this, getFragmentManager(), R.id.realtabcontent);
+            mSelectedIndicatorPaint.setColor(color);
 
-        //得到fragment的个数
-        int count = fragmentArray.length;
-
-        for (int i = 0; i < count; i++) {
-            //为每一个Tab按钮设置图标、文字和内容
-            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextviewArray[i]).setIndicator(getTabItemView(i));
-            //将Tab按钮添加进Tab选项卡中
-            mTabHost.addTab(tabSpec, fragmentArray[i], null);
-            //设置Tab按钮的背景
-            //mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.selector_tab_background);
+            canvas.drawRect(left, height - mSelectedIndicatorThickness, right,
+                    height, mSelectedIndicatorPaint);
         }
 
-        mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(String tabId) {
+        // Thin underline along the entire bottom edge
+        canvas.drawRect(0, height - mBottomBorderThickness, getWidth(), height, mBottomBorderPaint);
 
-                for (int i = 0; i < mTabHost.getTabWidget().getChildCount(); i++) {
-                    ImageView view = (ImageView) mTabHost.getTabWidget().getChildAt(i).findViewById(R.id.imageview);
-                    if (view != null) {
-                        if (tabId.equals(mTextviewArray[i])) {
-                            view.setImageResource(mImageViewArray2[i]);
-                        } else {
-                            view.setImageResource(mImageViewArray[i]);
-                        }
-                    }
-
-                }
-            }
-        });
-
-        mTabHost.setCurrentTab(0);
-        mTabHost.getTabWidget().setDividerDrawable(null);
-
+        // Vertical separators between the titles
+        int separatorTop = (height - dividerHeightPx) / 2;
+        for (int i = 0; i < childCount - 1; i++) {
+            View child = getChildAt(i);
+            mDividerPaint.setColor(tabColorizer.getDividerColor(i));
+            canvas.drawLine(child.getRight(), separatorTop, child.getRight(),
+                    separatorTop + dividerHeightPx, mDividerPaint);
+        }
     }
 
     /**
-     * 给Tab按钮设置图标和文字
+     * Set the alpha value of the {@code color} to be the given {@code alpha} value.
      */
-    private View getTabItemView(int index) {
-        View view = layoutInflater.inflate(R.layout.tabbar_item, null);
-
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-        if (index == 0) {
-            imageView.setImageResource(mImageViewArray2[index]);
-        } else {
-            imageView.setImageResource(mImageViewArray[index]);
-        }
-        TextView textView = (TextView) view.findViewById(R.id.textview);
-        textView.setText(mTextviewArray[index]);
-
-
-        return view;
+    private static int setColorAlpha(int color, byte alpha) {
+        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
     }
 
+    /**
+     * Blend {@code color1} and {@code color2} using the given ratio.
+     *
+     * @param ratio of which to blend. 1.0 will return {@code color1}, 0.5 will give an even blend,
+     *              0.0 will return {@code color2}.
+     */
+    private static int blendColors(int color1, int color2, float ratio) {
+        final float inverseRation = 1f - ratio;
+        float r = (Color.red(color1) * ratio) + (Color.red(color2) * inverseRation);
+        float g = (Color.green(color1) * ratio) + (Color.green(color2) * inverseRation);
+        float b = (Color.blue(color1) * ratio) + (Color.blue(color2) * inverseRation);
+        return Color.rgb((int) r, (int) g, (int) b);
+    }
 
+    private static class SimpleTabColorizer implements SlidingTabLayout.TabColorizer {
+        private int[] mIndicatorColors;
+        private int[] mDividerColors;
+
+        @Override
+        public final int getIndicatorColor(int position) {
+            return mIndicatorColors[position % mIndicatorColors.length];
+        }
+
+        @Override
+        public final int getDividerColor(int position) {
+            return mDividerColors[position % mDividerColors.length];
+        }
+
+        void setIndicatorColors(int... colors) {
+            mIndicatorColors = colors;
+        }
+
+        void setDividerColors(int... colors) {
+            mDividerColors = colors;
+        }
+    }
 }

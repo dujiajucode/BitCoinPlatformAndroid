@@ -195,7 +195,7 @@
         android:layout_weight="1"/>
 
     <android.support.v13.app.FragmentTabHost
-        android:id="@android:id/tabhost"
+        android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

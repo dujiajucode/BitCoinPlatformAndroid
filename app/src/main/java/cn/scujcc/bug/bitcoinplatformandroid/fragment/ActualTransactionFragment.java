@@ -185,6 +185,7 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -234,8 +235,16 @@ public class ActualTransactionFragment extends BaseFragment {
         fragments.add(new Fragment8());
 
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager(),
-                fragments);
+        ViewPagerAdapter viewPagerAdapter;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),
+                    fragments);
+        } else {
+            viewPagerAdapter = new ViewPagerAdapter(getFragmentManager(),
+                    fragments);
+        }
+
         viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(viewPagerAdapter);
         // 设置SlidingTab

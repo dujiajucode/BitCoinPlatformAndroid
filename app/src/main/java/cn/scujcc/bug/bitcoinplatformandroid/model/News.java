@@ -198,6 +198,10 @@ public class News implements Serializable {
         return mContent;
     }
 
+    public void setContent(String content) {
+        mContent = content;
+    }
+
     public String getHTMLContent() {
         String content = mContent;//.replaceAll("<img\\\\s+.*\\\\s*\\\\/{0,1}>", "");
 
@@ -208,10 +212,6 @@ public class News implements Serializable {
         content = content.replaceAll(regex, "");
 
         return content;
-    }
-
-    public void setContent(String content) {
-        mContent = content;
     }
 
     public String getImage() {

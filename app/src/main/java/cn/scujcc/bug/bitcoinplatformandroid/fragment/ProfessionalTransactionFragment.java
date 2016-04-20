@@ -200,7 +200,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 专业交易
  */
 public class ProfessionalTransactionFragment extends BaseFragment {

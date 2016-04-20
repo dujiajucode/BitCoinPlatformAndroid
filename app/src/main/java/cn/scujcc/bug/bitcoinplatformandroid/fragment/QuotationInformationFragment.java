@@ -284,143 +284,6 @@ public class QuotationInformationFragment extends BaseFragment {
         return view;
     }
 
-    public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> implements View.OnClickListener {
-        private List<News> mLists;
-
-        @Override
-        public void onClick(View v) {
-            //Item Click
-            int pos = (int) v.getTag();
-            News news = mLists.get(pos);
-
-            Intent intent = new Intent();
-            intent.setClass(getActivity(), NewsDetailsActivity.class);
-            intent.putExtra("news", news);
-            startActivity(intent);
-
-            //Log.e("TAG", "POS" + news.getTitle());
-        }
-
-        /**
-         * 采用ViewHolder可以优化性能
-         */
-        public class ViewHolder extends RecyclerView.ViewHolder {
-
-            public View mView;
-
-
-            public ImageView ivPic;
-
-            public TextView tvTitle;
-
-            public ViewHolder(View v) {
-                super(v);
-                mView = v;
-
-                mView.setOnClickListener(CardAdapter.this);
-
-                ivPic = (ImageView) mView.findViewById(R.id.news_imageview);
-                tvTitle = (TextView) mView.findViewById(R.id.news_title_textview);
-
-            }
-        }
-
-        public CardAdapter() {
-            mLists = null;
-        }
-
-        public CardAdapter(List<News> list) {
-            mLists = list;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent,
-                                             int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.news_cardview, parent, false);
-
-            return new ViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-
-            //设置信息
-            News news = mLists.get(position);
-
-            holder.mView.setTag(position);
-
-            //异步加载图片
-            //holder.ivPic.setImageResource();
-            holder.tvTitle.setText(news.getTitle());
-
-            holder.ivPic.setTag(news.getImage());
-
-
-//
-        }
-
-        @Override
-        public int getItemCount() {
-            return mLists == null ? 0 : mLists.size();
-        }
-    }
-
-
-    class NewsAsyncTask extends AsyncTask<Void, Void, List<News>> {
-
-        /**
-         * 在开始线程前,做些事情,请注意是工作在主线程上
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Log.e(TAG, "onPreExecute");
-        }
-
-        @Override
-        protected List<News> doInBackground(Void... params) {
-            List<News> list = readNewsFromCache();//   =new ArrayList<News>();
-
-
-            //判断是否有缓存数据,如果有检查时间是否过期
-            if (list != null) {
-                return list;
-            }
-
-            try {
-                String xmlString = getUrlString(NEWS_RSS_URL);
-
-                list = getNews(xmlString);
-                //保存数据
-                writeNewsToCache(list);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            return list;
-        }
-
-
-        /**
-         * 拿到数据后,加载数据
-         *
-         * @param newses
-         */
-        @Override
-        protected void onPostExecute(List<News> newses) {
-            super.onPostExecute(newses);
-
-            if (newses != null && newses.size() > 0) {
-                //Do Something
-                mProgressBar.setVisibility(View.GONE);
-                mAdapter = new CardAdapter(newses);
-                mRecyclerView.setAdapter(mAdapter);
-            }
-        }
-    }
-
     private List<News> getNews(String xmlString) throws IOException, XmlPullParserException {
         List<News> list;
         News news = null;
@@ -605,5 +468,141 @@ public class QuotationInformationFragment extends BaseFragment {
         }
         bufferedReader.close();
         return sb.toString();
+    }
+
+    public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> implements View.OnClickListener {
+        private List<News> mLists;
+
+        public CardAdapter() {
+            mLists = null;
+        }
+
+        public CardAdapter(List<News> list) {
+            mLists = list;
+        }
+
+        @Override
+        public void onClick(View v) {
+            //Item Click
+            int pos = (int) v.getTag();
+            News news = mLists.get(pos);
+
+            Intent intent = new Intent();
+            intent.setClass(getActivity(), NewsDetailsActivity.class);
+            intent.putExtra("news", news);
+            startActivity(intent);
+
+            //Log.e("TAG", "POS" + news.getTitle());
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent,
+                                             int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.news_cardview, parent, false);
+
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+            //设置信息
+            News news = mLists.get(position);
+
+            holder.mView.setTag(position);
+
+            //异步加载图片
+            //holder.ivPic.setImageResource();
+            holder.tvTitle.setText(news.getTitle());
+
+            holder.ivPic.setTag(news.getImage());
+
+
+//
+        }
+
+        @Override
+        public int getItemCount() {
+            return mLists == null ? 0 : mLists.size();
+        }
+
+        /**
+         * 采用ViewHolder可以优化性能
+         */
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            public View mView;
+
+
+            public ImageView ivPic;
+
+            public TextView tvTitle;
+
+            public ViewHolder(View v) {
+                super(v);
+                mView = v;
+
+                mView.setOnClickListener(CardAdapter.this);
+
+                ivPic = (ImageView) mView.findViewById(R.id.news_imageview);
+                tvTitle = (TextView) mView.findViewById(R.id.news_title_textview);
+
+            }
+        }
+    }
+
+    class NewsAsyncTask extends AsyncTask<Void, Void, List<News>> {
+
+        /**
+         * 在开始线程前,做些事情,请注意是工作在主线程上
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.e(TAG, "onPreExecute");
+        }
+
+        @Override
+        protected List<News> doInBackground(Void... params) {
+            List<News> list = readNewsFromCache();//   =new ArrayList<News>();
+
+
+            //判断是否有缓存数据,如果有检查时间是否过期
+            if (list != null) {
+                return list;
+            }
+
+            try {
+                String xmlString = getUrlString(NEWS_RSS_URL);
+
+                list = getNews(xmlString);
+                //保存数据
+                writeNewsToCache(list);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            return list;
+        }
+
+
+        /**
+         * 拿到数据后,加载数据
+         *
+         * @param newses
+         */
+        @Override
+        protected void onPostExecute(List<News> newses) {
+            super.onPostExecute(newses);
+
+            if (newses != null && newses.size() > 0) {
+                //Do Something
+                mProgressBar.setVisibility(View.GONE);
+                mAdapter = new CardAdapter(newses);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        }
     }
 }

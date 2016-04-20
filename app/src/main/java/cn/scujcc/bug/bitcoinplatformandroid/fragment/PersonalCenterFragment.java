@@ -194,13 +194,12 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 个人中心
  */
 public class PersonalCenterFragment extends BaseFragment {
-    private String mTitle = "个人中心";
     TextView tv;
-
+    private String mTitle = "个人中心";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

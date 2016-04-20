@@ -239,10 +239,15 @@ public class ActualTransactionFragment extends BaseFragment {
         viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(viewPagerAdapter);
         // 设置SlidingTab
-        slidingTabLayout.setViewPager(viewPager);
+        slidingTabLayout.setViewPager(viewPager, caculateScreenX());
 
         return view;
     }
+
+    private int caculateScreenX() {
+        return getResources().getDisplayMetrics().widthPixels;
+    }
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private ArrayList<Fragment> fragments;

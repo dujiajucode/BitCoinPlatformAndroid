@@ -188,9 +188,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -230,7 +233,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
  * <p>
  * 行情资讯
  */
-public class QuotationInformationFragment extends BaseFragment {
+public class QuotationInformationFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private final String NEWS_RSS_URL = "http://www.bitecoin.com/feed";
 
@@ -240,10 +243,13 @@ public class QuotationInformationFragment extends BaseFragment {
 
     private ProgressBar mProgressBar;
 
+    private boolean isForce = false;
+
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout mSwipeRefreshWidget;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -258,6 +264,16 @@ public class QuotationInformationFragment extends BaseFragment {
         setHasOptionsMenu(true);
         setTitle(view, "行情资讯");
         setShowPeopleCenter();
+
+        mSwipeRefreshWidget = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
+
+        mSwipeRefreshWidget.setOnRefreshListener(this);
+
+        mSwipeRefreshWidget.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
+
+        mSwipeRefreshWidget.setProgressViewOffset(false, 0, (int) TypedValue
+                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
+                        .getDisplayMetrics()));
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 
@@ -470,6 +486,14 @@ public class QuotationInformationFragment extends BaseFragment {
         return sb.toString();
     }
 
+    @Override
+    public void onRefresh() {
+        isForce = true;
+        NewsAsyncTask task = new NewsAsyncTask();
+        task.execute();
+
+    }
+
     public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> implements View.OnClickListener {
         private List<News> mLists;
 
@@ -569,7 +593,7 @@ public class QuotationInformationFragment extends BaseFragment {
 
 
             //判断是否有缓存数据,如果有检查时间是否过期
-            if (list != null) {
+            if (list != null && !isForce) {
                 return list;
             }
 
@@ -597,6 +621,12 @@ public class QuotationInformationFragment extends BaseFragment {
         protected void onPostExecute(List<News> newses) {
             super.onPostExecute(newses);
 
+            if (isForce) {
+
+                mSwipeRefreshWidget.setRefreshing(false);
+                Snackbar.make(mRecyclerView, "刷新成功", Snackbar.LENGTH_SHORT).show();
+                isForce = false;
+            }
             if (newses != null && newses.size() > 0) {
                 //Do Something
                 mProgressBar.setVisibility(View.GONE);

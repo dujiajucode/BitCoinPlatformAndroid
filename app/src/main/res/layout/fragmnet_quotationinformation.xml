@@ -189,7 +189,7 @@
 
     <include layout="@layout/activity_toolbar"/>
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
@@ -200,11 +200,17 @@
         >
 
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_widget"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none"/>
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/my_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -213,5 +219,5 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             />
-    </FrameLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

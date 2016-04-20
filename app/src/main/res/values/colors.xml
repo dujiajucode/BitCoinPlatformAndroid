@@ -186,7 +186,7 @@
 <resources>
     <color name="colorPrimary">#009688</color>
     <color name="colorPrimaryDark">#00796b</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#009688</color>
 
 
     <color name="tool_bar_title">#FFFFFF</color>

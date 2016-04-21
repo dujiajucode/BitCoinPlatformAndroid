@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -43,7 +44,8 @@ public class BTCCTradingRequest {
 		System.out.println(accountString);
 		NewOrderSingle newOrderSingleRequest = new NewOrderSingle();
 		newOrderSingleRequest.set(new Account(accountString));
-		newOrderSingleRequest.set(new ClOrdID("5"));
+		UUID uuid = UUID.randomUUID();
+		newOrderSingleRequest.set(new ClOrdID(uuid.toString()));
 		newOrderSingleRequest.set(new OrderQty(amount));
 		newOrderSingleRequest.set(new OrdType(ordertype));
 		// 如果买入 ,OrdType 为1 price 意思为市价单 买30块钱的币 OrderQty无意义
@@ -53,7 +55,7 @@ public class BTCCTradingRequest {
 		newOrderSingleRequest.set(new Price(price));
 		newOrderSingleRequest.set(new Side(side));
 		newOrderSingleRequest.set(new Symbol(symbol));
-		//TransactTime time = new TransactTime();
+		// TransactTime time = new TransactTime();
 		// Calendar cal = Calendar.getInstance();
 		// cal.add(Calendar.HOUR, 8);
 		// time.setValue(cal.getTime());
@@ -78,7 +80,8 @@ public class BTCCTradingRequest {
 		String accountString = this.getAccountString(accesskey, secretkey, methodstr);
 		NewOrderSingle newOrderSingleRequest = new NewOrderSingle();
 		newOrderSingleRequest.set(new Account(accountString));
-		newOrderSingleRequest.set(new ClOrdID("ClOrdID"));
+		UUID uuid = UUID.randomUUID();
+		newOrderSingleRequest.set(new ClOrdID(uuid.toString()));
 		newOrderSingleRequest.set(new OrderQty(amount));
 		newOrderSingleRequest.set(new OrdType(ordertype));
 		// 如果买入 ,OrdType 为1 price 意思为市价单 买30块钱的币 OrderQty无意义

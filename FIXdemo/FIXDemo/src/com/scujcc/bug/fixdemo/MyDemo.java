@@ -263,7 +263,7 @@ class MyQuickFixApp extends MessageCracker implements Application {
 				// message =
 				// BTCCMarketDataRequest.unsubscribeIncrementalRequest("LTCCNY");
 				try {
-					message = tradeRequest.createNewOrderSingle(MyDemo.AK, MyDemo.SK, Side.SELL, OrdType.MARKET, 10,
+					message = tradeRequest.createNewOrderSingle(MyDemo.AK, MyDemo.SK, Side.SELL, OrdType.LIMIT, 10,
 							0.01, "BTCCNY"); //
 				} catch (InvalidKeyException | NoSuchAlgorithmException e) {
 					// TODO Auto-generated catch block

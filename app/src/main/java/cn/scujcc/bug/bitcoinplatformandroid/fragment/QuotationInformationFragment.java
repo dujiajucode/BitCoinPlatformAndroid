@@ -230,7 +230,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 行情资讯
  */
 public class QuotationInformationFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -242,8 +242,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
     private final String TAG = "QuotationInformation";
 
     private ProgressBar mProgressBar;
-
-    private  View mView;
 
     private boolean isForce = false;
 
@@ -266,8 +264,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
         setHasOptionsMenu(true);
         setTitle(view, "行情资讯");
         setShowPeopleCenter();
-
-        mView=view;
 
         mSwipeRefreshWidget = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
 

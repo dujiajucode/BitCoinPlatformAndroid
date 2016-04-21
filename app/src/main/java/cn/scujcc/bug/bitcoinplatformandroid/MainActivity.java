@@ -202,10 +202,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FragmentTabHost mTabHost;
 
-    //Test for preview
-
-    //Test for commit
-
     //定义一个布局
     private LayoutInflater layoutInflater;
 

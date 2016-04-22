@@ -230,7 +230,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 行情资讯
  */
 public class QuotationInformationFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -244,7 +244,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
     private ProgressBar mProgressBar;
 
     private boolean isForce = false;
-
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -296,6 +295,9 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
         //从网络获取数据
         NewsAsyncTask task = new NewsAsyncTask();
         task.execute();
+
+
+        mSwipeRefreshWidget.setRefreshing(true);
 
         return view;
     }
@@ -623,7 +625,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
             if (isForce) {
 
-                mSwipeRefreshWidget.setRefreshing(false);
                 Snackbar.make(mRecyclerView, "刷新成功", Snackbar.LENGTH_SHORT).show();
                 isForce = false;
             }
@@ -633,6 +634,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
                 mAdapter = new CardAdapter(newses);
                 mRecyclerView.setAdapter(mAdapter);
             }
+            mSwipeRefreshWidget.setRefreshing(false);
         }
     }
 }

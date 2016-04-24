@@ -199,11 +199,11 @@
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_widget"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:layout_height="match_parent">
+            android:paddingTop="@dimen/activity_vertical_margin">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/my_recycler_view"
@@ -212,12 +212,6 @@
                 android:scrollbars="none"/>
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@android:style/Widget.Holo.ProgressBar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            />
+
     </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

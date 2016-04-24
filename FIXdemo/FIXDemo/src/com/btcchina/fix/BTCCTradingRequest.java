@@ -3,10 +3,7 @@ package com.btcchina.fix;
 //import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -41,11 +38,9 @@ public class BTCCTradingRequest {
 			methodstr = this.toSellOrder3ParamString(price, amount, symbol);
 		}
 		String accountString = this.getAccountString(accesskey, secretkey, methodstr);
-		System.out.println(accountString);
 		NewOrderSingle newOrderSingleRequest = new NewOrderSingle();
 		newOrderSingleRequest.set(new Account(accountString));
-		UUID uuid = UUID.randomUUID();
-		newOrderSingleRequest.set(new ClOrdID(uuid.toString()));
+		newOrderSingleRequest.set(new ClOrdID("5"));
 		newOrderSingleRequest.set(new OrderQty(amount));
 		newOrderSingleRequest.set(new OrdType(ordertype));
 		// 如果买入 ,OrdType 为1 price 意思为市价单 买30块钱的币 OrderQty无意义
@@ -55,11 +50,6 @@ public class BTCCTradingRequest {
 		newOrderSingleRequest.set(new Price(price));
 		newOrderSingleRequest.set(new Side(side));
 		newOrderSingleRequest.set(new Symbol(symbol));
-		// TransactTime time = new TransactTime();
-		// Calendar cal = Calendar.getInstance();
-		// cal.add(Calendar.HOUR, 8);
-		// time.setValue(cal.getTime());
-		// System.out.println("xxxxxxxxxxxxxxx" + time);
 		newOrderSingleRequest.set(new TransactTime());
 
 		System.out.println("accountString : " + accountString);
@@ -80,8 +70,7 @@ public class BTCCTradingRequest {
 		String accountString = this.getAccountString(accesskey, secretkey, methodstr);
 		NewOrderSingle newOrderSingleRequest = new NewOrderSingle();
 		newOrderSingleRequest.set(new Account(accountString));
-		UUID uuid = UUID.randomUUID();
-		newOrderSingleRequest.set(new ClOrdID(uuid.toString()));
+		newOrderSingleRequest.set(new ClOrdID("ClOrdID"));
 		newOrderSingleRequest.set(new OrderQty(amount));
 		newOrderSingleRequest.set(new OrdType(ordertype));
 		// 如果买入 ,OrdType 为1 price 意思为市价单 买30块钱的币 OrderQty无意义
@@ -96,24 +85,6 @@ public class BTCCTradingRequest {
 		System.out.println("accountString : " + accountString);
 		System.out.println("methodstr : " + methodstr);
 		return newOrderSingleRequest;
-	}
-
-	public static String getSignature(String data, String key) throws Exception {
-		// get an hmac_sha1 key from the raw key bytes
-		SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
-		// get an hmac_sha1 Mac instance and initialize with the signing key
-		Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
-		mac.init(signingKey);
-		// compute the hmac on input data bytes
-		byte[] rawHmac = mac.doFinal(data.getBytes());
-		return bytArrayToHex(rawHmac);
-	}
-
-	private static String bytArrayToHex(byte[] a) {
-		StringBuilder sb = new StringBuilder();
-		for (byte b : a)
-			sb.append(String.format("%02x", b & 0xff));
-		return sb.toString();
 	}
 
 	/**
@@ -195,47 +166,40 @@ public class BTCCTradingRequest {
 		return accountInfoRequest;
 	}
 
-	String getAccountString(String accesskey, String secretkey, String methodstr) {
+	String getAccountString(String accesskey, String secretkey, String methodstr)
+			throws InvalidKeyException, NoSuchAlgorithmException {
 		String tonce = "" + (System.currentTimeMillis() * 1000);
 		String params = "tonce=" + tonce.toString() + "&accesskey=" + accesskey + "&requestmethod=post&id=1&"
 				+ methodstr;
 
-		String hash = "";
-		try {
-			hash = getSignature(params, secretkey);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String hash = getSignature(params, secretkey);
 		String userpass = accesskey + ":" + hash;
 		String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userpass.getBytes());
 
-		return basicAuth;
+		return tonce + ":" + basicAuth;
 	}
 
-	// String getSignature(String data, String key) throws
-	// NoSuchAlgorithmException, InvalidKeyException {
-	//
-	// // get an hmac_sha1 key from the raw key bytes
-	// SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(),
-	// HMAC_SHA1_ALGORITHM);
-	//
-	// // get an hmac_sha1 Mac instance and initialize with the signing key
-	// Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
-	// mac.init(signingKey);
-	//
-	// // compute the hmac on input data bytes
-	// byte[] rawHmac = mac.doFinal(data.getBytes());
-	//
-	// return bytArrayToHex(rawHmac);
-	// }
-	//
-	// String bytArrayToHex(byte[] a) {
-	// StringBuilder sb = new StringBuilder();
-	// for (byte b : a)
-	// sb.append(String.format("%02x", b & 0xff));
-	// return sb.toString();
-	// }
+	String getSignature(String data, String key) throws NoSuchAlgorithmException, InvalidKeyException {
+
+		// get an hmac_sha1 key from the raw key bytes
+		SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
+
+		// get an hmac_sha1 Mac instance and initialize with the signing key
+		Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
+		mac.init(signingKey);
+
+		// compute the hmac on input data bytes
+		byte[] rawHmac = mac.doFinal(data.getBytes());
+
+		return bytArrayToHex(rawHmac);
+	}
+
+	String bytArrayToHex(byte[] a) {
+		StringBuilder sb = new StringBuilder();
+		for (byte b : a)
+			sb.append(String.format("%02x", b & 0xff));
+		return sb.toString();
+	}
 
 	String toBuyOrder3ParamString(Double price, Double amount, String market) throws UnsupportMarketException {
 		if (market != null) {

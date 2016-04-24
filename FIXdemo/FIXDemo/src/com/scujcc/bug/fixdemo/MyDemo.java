@@ -223,6 +223,40 @@ class MyQuickFixApp extends MessageCracker implements Application {
 		}).start();
 	}
 
+	private void buy2(SessionID sessionId) {
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				quickfix.Message message = null;
+
+				System.out.println("准备用市场价格购买0.1比特币");
+
+				//
+				// BTCCTradingRequest tradeRequest = new BTCCTradingRequest();
+				//
+				// try {
+				// message = tradeRequest.createNewOrderSingle(MyDemo.AK,
+				// MyDemo.SK, Side.SELL, OrdType.MARKET, 0.01,
+				// "CNYBTC"); //
+				// } catch (InvalidKeyException | NoSuchAlgorithmException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// } catch (UnsupportMarketException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+				Session.lookupSession(sessionId).send(message);
+				// try {
+				// Thread.sleep(3000);
+				// } catch (InterruptedException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+			}
+		}).start();
+	}
+
 	private void buy(SessionID sessionId) {
 
 		new Thread(new Runnable() {
@@ -264,7 +298,7 @@ class MyQuickFixApp extends MessageCracker implements Application {
 				// BTCCMarketDataRequest.unsubscribeIncrementalRequest("LTCCNY");
 				try {
 					message = tradeRequest.createNewOrderSingle(MyDemo.AK, MyDemo.SK, Side.SELL, OrdType.MARKET, 0.01,
-							"CNYBTC"); //
+							"BTCCNY"); //
 				} catch (InvalidKeyException | NoSuchAlgorithmException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

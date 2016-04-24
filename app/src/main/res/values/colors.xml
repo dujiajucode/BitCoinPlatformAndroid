@@ -188,6 +188,8 @@
     <color name="colorPrimaryDark">#00796b</color>
     <color name="colorAccent">#009688</color>
 
+    <color name="tool_bar_background">#11cccccc</color>
+
 
     <color name="tool_bar_title">#FFFFFF</color>
 

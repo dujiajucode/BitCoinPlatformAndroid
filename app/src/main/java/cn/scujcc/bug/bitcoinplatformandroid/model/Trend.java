@@ -182,64 +182,37 @@
  *
  */
 
-package cn.scujcc.bug.bitcoinplatformandroid.service;
-
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
-import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
-import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
+package cn.scujcc.bug.bitcoinplatformandroid.model;
 
 /**
  * Created by lilujia on 16/4/25.
+ * 走势
  */
-public class SocketService extends Service {
-    private SocketProtocol mProtocol;
-    private SocketDataChange mDataChange;
-    private IBinder mBinder = new LocalBinder();
+public class Trend {
+    private double mPrice;
+    private double mCount;
 
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.e("tag", "onCreate");
-        mProtocol = new SocketProtocol();
-        mProtocol.chat();
+    public Trend() {
     }
 
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-        Log.e("tag", "onStartCommand");
-
-
-        return super.onStartCommand(intent, flags, startId);
+    public Trend(double mCount, double mPrice) {
+        this.mCount = mCount;
+        this.mPrice = mPrice;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mProtocol = null;
-        Log.e("tag", "onDestroy");
-
+    public double getCount() {
+        return mCount;
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
+    public void setCount(double count) {
+        mCount = count;
     }
 
-    public class LocalBinder extends Binder {
-        public SocketService getService(SocketDataChange mDataChange) {
-            mProtocol.setChange(mDataChange);
-            // Return this instance of LocalService so clients can call public methods
-            return SocketService.this;
-        }
+    public double getPrice() {
+        return mPrice;
+    }
+
+    public void setPrice(double price) {
+        mPrice = price;
     }
 }

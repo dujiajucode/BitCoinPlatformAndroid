@@ -207,7 +207,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
  * Created by donglei on 16/4/13.
  */
 public class SocketProtocol {
-    SocketDataChange mChange;
+    public static SocketDataChange mChange;
 
     private String ACCESS_KEY = SecurityConfig.ACCESS_KEY;
     private String SECRET_KEY = SecurityConfig.SECRET_KEY;
@@ -228,6 +228,7 @@ public class SocketProtocol {
     }
 
     public void setChange(SocketDataChange change) {
+        Log.e("tag", "setChange");
         mChange = change;
     }
 
@@ -300,7 +301,7 @@ public class SocketProtocol {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // grouporder
                     // message
-                    Log.e("tag", json.toString());
+                    Log.e("tag", "mChange" + (mChange == null));
 
                     if (mChange != null)
                         mChange.groupOrderChange(json.toString());

@@ -194,20 +194,29 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.model.Trend;
 import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
 import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
- * Created by lilujia on 16/3/27.
+ * Created by lilujia on 16/4/27.
  * <p/>
  * 现货交易
  */
@@ -215,6 +224,13 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     private String mTextviewArray[] = {"综合", "买入", "卖出", "挂单"};
     private SocketService mService;
+    private RecyclerView mRecyclerViewBuy, mRecyclerViewSale;
+
+    private List<Trend> mBuyList;
+    private List<Trend> mSaleList;
+    private DataAdapter mBuyAdapter;
+    private DataAdapter mSaleAdapter;
+
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -222,8 +238,8 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
-            mService = binder.getService();
-            mService.setDataChange(ActualTransactionFragment.this);
+            mService = binder.getService(ActualTransactionFragment.this);
+            //mService.setDataChange(ActualTransactionFragment.this);
         }
 
         @Override
@@ -264,22 +280,41 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tablayout);
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
 
+        mRecyclerViewBuy = (RecyclerView) view.findViewById(R.id.recyclerViewBuy);
+        mRecyclerViewSale = (RecyclerView) view.findViewById(R.id.recyclerViewSale);
+        mBuyList = new ArrayList<Trend>();
+        mSaleList = new ArrayList<Trend>();
+        for (int i = 0; i < 6; i++) {
+            Trend trend1 = new Trend();
+            trend1.setCount(0);
+            trend1.setPrice(0);
+
+            Trend trend2 = new Trend();
+            trend2.setCount(0);
+            trend2.setPrice(0);
+
+            mBuyList.add(trend1);
+            mSaleList.add(trend2);
+        }
+        mBuyAdapter = new DataAdapter(mBuyList, false);
+        mSaleAdapter = new DataAdapter(mSaleList, true);
+        mRecyclerViewBuy.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerViewSale.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerViewBuy.setHasFixedSize(true);
+        mRecyclerViewSale.setHasFixedSize(true);
+        mRecyclerViewBuy.setAdapter(mBuyAdapter);
+        mRecyclerViewSale.setAdapter(mSaleAdapter);
+
         // 设置ViewPager
         ArrayList<Fragment> fragments = new ArrayList<Fragment>();
-
-
         fragments.add(new Fragment1());
         fragments.add(new ActualTransactionBuyFragment());
         fragments.add(new Fragment3());
         fragments.add(new Fragment4());
-
-
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),
                 fragments);
-
         viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(viewPagerAdapter);
-        // 设置SlidingTab
         slidingTabLayout.setViewPager(viewPager, caculateScreenX());
 
         return view;
@@ -330,14 +365,40 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         //grouporder
         //更新5栏
 
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            jsonObject = jsonObject.getJSONObject("grouporder");
+            JSONArray ask = jsonObject.getJSONArray("ask");
+            JSONArray bid = jsonObject.getJSONArray("bid");
+
+            for (int i = 0; i < ask.length(); i++) {
+                JSONObject askObj = ask.getJSONObject(i);
+                Trend trendBuy = new Trend(askObj.getDouble("totalamount"), askObj.getDouble("price"));
+                mBuyList.remove(1);
+                mBuyList.add(trendBuy);
+
+                JSONObject bidObj = bid.getJSONObject(i);
+                Trend trendSale = new Trend(bidObj.getDouble("totalamount"), bidObj.getDouble("price"));
+                mSaleList.remove(1);
+                mSaleList.add(trendSale);
+            }
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+
+            Log.e("tag1", e.getLocalizedMessage());
+            return;
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //tv.setText(json);
+                mBuyAdapter.notifyDataSetChanged();
+                mSaleAdapter.notifyDataSetChanged();
             }
         });
 
-        Log.e("tag", "groupOrderChange");
     }
 
     @Override
@@ -359,5 +420,83 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
     @Override
     public void socketNetworkConnect() {
         Log.e("tag", "socketNetworkConnect");
+    }
+
+    public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
+        private List<Trend> mLists;
+        private boolean isSale;
+
+        public DataAdapter(List<Trend> list, boolean isSale) {
+            mLists = list;
+            this.isSale = isSale;
+        }
+
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent,
+                                             int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.five_data, parent, false);
+
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            if (position == 0) {
+                holder.tv1.setText("      ");
+                holder.tv2.setText("出价");
+                holder.tv3.setText("数量");
+            } else {
+                //设置信息
+                Trend trend = mLists.get(position);
+
+                holder.mView.setTag(position);
+
+                if (isSale) {
+                    holder.tv1.setText("卖家" + (position));
+                    holder.tv1.setTextColor(getResources().getColor(R.color.green));
+                    holder.tv2.setTextColor(getResources().getColor(R.color.green));
+                    holder.tv3.setTextColor(getResources().getColor(R.color.green));
+                } else {
+                    holder.tv1.setText("买家" + (position));
+                    holder.tv1.setTextColor(getResources().getColor(R.color.red));
+                    holder.tv2.setTextColor(getResources().getColor(R.color.red));
+                    holder.tv3.setTextColor(getResources().getColor(R.color.red));
+                }
+
+                holder.tv2.setText("" + trend.getPrice());
+                holder.tv3.setText("" + trend.getCount());
+            }
+
+
+//
+        }
+
+        @Override
+        public int getItemCount() {
+            return mLists == null ? 0 : mLists.size();
+        }
+
+        /**
+         * 采用ViewHolder可以优化性能
+         */
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            public View mView;
+
+
+            public TextView tv1, tv2, tv3;
+
+            public ViewHolder(View v) {
+                super(v);
+                mView = v;
+
+                tv1 = (TextView) mView.findViewById(R.id.data1);
+                tv2 = (TextView) mView.findViewById(R.id.data2);
+                tv3 = (TextView) mView.findViewById(R.id.data3);
+
+            }
+        }
     }
 }

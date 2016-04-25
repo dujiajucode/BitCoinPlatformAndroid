@@ -277,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
         mTabHost.setCurrentTab(0);
         mTabHost.getTabWidget().setDividerDrawable(null);
 
+
     }
 
     /**

@@ -204,7 +204,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 /**
  * Created by donglei on 16/4/13.
  */
-public class SocketMain {
+public class SocketProtocol {
     /*
      * An example for Java Socket.IO Client
 	 *
@@ -226,11 +226,11 @@ public class SocketMain {
         try {
             IO.Options opt = new IO.Options();
             opt.reconnection = true;
-            Logger.getLogger(SocketMain.class.getName()).setLevel(Level.FINE);
+            Logger.getLogger(SocketProtocol.class.getName()).setLevel(Level.FINE);
             final Socket socket = IO.socket("https://websocket.btcchina.com", opt);
 
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-                SocketMain sm = new SocketMain();
+                SocketProtocol sm = new SocketProtocol();
 
                 @Override
                 public void call(Object... args) {
@@ -250,7 +250,6 @@ public class SocketMain {
                         // arg.add(sm.get_sign());
                         socket.emit("private", arg);
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }

@@ -207,7 +207,6 @@
             android:name=".activity.NewsDetailsActivity"
             android:parentActivityName=".MainActivity"/>
 
-        <service android:name=".service.SocketService"/>
     </application>
 
 </manifest>

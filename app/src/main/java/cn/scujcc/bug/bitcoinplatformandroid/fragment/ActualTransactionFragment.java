@@ -185,7 +185,12 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -197,6 +202,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
 import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
@@ -208,10 +214,42 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
 
     private String mTextviewArray[] = {"综合", "买入", "卖出", "挂单"};
+    private SocketService mService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
+            mService = binder.getService();
+            mService.setDataChange(ActualTransactionFragment.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent = new Intent(getActivity(), SocketService.class);
+        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        getActivity().unbindService(mConnection);
+
     }
 
     @Nullable

@@ -186,6 +186,7 @@ package cn.scujcc.bug.bitcoinplatformandroid.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -197,7 +198,9 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
  * Created by lilujia on 16/4/25.
  */
 public class SocketService extends Service {
-    SocketProtocol mProtocol;
+    private SocketProtocol mProtocol;
+    private SocketDataChange mDataChange;
+    private IBinder mBinder = new LocalBinder();
 
 
     @Override
@@ -208,18 +211,15 @@ public class SocketService extends Service {
         mProtocol.chat();
     }
 
+    public void setDataChange(SocketDataChange mDataChange) {
+        this.mDataChange = mDataChange;
+        mProtocol.setChange(mDataChange);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.e("tag", "onStartCommand");
-
-
-        SocketDataChange dataChange = (SocketDataChange) intent.getSerializableExtra("SocketDataChange");
-        if (dataChange != null) {
-            mProtocol.setChange(dataChange);
-        } else {
-            mProtocol.setChange(null);
-        }
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -237,5 +237,12 @@ public class SocketService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public class LocalBinder extends Binder {
+        public SocketService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return SocketService.this;
+        }
     }
 }

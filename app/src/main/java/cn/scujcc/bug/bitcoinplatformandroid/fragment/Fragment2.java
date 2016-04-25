@@ -218,8 +218,16 @@ public class Fragment2 extends BaseFragment implements SocketDataChange {
 
 
         Log.e("tag", "maimaimai");
-        mProtocol = new SocketProtocol();
-        mProtocol.chat(this);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mProtocol = new SocketProtocol();
+                mProtocol.chat();
+            }
+        });
+        thread.start();
+
 
         return view;
 

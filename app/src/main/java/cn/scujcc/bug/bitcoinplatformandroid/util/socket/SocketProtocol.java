@@ -184,8 +184,6 @@
 
 package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
 
-import android.util.Log;
-
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -207,7 +205,14 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
  * Created by donglei on 16/4/13.
  */
 public class SocketProtocol {
-
+    /*
+     * An example for Java Socket.IO Client
+	 *
+	 * Require installing socket.io client for Java first Refer to the source
+	 * here to install socket.io client for Java:
+	 * https://github.com/nkzawa/socket.io-client.java
+	 *
+	 */
 
     private String ACCESS_KEY = SecurityConfig.ACCESS_KEY;
     private String SECRET_KEY = SecurityConfig.SECRET_KEY;
@@ -217,22 +222,21 @@ public class SocketProtocol {
     private String tonce = "" + (System.currentTimeMillis() * 1000);
 
     // public static void main(String[] args) throws Exception
-    public void chat(final SocketDataChange change) {
+    public void chat() {
         try {
             IO.Options opt = new IO.Options();
             opt.reconnection = true;
             Logger.getLogger(SocketProtocol.class.getName()).setLevel(Level.FINE);
             final Socket socket = IO.socket("https://websocket.btcchina.com", opt);
 
-            Log.e("tag", "buybuybuy");
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 SocketProtocol sm = new SocketProtocol();
 
                 @Override
                 public void call(Object... args) {
 
-                    Log.e("tag", "Connected!");
-                    change.socketNetworkConnect();
+                    System.out.println("Connected!");
+                    //   change.socketNetworkConnect();
 
                     socket.emit("subscribe", "marketdata_cnybtc");
 
@@ -246,13 +250,14 @@ public class SocketProtocol {
                         // arg.add(sm.get_sign());
                         socket.emit("private", arg);
                     } catch (Exception e) {
+                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
             }).on("message", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.e("tag", args[0].toString());
+                    System.out.println(args[0].toString());
                 }
             }).on("trade", new Emitter.Listener() {
                 @Override
@@ -260,9 +265,9 @@ public class SocketProtocol {
                     // 方法监听即时市场交易数据并处理接收到的实时数据
                     JSONObject json = (JSONObject) args[0]; // receive the trade
                     // message
-                    Log.e("tag", json.toString());
+                    System.out.println(json.toString());
 
-                    change.tradeChange(json.toString());
+                    //    change.tradeChange(json.toString());
 
                 }
             }).on("ticker", new Emitter.Listener() { // 即时市场行情
@@ -270,9 +275,9 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the ticker
                     // message
-                    Log.e("tag", json.toString());
+                    System.out.println(json.toString());
 
-                    change.tickerChange(json.toString());
+                    //  change.tickerChange(json.toString());
 
                 }
             }).on("grouporder", new Emitter.Listener() { // 即时市场深度
@@ -282,38 +287,38 @@ public class SocketProtocol {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // grouporder
                     // message
-                    Log.e("tag", json.toString());
+                    System.out.println(json.toString());
 
-                    change.groupOrderChange(json.toString());
+                    //   change.groupOrderChange(json.toString());
                 }
             }).on("order", new Emitter.Listener() { // 订单
                 @Override
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the order
                     // message
-                    Log.e("tag", json.toString());
+                    System.out.println(json.toString());
 
-                    change.orderChange(json.toString());
+                    //change.orderChange(json.toString());
                 }
             }).on("account_info", new Emitter.Listener() { // 账号信息
                 @Override
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // balance message
-                    Log.e("tag", json.toString());
+                    System.out.println(json.toString());
 
-                    change.balanceChange(json.toString());
+                    //  change.balanceChange(json.toString());
                 }
             }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.e("tag", "Disconnected!");
-                    change.socketNetworkDisconnect();
+                    System.out.println("Disconnected!");
+                    //change.socketNetworkDisconnect();
                 }
             });
             socket.connect();
         } catch (URISyntaxException ex) {
-            Log.e("tag", ex.getLocalizedMessage());
+            System.out.println(ex.getLocalizedMessage());
         }
     }
 
@@ -325,7 +330,7 @@ public class SocketProtocol {
         // and
         // balance
         // feed
-        Log.e("tag", "postdata is: " + postdata);
+        System.out.println("postdata is: " + postdata);
         return postdata;
     }
     //

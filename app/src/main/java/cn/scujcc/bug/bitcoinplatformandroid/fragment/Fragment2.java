@@ -202,6 +202,8 @@ public class Fragment2 extends BaseFragment implements SocketDataChange {
 
     SocketProtocol mProtocol;
 
+    TextView tv;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,7 +215,7 @@ public class Fragment2 extends BaseFragment implements SocketDataChange {
         View view = inflater.inflate(R.layout.fragment_hello, container, false);
 
 
-        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
+        tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
         tv.setText("买入");
 
 
@@ -223,7 +225,7 @@ public class Fragment2 extends BaseFragment implements SocketDataChange {
             @Override
             public void run() {
                 mProtocol = new SocketProtocol();
-                mProtocol.chat();
+                mProtocol.chat(Fragment2.this);
             }
         });
         thread.start();
@@ -246,7 +248,17 @@ public class Fragment2 extends BaseFragment implements SocketDataChange {
     }
 
     @Override
-    public void groupOrderChange(String json) {
+    public void groupOrderChange(final String json) {
+        //grouporder
+        //更新5栏
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tv.setText(json);
+            }
+        });
+
         Log.e("tag", "groupOrderChange");
     }
 

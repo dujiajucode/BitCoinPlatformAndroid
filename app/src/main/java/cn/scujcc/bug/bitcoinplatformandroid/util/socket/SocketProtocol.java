@@ -184,6 +184,8 @@
 
 package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
 
+import android.util.Log;
+
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -205,14 +207,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
  * Created by donglei on 16/4/13.
  */
 public class SocketProtocol {
-    /*
-     * An example for Java Socket.IO Client
-	 *
-	 * Require installing socket.io client for Java first Refer to the source
-	 * here to install socket.io client for Java:
-	 * https://github.com/nkzawa/socket.io-client.java
-	 *
-	 */
+
 
     private String ACCESS_KEY = SecurityConfig.ACCESS_KEY;
     private String SECRET_KEY = SecurityConfig.SECRET_KEY;
@@ -229,13 +224,14 @@ public class SocketProtocol {
             Logger.getLogger(SocketProtocol.class.getName()).setLevel(Level.FINE);
             final Socket socket = IO.socket("https://websocket.btcchina.com", opt);
 
+            Log.e("tag", "buybuybuy");
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 SocketProtocol sm = new SocketProtocol();
 
                 @Override
                 public void call(Object... args) {
 
-                    System.out.println("Connected!");
+                    Log.e("tag", "Connected!");
                     change.socketNetworkConnect();
 
                     socket.emit("subscribe", "marketdata_cnybtc");
@@ -256,7 +252,7 @@ public class SocketProtocol {
             }).on("message", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    System.out.println(args[0].toString());
+                    Log.e("tag", args[0].toString());
                 }
             }).on("trade", new Emitter.Listener() {
                 @Override
@@ -264,7 +260,7 @@ public class SocketProtocol {
                     // 方法监听即时市场交易数据并处理接收到的实时数据
                     JSONObject json = (JSONObject) args[0]; // receive the trade
                     // message
-                    System.out.println(json.toString());
+                    Log.e("tag", json.toString());
 
                     change.tradeChange(json.toString());
 
@@ -274,7 +270,7 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the ticker
                     // message
-                    System.out.println(json.toString());
+                    Log.e("tag", json.toString());
 
                     change.tickerChange(json.toString());
 
@@ -286,7 +282,7 @@ public class SocketProtocol {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // grouporder
                     // message
-                    System.out.println(json.toString());
+                    Log.e("tag", json.toString());
 
                     change.groupOrderChange(json.toString());
                 }
@@ -295,7 +291,7 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the order
                     // message
-                    System.out.println(json.toString());
+                    Log.e("tag", json.toString());
 
                     change.orderChange(json.toString());
                 }
@@ -304,20 +300,20 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // balance message
-                    System.out.println(json.toString());
+                    Log.e("tag", json.toString());
 
                     change.balanceChange(json.toString());
                 }
             }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    System.out.println("Disconnected!");
+                    Log.e("tag", "Disconnected!");
                     change.socketNetworkDisconnect();
                 }
             });
             socket.connect();
         } catch (URISyntaxException ex) {
-            System.out.println(ex.getLocalizedMessage());
+            Log.e("tag", ex.getLocalizedMessage());
         }
     }
 
@@ -329,7 +325,7 @@ public class SocketProtocol {
         // and
         // balance
         // feed
-        System.out.println("postdata is: " + postdata);
+        Log.e("tag", "postdata is: " + postdata);
         return postdata;
     }
     //

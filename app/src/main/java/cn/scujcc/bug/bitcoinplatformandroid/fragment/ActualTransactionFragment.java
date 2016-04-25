@@ -228,10 +228,10 @@ public class ActualTransactionFragment extends BaseFragment {
         ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
 
-        fragments.add(new Fragment5());
-        fragments.add(new Fragment6());
-        fragments.add(new Fragment7());
-        fragments.add(new Fragment8());
+        fragments.add(new Fragment1());
+        fragments.add(new Fragment2());
+        fragments.add(new Fragment3());
+        fragments.add(new Fragment4());
 
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),

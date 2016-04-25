@@ -185,19 +185,22 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
+import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
- * Created by lilujia on 16/3/27.
- * <p>
- * 个人中心
+ * 买
  */
-public class Fragment2 extends BaseFragment {
+public class Fragment2 extends BaseFragment implements SocketDataChange {
+
+    SocketProtocol mProtocol;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -214,8 +217,49 @@ public class Fragment2 extends BaseFragment {
         tv.setText("买入");
 
 
+        Log.e("tag", "maimaimai");
+        mProtocol = new SocketProtocol();
+        mProtocol.chat(this);
+
         return view;
+
+
     }
 
 
+    @Override
+    public void tradeChange(String json) {
+        Log.e("tag", "tradeChange");
+    }
+
+    @Override
+    public void tickerChange(String json) {
+        Log.e("tag", "tickerChange");
+    }
+
+    @Override
+    public void groupOrderChange(String json) {
+        Log.e("tag", "groupOrderChange");
+    }
+
+    @Override
+    public void orderChange(String json) {
+        Log.e("tag", "orderChange");
+    }
+
+    @Override
+    public void balanceChange(String json) {
+        Log.e("tag", "balanceChange");
+    }
+
+    @Override
+    public void socketNetworkDisconnect() {
+        // mProtocol=null;
+        Log.e("tag", "socketNetworkDisconnect");
+    }
+
+    @Override
+    public void socketNetworkConnect() {
+        Log.e("tag", "socketNetworkConnect");
+    }
 }

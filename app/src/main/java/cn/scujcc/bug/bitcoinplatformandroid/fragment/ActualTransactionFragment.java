@@ -189,6 +189,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,6 +197,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
 import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
@@ -203,7 +205,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
  * <p/>
  * 现货交易
  */
-public class ActualTransactionFragment extends BaseFragment {
+public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
 
     private String mTextviewArray[] = {"综合", "买入", "卖出", "挂单"};
 
@@ -272,5 +274,52 @@ public class ActualTransactionFragment extends BaseFragment {
         public CharSequence getPageTitle(int position) {
             return mTextviewArray[position];
         }
+    }
+
+
+    @Override
+    public void tradeChange(String json) {
+        Log.e("tag", "tradeChange");
+    }
+
+    @Override
+    public void tickerChange(String json) {
+        Log.e("tag", "tickerChange");
+    }
+
+    @Override
+    public void groupOrderChange(final String json) {
+        //grouporder
+        //更新5栏
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //tv.setText(json);
+            }
+        });
+
+        Log.e("tag", "groupOrderChange");
+    }
+
+    @Override
+    public void orderChange(String json) {
+        Log.e("tag", "orderChange");
+    }
+
+    @Override
+    public void balanceChange(String json) {
+        Log.e("tag", "balanceChange");
+    }
+
+    @Override
+    public void socketNetworkDisconnect() {
+        // mProtocol=null;
+        Log.e("tag", "socketNetworkDisconnect");
+    }
+
+    @Override
+    public void socketNetworkConnect() {
+        Log.e("tag", "socketNetworkConnect");
     }
 }

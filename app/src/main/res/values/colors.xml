@@ -196,4 +196,7 @@
 
     <color name="tabbar_pressed">@color/colorPrimaryDark</color>
     <color name="tabbar_normal">@color/colorPrimary</color>
+
+    <color name="red">#DC143C</color>
+    <color name="green">#32CD32</color>
 </resources>

@@ -181,105 +181,61 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-import android.os.Bundle;
+package cn.scujcc.bug.bitcoinplatformandroid.service;
+
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
- * 买
+ * Created by lilujia on 16/4/25.
  */
-public class Fragment2 extends BaseFragment implements SocketDataChange {
-
+public class SocketService extends Service {
     SocketProtocol mProtocol;
 
-    TextView tv;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate() {
+        super.onCreate();
+        Log.e("tag", "onCreate");
+        mProtocol = new SocketProtocol();
+        mProtocol.chat();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.e("tag", "onStartCommand");
+
+
+        SocketDataChange dataChange = (SocketDataChange) intent.getSerializableExtra("SocketDataChange");
+        if (dataChange != null) {
+            mProtocol.setChange(dataChange);
+        } else {
+            mProtocol.setChange(null);
+        }
+
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mProtocol = null;
+        Log.e("tag", "onDestroy");
+
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hello, container, false);
-
-
-        tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-        tv.setText("买入");
-
-
-        Log.e("tag", "maimaimai");
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mProtocol = new SocketProtocol();
-                mProtocol.chat(Fragment2.this);
-            }
-        });
-        thread.start();
-
-
-        return view;
-
-
-    }
-
-
-    @Override
-    public void tradeChange(String json) {
-        Log.e("tag", "tradeChange");
-    }
-
-    @Override
-    public void tickerChange(String json) {
-        Log.e("tag", "tickerChange");
-    }
-
-    @Override
-    public void groupOrderChange(final String json) {
-        //grouporder
-        //更新5栏
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tv.setText(json);
-            }
-        });
-
-        Log.e("tag", "groupOrderChange");
-    }
-
-    @Override
-    public void orderChange(String json) {
-        Log.e("tag", "orderChange");
-    }
-
-    @Override
-    public void balanceChange(String json) {
-        Log.e("tag", "balanceChange");
-    }
-
-    @Override
-    public void socketNetworkDisconnect() {
-        // mProtocol=null;
-        Log.e("tag", "socketNetworkDisconnect");
-    }
-
-    @Override
-    public void socketNetworkConnect() {
-        Log.e("tag", "socketNetworkConnect");
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }

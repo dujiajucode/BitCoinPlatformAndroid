@@ -183,6 +183,7 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
@@ -195,6 +196,7 @@ import android.widget.TextView;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionFragment;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.ProfessionalTransactionFragment;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.QuotationInformationFragment;
+import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -277,6 +279,12 @@ public class MainActivity extends AppCompatActivity {
         mTabHost.setCurrentTab(0);
         mTabHost.getTabWidget().setDividerDrawable(null);
 
+        Intent intent = new Intent();
+        intent.setClass(this, SocketService.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("SocketDataChange", null);
+        intent.putExtras(bundle);
+        startService(intent);
 
     }
 

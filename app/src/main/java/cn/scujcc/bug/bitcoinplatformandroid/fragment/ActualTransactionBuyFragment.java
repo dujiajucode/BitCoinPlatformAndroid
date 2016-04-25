@@ -181,201 +181,99 @@
  *
  *
  */
+package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
-
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+import java.io.Serializable;
 
-import org.json.JSONObject;
-
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
+import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
+import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
- * Created by donglei on 16/4/13.
+ * 买
  */
-public class SocketProtocol {
-    SocketDataChange mChange;
+public class ActualTransactionBuyFragment extends BaseFragment implements SocketDataChange, Serializable {
 
-    private String ACCESS_KEY = SecurityConfig.ACCESS_KEY;
-    private String SECRET_KEY = SecurityConfig.SECRET_KEY;
-    public static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
+    SocketProtocol mProtocol;
 
-    private String postdata = "";
-    private String tonce = "" + (System.currentTimeMillis() * 1000);
 
-    public SocketProtocol() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
-    public SocketProtocol(SocketDataChange change) {
-        mChange = change;
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_actualtransactionbuy, container, false);
+
+
+//        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
+//        tv.setText("买入");
+
+//        Intent intent = new Intent();
+//        intent.setClass(getActivity(), SocketService.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("SocketDataChange", this);
+//        intent.putExtras(bundle);
+//        getActivity().startService(intent);
+
+        return view;
+
+
     }
 
-    public SocketDataChange getChange() {
-        return mChange;
+
+    @Override
+    public void tradeChange(String json) {
+        Log.e("tag", "tradeChange");
     }
 
-    public void setChange(SocketDataChange change) {
-        mChange = change;
+    @Override
+    public void tickerChange(String json) {
+        Log.e("tag", "tickerChange");
     }
 
-    // public static void main(String[] args) throws Exception
-    public void chat() {
-        try {
-            IO.Options opt = new IO.Options();
-            opt.reconnection = true;
-            Logger.getLogger(SocketProtocol.class.getName()).setLevel(Level.FINE);
-            final Socket socket = IO.socket("https://websocket.btcchina.com", opt);
+    @Override
+    public void groupOrderChange(final String json) {
+        //grouporder
+        //更新5栏
 
-            Log.e("tag", "buybuybuy");
-            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-                SocketProtocol sm = new SocketProtocol();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //tv.setText(json);
+            }
+        });
 
-                @Override
-                public void call(Object... args) {
-
-                    Log.e("tag", "Connected!");
-                    if (mChange != null)
-                        mChange.socketNetworkConnect();
-
-                    socket.emit("subscribe", "marketdata_cnybtc");
-
-                    socket.emit("subscribe", "grouporder_cnybtc");
-
-                    // Use 'private' method to subscribe the order and balance
-                    // feed
-                    try {
-                        List arg = new ArrayList();
-                        arg.add(sm.get_payload());
-                        // arg.add(sm.get_sign());
-                        socket.emit("private", arg);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).on("message", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    Log.e("tag", args[0].toString());
-                }
-            }).on("trade", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) { // 使用 “trade”
-                    // 方法监听即时市场交易数据并处理接收到的实时数据
-                    JSONObject json = (JSONObject) args[0]; // receive the trade
-                    // message
-                    Log.e("tag", json.toString());
-
-                    if (mChange != null)
-                        mChange.tradeChange(json.toString());
-
-                }
-            }).on("ticker", new Emitter.Listener() { // 即时市场行情
-                @Override
-                public void call(Object... args) {
-                    JSONObject json = (JSONObject) args[0];// receive the ticker
-                    // message
-                    Log.e("tag", json.toString());
-
-                    if (mChange != null)
-                        mChange.tickerChange(json.toString());
-
-                }
-            }).on("grouporder", new Emitter.Listener() { // 即时市场深度
-                // 即时市场深度方法会实时返回市场上的5对未成交的买卖订单
-                @Override
-                public void call(Object... args) {
-                    JSONObject json = (JSONObject) args[0];// receive the
-                    // grouporder
-                    // message
-                    Log.e("tag", json.toString());
-
-                    if (mChange != null)
-                        mChange.groupOrderChange(json.toString());
-                }
-            }).on("order", new Emitter.Listener() { // 订单
-                @Override
-                public void call(Object... args) {
-                    JSONObject json = (JSONObject) args[0];// receive the order
-                    // message
-                    Log.e("tag", json.toString());
-
-                    if (mChange != null)
-                        mChange.orderChange(json.toString());
-                }
-            }).on("account_info", new Emitter.Listener() { // 账号信息
-                @Override
-                public void call(Object... args) {
-                    JSONObject json = (JSONObject) args[0];// receive the
-                    // balance message
-                    Log.e("tag", json.toString());
-
-                    if (mChange != null)
-                        mChange.balanceChange(json.toString());
-                }
-            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    Log.e("tag", "Disconnected!");
-                    if (mChange != null)
-                        mChange.socketNetworkDisconnect();
-                }
-            });
-            socket.connect();
-        } catch (URISyntaxException ex) {
-            Log.e("tag", ex.getLocalizedMessage());
-        }
+        Log.e("tag", "groupOrderChange");
     }
 
-    public String get_payload() throws Exception {
-        postdata = "{\"tonce\":\"" + tonce.toString() + "\",\"accesskey\":\"" + ACCESS_KEY
-                + "\",\"requestmethod\": \"post\",\"id\":\"" + tonce.toString()
-                + "\",\"method\": \"subscribe\", \"params\": [\"order_cnybtc\",\"order_cnyltc\",\"order_btcltc\",\"account_info\"]}";// subscribe
-        // order
-        // and
-        // balance
-        // feed
-        Log.e("tag", "postdata is: " + postdata);
-        return postdata;
-    }
-    //
-    // public String get_sign() throws Exception{
-    // String params =
-    // "tonce="+tonce.toString()+"&accesskey="+ACCESS_KEY+"&requestmethod=post&id="+tonce.toString()+"&method=subscribe&params=order_cnybtc,order_cnyltc,order_btcltc,account_info";
-    // String hash = getSignature(params, SECRET_KEY);
-    // String userpass = ACCESS_KEY + ":" + hash;
-    // String basicAuth =
-    // DatatypeConverter.printBase64Binary(userpass.getBytes());
-    // return basicAuth;
-    // }
-
-    public String getSignature(String data, String key) throws Exception {
-        // get an hmac_sha1 key from the raw key bytes
-        SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
-        // get an hmac_sha1 Mac instance and initialize with the signing key
-        Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
-        mac.init(signingKey);
-        // compute the hmac on input data bytes
-        byte[] rawHmac = mac.doFinal(data.getBytes());
-        return bytArrayToHex(rawHmac);
+    @Override
+    public void orderChange(String json) {
+        Log.e("tag", "orderChange");
     }
 
-    private String bytArrayToHex(byte[] a) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : a)
-            sb.append(String.format("%02x", b & 0xff));
-        return sb.toString();
+    @Override
+    public void balanceChange(String json) {
+        Log.e("tag", "balanceChange");
+    }
+
+    @Override
+    public void socketNetworkDisconnect() {
+        // mProtocol=null;
+        Log.e("tag", "socketNetworkDisconnect");
+    }
+
+    @Override
+    public void socketNetworkConnect() {
+        Log.e("tag", "socketNetworkConnect");
     }
 }

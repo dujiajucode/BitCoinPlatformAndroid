@@ -229,7 +229,7 @@ public class ActualTransactionFragment extends BaseFragment {
 
 
         fragments.add(new Fragment1());
-        fragments.add(new Fragment2());
+        fragments.add(new ActualTransactionBuyFragment());
         fragments.add(new Fragment3());
         fragments.add(new Fragment4());
 

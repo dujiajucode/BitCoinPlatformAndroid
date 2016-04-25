@@ -186,51 +186,49 @@ package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
 
 public interface SocketDataChange {
 
-	/**
-	 * 市场有交易发生
-	 * 
-	 * @param json
-	 */
-	public void tradeChange(String json);
+    /**
+     * 市场有交易发生
+     *
+     * @param json
+     */
+    public void tradeChange(String json);
 
-	/**
-	 * 即时市场行情
-	 * 
-	 * @param json
-	 */
-	public void tickerChange(String json);
+    /**
+     * 即时市场行情
+     *
+     * @param json
+     */
+    public void tickerChange(String json);
 
-	/**
-	 * 即时市场深度(5栏)
-	 * 
-	 * @param json
-	 */
-	public void groupOrderChange(String json);
+    /**
+     * 即时市场深度(5栏)
+     *
+     * @param json
+     */
+    public void groupOrderChange(String json);
 
-	/**
-	 * 私人订单更新
-	 * 
-	 * @param json
-	 */
-	public void orderChange(String json);
+    /**
+     * 私人订单更新
+     *
+     * @param json
+     */
+    public void orderChange(String json);
 
-	/**
-	 * 即时余额更新
-	 * 
-	 * @param json
-	 */
-	public void balanceChange(String json);
+    /**
+     * 即时余额更新
+     *
+     * @param json
+     */
+    public void balanceChange(String json);
 
-	/**
-	 * 网络断开连接
-	 * 
-	 */
-	public void socketNetworkDisconnect();
+    /**
+     * 网络断开连接
+     */
+    public void socketNetworkDisconnect();
 
-	/**
-	 * 网络成功连接
-	 * 
-	 */
-	public void socketNetworkConnect();
+    /**
+     * 网络成功连接
+     */
+    public void socketNetworkConnect();
 
 }

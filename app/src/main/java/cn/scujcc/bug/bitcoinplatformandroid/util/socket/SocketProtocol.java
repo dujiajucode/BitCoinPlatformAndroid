@@ -181,123 +181,183 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid;
 
-import android.os.Bundle;
-import android.support.v13.app.FragmentTabHost;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TextView;
+package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
 
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionFragment;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.ProfessionalTransactionFragment;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.QuotationInformationFragment;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONObject;
 
-    public static int MAIN_INDEX = 0;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-    private FragmentTabHost mTabHost;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
-    //定义一个布局
-    private LayoutInflater layoutInflater;
+import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 
-    //定义数组来存放Fragment界面
-    private Class fragmentArray[] = {ActualTransactionFragment.class, ProfessionalTransactionFragment
-            .class, QuotationInformationFragment.class};
+/**
+ * Created by donglei on 16/4/13.
+ */
+public class SocketProtocol {
+    /*
+     * An example for Java Socket.IO Client
+	 *
+	 * Require installing socket.io client for Java first Refer to the source
+	 * here to install socket.io client for Java:
+	 * https://github.com/nkzawa/socket.io-client.java
+	 *
+	 */
 
-    //定义数组来存放按钮图片
-    private int mImageViewArray[] = {R.drawable.a1_1, R.drawable.a2_1, R.drawable.a3_1};
+    private String ACCESS_KEY = SecurityConfig.ACCESS_KEY;
+    private String SECRET_KEY = SecurityConfig.SECRET_KEY;
+    public static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
-    //定义数组来存放按钮图片
-    private int mImageViewArray2[] = {R.drawable.a1_2, R.drawable.a2_2, R.drawable.a3_2};
+    private String postdata = "";
+    private String tonce = "" + (System.currentTimeMillis() * 1000);
 
-    //Tab选项卡的文字
-    private String mTextviewArray[] = {"现货交易", "专业交易", "行情资讯"};
+    // public static void main(String[] args) throws Exception
+    public void chat(final SocketDataChange change) {
+        try {
+            IO.Options opt = new IO.Options();
+            opt.reconnection = true;
+            Logger.getLogger(SocketProtocol.class.getName()).setLevel(Level.FINE);
+            final Socket socket = IO.socket("https://websocket.btcchina.com", opt);
 
+            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                SocketProtocol sm = new SocketProtocol();
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+                @Override
+                public void call(Object... args) {
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //
-        mTabHost.setCurrentTab(MAIN_INDEX);
-    }
+                    System.out.println("Connected!");
+                    change.socketNetworkConnect();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+                    socket.emit("subscribe", "marketdata_cnybtc");
 
+                    socket.emit("subscribe", "grouporder_cnybtc");
 
-        layoutInflater = LayoutInflater.from(this);
-
-        //实例化TabHost对象，得到TabHost
-        mTabHost = (FragmentTabHost) findViewById(R.id.tabhost);
-        if (mTabHost == null) return;
-        mTabHost.setup(this, getFragmentManager(), R.id.realtabcontent);
-
-        //得到fragment的个数
-        int count = fragmentArray.length;
-
-        for (int i = 0; i < count; i++) {
-            //为每一个Tab按钮设置图标、文字和内容
-            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextviewArray[i]).setIndicator(getTabItemView(i));
-            //将Tab按钮添加进Tab选项卡中
-            mTabHost.addTab(tabSpec, fragmentArray[i], null);
-            //设置Tab按钮的背景
-            //mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.selector_tab_background);
-        }
-
-        mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(String tabId) {
-
-                for (int i = 0; i < mTabHost.getTabWidget().getChildCount(); i++) {
-                    ImageView view = (ImageView) mTabHost.getTabWidget().getChildAt(i).findViewById(R.id.imageview);
-                    if (view != null) {
-                        if (tabId.equals(mTextviewArray[i])) {
-                            view.setImageResource(mImageViewArray2[i]);
-                        } else {
-                            view.setImageResource(mImageViewArray[i]);
-                        }
+                    // Use 'private' method to subscribe the order and balance
+                    // feed
+                    try {
+                        List arg = new ArrayList();
+                        arg.add(sm.get_payload());
+                        // arg.add(sm.get_sign());
+                        socket.emit("private", arg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                }
+            }).on("message", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    System.out.println(args[0].toString());
+                }
+            }).on("trade", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) { // 使用 “trade”
+                    // 方法监听即时市场交易数据并处理接收到的实时数据
+                    JSONObject json = (JSONObject) args[0]; // receive the trade
+                    // message
+                    System.out.println(json.toString());
+
+                    change.tradeChange(json.toString());
 
                 }
-            }
-        });
+            }).on("ticker", new Emitter.Listener() { // 即时市场行情
+                @Override
+                public void call(Object... args) {
+                    JSONObject json = (JSONObject) args[0];// receive the ticker
+                    // message
+                    System.out.println(json.toString());
 
-        mTabHost.setCurrentTab(0);
-        mTabHost.getTabWidget().setDividerDrawable(null);
+                    change.tickerChange(json.toString());
 
+                }
+            }).on("grouporder", new Emitter.Listener() { // 即时市场深度
+                // 即时市场深度方法会实时返回市场上的5对未成交的买卖订单
+                @Override
+                public void call(Object... args) {
+                    JSONObject json = (JSONObject) args[0];// receive the
+                    // grouporder
+                    // message
+                    System.out.println(json.toString());
 
-    }
+                    change.groupOrderChange(json.toString());
+                }
+            }).on("order", new Emitter.Listener() { // 订单
+                @Override
+                public void call(Object... args) {
+                    JSONObject json = (JSONObject) args[0];// receive the order
+                    // message
+                    System.out.println(json.toString());
 
-    /**
-     * 给Tab按钮设置图标和文字
-     */
-    private View getTabItemView(int index) {
-        View view = layoutInflater.inflate(R.layout.tabbar_item, null);
+                    change.orderChange(json.toString());
+                }
+            }).on("account_info", new Emitter.Listener() { // 账号信息
+                @Override
+                public void call(Object... args) {
+                    JSONObject json = (JSONObject) args[0];// receive the
+                    // balance message
+                    System.out.println(json.toString());
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-        if (index == 0) {
-            imageView.setImageResource(mImageViewArray2[index]);
-        } else {
-            imageView.setImageResource(mImageViewArray[index]);
+                    change.balanceChange(json.toString());
+                }
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    System.out.println("Disconnected!");
+                    change.socketNetworkDisconnect();
+                }
+            });
+            socket.connect();
+        } catch (URISyntaxException ex) {
+            System.out.println(ex.getLocalizedMessage());
         }
-        TextView textView = (TextView) view.findViewById(R.id.textview);
-        textView.setText(mTextviewArray[index]);
-
-
-        return view;
     }
 
+    public String get_payload() throws Exception {
+        postdata = "{\"tonce\":\"" + tonce.toString() + "\",\"accesskey\":\"" + ACCESS_KEY
+                + "\",\"requestmethod\": \"post\",\"id\":\"" + tonce.toString()
+                + "\",\"method\": \"subscribe\", \"params\": [\"order_cnybtc\",\"order_cnyltc\",\"order_btcltc\",\"account_info\"]}";// subscribe
+        // order
+        // and
+        // balance
+        // feed
+        System.out.println("postdata is: " + postdata);
+        return postdata;
+    }
+    //
+    // public String get_sign() throws Exception{
+    // String params =
+    // "tonce="+tonce.toString()+"&accesskey="+ACCESS_KEY+"&requestmethod=post&id="+tonce.toString()+"&method=subscribe&params=order_cnybtc,order_cnyltc,order_btcltc,account_info";
+    // String hash = getSignature(params, SECRET_KEY);
+    // String userpass = ACCESS_KEY + ":" + hash;
+    // String basicAuth =
+    // DatatypeConverter.printBase64Binary(userpass.getBytes());
+    // return basicAuth;
+    // }
 
+    public String getSignature(String data, String key) throws Exception {
+        // get an hmac_sha1 key from the raw key bytes
+        SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
+        // get an hmac_sha1 Mac instance and initialize with the signing key
+        Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
+        mac.init(signingKey);
+        // compute the hmac on input data bytes
+        byte[] rawHmac = mac.doFinal(data.getBytes());
+        return bytArrayToHex(rawHmac);
+    }
+
+    private String bytArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : a)
+            sb.append(String.format("%02x", b & 0xff));
+        return sb.toString();
+    }
 }

@@ -217,7 +217,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p/>
+ * <p>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
@@ -307,7 +307,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         // 设置ViewPager
         ArrayList<Fragment> fragments = new ArrayList<Fragment>();
-        fragments.add(new Fragment1());
+        fragments.add(new ActualTransactionCandlestickChartsFragment());
         fragments.add(new ActualTransactionBuyFragment());
         fragments.add(new Fragment3());
         fragments.add(new Fragment4());

@@ -184,8 +184,12 @@
 
 package cn.scujcc.bug.bitcoinplatformandroid.activity;
 
+import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 
@@ -193,15 +197,30 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
  * Created by lilujia on 16/4/26.
  */
 public class SplashActivity extends AppCompatActivity {
+
+    public final static long SPLASH_DISPLAY_LENGTH = 3000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         setContentView(R.layout.activity_splash);
+
+        ImageView imageView = (ImageView) findViewById(R.id.logo);
+
+        ObjectAnimator anim = ObjectAnimator.ofFloat(imageView, "alpha", 0f, 1f);
+        anim.setDuration(2000);
+        anim.start();
+
+        //3秒后启动 Activity
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent();
+                intent.setClass(SplashActivity.this, MainActivity.class);
+                SplashActivity.this.startActivity(intent);
+                SplashActivity.this.finish();
+            }
+
+        }, SPLASH_DISPLAY_LENGTH);
     }
 }

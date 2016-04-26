@@ -188,10 +188,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.model.News;
@@ -199,7 +203,12 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
 /**
  * Created by lilujia on 16/4/13.
  */
-public class NewsDetailsFragment extends BaseFragment {
+public class NewsDetailsFragment extends BaseFragment{
+
+    static final String TAG = "NewsDetailsFragment";
+    private GestureDetector gesture = null;
+    private static final int FLING_MIN_DISTANCE = 10;
+    private static final int FLING_MIN_VELOCITY = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -227,7 +236,37 @@ public class NewsDetailsFragment extends BaseFragment {
 
         }
 
+        view.setLongClickable(true);
+        gesture = new GestureDetector(this.getActivity(), new MyOnGestureListener());
+        //为fragment添加OnTouchListener监听器
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.e(TAG,"Touch");
+                return gesture.onTouchEvent(event);//返回手势识别触发的事件
+            }
+        });
 
         return view;
+    }
+    private class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener
+    {
+
+        @Override//此方法必须重写且返回真，否则onFling不起效
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if((e1.getX()- e2.getX()>FLING_MIN_DISTANCE && Math.abs(velocityX)>FLING_MIN_VELOCITY )){
+                Log.e(TAG,"Fling to left");
+                return true;
+            }else if((e2.getX()- e1.getX()>FLING_MIN_DISTANCE) && Math.abs(velocityX)>FLING_MIN_VELOCITY ){
+                Log.e(TAG,"Fling to right");
+                return true;
+            }
+            return false;
+        }
     }
 }

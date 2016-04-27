@@ -193,7 +193,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
- * 买
+ * 现货交易买入
  */
 public class ActualTransactionBuyFragment extends BaseFragment {
 

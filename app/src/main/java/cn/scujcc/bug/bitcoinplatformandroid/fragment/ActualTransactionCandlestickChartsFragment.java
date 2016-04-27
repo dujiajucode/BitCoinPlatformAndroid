@@ -205,7 +205,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 /**
  * Created by lilujia on 16/3/27.
  * <p/>
- * 个人中心
+ * 现货交易K线图
  */
 public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
 

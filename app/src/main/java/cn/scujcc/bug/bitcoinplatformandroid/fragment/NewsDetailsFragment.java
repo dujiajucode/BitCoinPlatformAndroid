@@ -249,7 +249,7 @@ public class NewsDetailsFragment extends BaseFragment{
 
         return view;
     }
-    private class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener
+     class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener
     {
 
         @Override//此方法必须重写且返回真，否则onFling不起效

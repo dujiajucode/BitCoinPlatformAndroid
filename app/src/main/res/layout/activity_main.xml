@@ -186,7 +186,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="cn.scujcc.bug.bitcoinplatformandroid.MainActivity">
+              tools:context=".activity.MainActivity">
 
     <FrameLayout
         android:id="@+id/realtabcontent"
@@ -197,7 +197,8 @@
     <android.support.v13.app.FragmentTabHost
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/tool_bar_background">
 
         <FrameLayout
             android:id="@android:id/tabcontent"

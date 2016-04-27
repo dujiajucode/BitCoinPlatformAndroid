@@ -190,7 +190,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import cn.scujcc.bug.bitcoinplatformandroid.MainActivity;
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.NewsDetailsFragment;
 

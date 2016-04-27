@@ -198,8 +198,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -230,7 +231,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 行情资讯
  */
 public class QuotationInformationFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -241,12 +242,8 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
     private final String TAG = "QuotationInformation";
 
-    private ProgressBar mProgressBar;
-
-    private  View mView;
 
     private boolean isForce = false;
-
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -267,8 +264,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
         setTitle(view, "行情资讯");
         setShowPeopleCenter();
 
-        mView=view;
-
         mSwipeRefreshWidget = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
 
         mSwipeRefreshWidget.setOnRefreshListener(this);
@@ -281,7 +276,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         //如果内容高度不发生变化,则开启此优化
         mRecyclerView.setHasFixedSize(true);
@@ -300,6 +294,9 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
         //从网络获取数据
         NewsAsyncTask task = new NewsAsyncTask();
         task.execute();
+
+
+        mSwipeRefreshWidget.setRefreshing(true);
 
         return view;
     }
@@ -540,7 +537,9 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
             holder.mView.setTag(position);
 
+          //  Log.e("tag", mLists.get(position).getImage());
             //异步加载图片
+            Picasso.with(getActivity()).load(mLists.get(position).getImage()).placeholder(R.drawable.loading).fit().into(holder.ivPic);
             //holder.ivPic.setImageResource();
             holder.tvTitle.setText(news.getTitle());
 
@@ -627,16 +626,15 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
             if (isForce) {
 
-                mSwipeRefreshWidget.setRefreshing(false);
                 Snackbar.make(mRecyclerView, "刷新成功", Snackbar.LENGTH_SHORT).show();
                 isForce = false;
             }
             if (newses != null && newses.size() > 0) {
                 //Do Something
-                mProgressBar.setVisibility(View.GONE);
                 mAdapter = new CardAdapter(newses);
                 mRecyclerView.setAdapter(mAdapter);
             }
+            mSwipeRefreshWidget.setRefreshing(false);
         }
     }
 }

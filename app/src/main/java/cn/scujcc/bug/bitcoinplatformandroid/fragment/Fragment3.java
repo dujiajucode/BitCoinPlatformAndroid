@@ -194,7 +194,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 个人中心
  */
 public class Fragment3 extends BaseFragment {

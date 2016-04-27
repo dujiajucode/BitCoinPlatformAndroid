@@ -214,12 +214,12 @@ public class BaseFragment extends Fragment {
      * 显示个人中心
      */
     protected void setShowPeopleCenter() {
-        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-        ActionBar ab = appCompatActivity.getSupportActionBar();
-        if (ab != null) {
-            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+//        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+//        ActionBar ab = appCompatActivity.getSupportActionBar();
+//        if (ab != null) {
+//            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+//            ab.setDisplayHomeAsUpEnabled(true);
+//        }
     }
 
     protected void setTitle(View view, int title) {

@@ -200,7 +200,9 @@
         <ImageView
             android:id="@+id/news_imageview"
             android:layout_width="100dp"
-            android:layout_height="100dp"/>
+            android:layout_height="100dp"
+            android:contentDescription="@string/fragment_quotationinformationcenter_news_pic"
+            android:src="@drawable/loading"/>
 
         <TextView
             android:id="@+id/news_title_textview"

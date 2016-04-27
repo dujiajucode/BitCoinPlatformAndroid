@@ -186,47 +186,141 @@
               xmlns:card_view="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_margin="16dp"
               android:orientation="horizontal"
     >
 
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fragment_actualtransactionbuy_univalent"
+                android:inputType="numberDecimal"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fragment_actualtransactionbuy_count"
+                android:inputType="numberDecimal"/>
+
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fragment_actualtransactionbuy_sum"
+                android:inputType="numberDecimal"/>
+
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_actualtransactionbuy_buy"/>
+    </LinearLayout>
+
     <android.support.v7.widget.CardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:layout_weight="1"
         android:orientation="vertical"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="2dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            >
 
-            <EditText
+            <TextView
+                android:id="@+id/fragment_ats_buy_account_title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/fragment_actualtransactionbuy_balance"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/fragment_ats_buy_account_cny"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/fragment_ats_buy_account_title"
+                android:layout_margin="8dp"
+                android:text="@string/fragment_actualtransactionbuy_cny"/>
+
+            <TextView
+                android:id="@+id/fragment_ats_buy_account_cnycount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_ats_buy_account_title"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
+                android:text="@string/fragment_actualtransactionbuy_btccount"/>
+
+            <TextView
+                android:id="@+id/fragment_ats_buy_account_cnysymbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/fragment_ats_buy_account_title"
+                android:layout_margin="8dp"
+                android:text="@string/fragment_actualtransactionbuy_cnysymbol"/>
+
+            <TextView
+                android:id="@+id/fragment_ats_buy_account_btc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/fragment_ats_buy_account_cny"
+                android:layout_margin="8dp"
+                android:text="@string/fragment_actualtransactionbuy_btc"/>
+
+            <TextView
+                android:id="@+id/fragment_ats_buy_account_btccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_ats_buy_account_cny"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
+                android:text="@string/fragment_actualtransactionbuy_btccount"/>
+
+            <TextView
+                android:id="@+id/fragment_ats_buy_account_btcsymbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/fragment_ats_buy_account_cny"
+                android:layout_margin="8dp"
+                android:text="@string/fragment_actualtransactionbuy_btcsymbol"/>
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="2dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-    
 </LinearLayout>

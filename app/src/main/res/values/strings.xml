@@ -186,6 +186,17 @@
     <string name="app_name">BitCoinPlatformAndroid</string>
 
     <string name="fragment_personal_center_title">个人中心</string>
-
     <string name="fragment_quotationinformationcenter_news_pic">新闻图片</string>
+
+
+    <string name="fragment_actualtransactionbuy_univalent">单价</string>
+    <string name="fragment_actualtransactionbuy_count">数量</string>
+    <string name="fragment_actualtransactionbuy_sum">金额</string>
+    <string name="fragment_actualtransactionbuy_buy">买入</string>
+    <string name="fragment_actualtransactionbuy_balance">账户余额</string>
+    <string name="fragment_actualtransactionbuy_cny">人民币</string>
+    <string name="fragment_actualtransactionbuy_btc">比特币</string>
+    <string name="fragment_actualtransactionbuy_btccount">0</string>
+    <string name="fragment_actualtransactionbuy_btcsymbol">฿</string>
+    <string name="fragment_actualtransactionbuy_cnysymbol">￥</string>
 </resources>

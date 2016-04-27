@@ -190,8 +190,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -206,14 +204,12 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 个人中心
  */
-public class ActualTransactionCandlestickChartsFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener {
+public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
 
     private CandleStickChart mChart;
-    private SeekBar mSeekBarX, mSeekBarY;
-    private TextView tvX, tvY;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -225,14 +221,6 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment imp
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_actualtransactioncandlestickcharts, container, false);
 
-        tvX = (TextView) view.findViewById(R.id.tvXMax);
-        tvY = (TextView) view.findViewById(R.id.tvYMax);
-
-        mSeekBarX = (SeekBar) view.findViewById(R.id.seekBar1);
-        mSeekBarX.setOnSeekBarChangeListener(this);
-
-        mSeekBarY = (SeekBar) view.findViewById(R.id.seekBar2);
-        mSeekBarY.setOnSeekBarChangeListener(this);
 
         mChart = (CandleStickChart) view.findViewById(R.id.chart1);
         mChart.setBackgroundColor(Color.WHITE);
@@ -264,30 +252,15 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment imp
 //        rightAxis.setStartAtZero(false);
 
         // setting data
-        mSeekBarX.setProgress(40);
-        mSeekBarY.setProgress(100);
-
-        mChart.getLegend().setEnabled(false);
-
-        mChart.animateX(3000);
-
-        return view;
-    }
-
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        int prog = (mSeekBarX.getProgress() + 1);
-
-        tvX.setText("" + prog);
-        tvY.setText("" + (mSeekBarY.getProgress()));
+        //       mSeekBarX.setProgress(40);
+        //     mSeekBarY.setProgress(100);
 
         mChart.resetTracking();
 
         ArrayList<CandleEntry> yVals1 = new ArrayList<CandleEntry>();
 
-        for (int i = 0; i < prog; i++) {
-            float mult = (mSeekBarY.getProgress() + 1);
+        for (int i = 0; i < 50; i++) {
+            float mult = (100);
             float val = (float) (Math.random() * 40) + mult;
 
             float high = (float) (Math.random() * 9) + 8f;
@@ -303,7 +276,7 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment imp
         }
 
         ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < prog; i++) {
+        for (int i = 0; i < 100; i++) {
             xVals.add("" + (1990 + i));
         }
 
@@ -323,15 +296,64 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment imp
 
         mChart.setData(data);
         mChart.invalidate();
+
+        mChart.getLegend().setEnabled(false);
+
+        mChart.animateX(3000);
+
+        return view;
     }
 
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
 
-    }
+    //  @Override
+    //public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//        int prog = (mSeekBarX.getProgress() + 1);
+//
+//        tvX.setText("" + prog);
+//        tvY.setText("" + (mSeekBarY.getProgress()));
+//
+//        mChart.resetTracking();
+//
+//        ArrayList<CandleEntry> yVals1 = new ArrayList<CandleEntry>();
+//
+//        for (int i = 0; i < prog; i++) {
+//            float mult = (mSeekBarY.getProgress() + 1);
+//            float val = (float) (Math.random() * 40) + mult;
+//
+//            float high = (float) (Math.random() * 9) + 8f;
+//            float low = (float) (Math.random() * 9) + 8f;
+//
+//            float open = (float) (Math.random() * 6) + 1f;
+//            float close = (float) (Math.random() * 6) + 1f;
+//
+//            boolean even = i % 2 == 0;
+//
+//            yVals1.add(new CandleEntry(i, val + high, val - low, even ? val + open : val - open,
+//                    even ? val - close : val + close));
+//        }
+//
+//        ArrayList<String> xVals = new ArrayList<String>();
+//        for (int i = 0; i < prog; i++) {
+//            xVals.add("" + (1990 + i));
+//        }
+//
+//        CandleDataSet set1 = new CandleDataSet(yVals1, "Data Set");
+//        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+////        set1.setColor(Color.rgb(80, 80, 80));
+//        set1.setShadowColor(Color.DKGRAY);
+//        set1.setShadowWidth(0.7f);
+//        set1.setDecreasingColor(Color.RED);
+//        set1.setDecreasingPaintStyle(Paint.Style.FILL);
+//        set1.setIncreasingColor(Color.rgb(122, 242, 84));
+//        set1.setIncreasingPaintStyle(Paint.Style.STROKE);
+//        set1.setNeutralColor(Color.BLUE);
+//        //set1.setHighlightLineWidth(1f);
+//
+//        CandleData data = new CandleData(xVals, set1);
+//
+//        mChart.setData(data);
+//        mChart.invalidate();
+    //   }
 
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
 
-    }
 }

@@ -222,7 +222,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
 
-    private String mTextviewArray[] = {"综合", "买入", "卖出", "挂单"};
+    private String mTextviewArray[] = {"综合", "买入", "卖出", "订单"};
     private SocketService mService;
     private RecyclerView mRecyclerViewBuy, mRecyclerViewSale;
 
@@ -307,11 +307,16 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         // 设置ViewPager
         ArrayList<Fragment> fragments = new ArrayList<Fragment>();
+
         ActualTransactionCandlestickChartsFragment candlestickChartsFragment = ActualTransactionCandlestickChartsFragment.getInstance(true);
         fragments.add(candlestickChartsFragment);
+
         fragments.add(new ActualTransactionBuyFragment());
-        fragments.add(new Fragment3());
+        fragments.add(new ActualTransactionSaleFragment());
+
         fragments.add(new Fragment4());
+
+
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),
                 fragments);
         viewPager.setOffscreenPageLimit(fragments.size());

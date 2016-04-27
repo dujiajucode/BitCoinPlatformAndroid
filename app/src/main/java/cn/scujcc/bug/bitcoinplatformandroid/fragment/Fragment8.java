@@ -211,7 +211,7 @@ public class Fragment8 extends BaseFragment {
 
 
         TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-        tv.setText("挂单");
+        tv.setText("订单");
 
 
         return view;

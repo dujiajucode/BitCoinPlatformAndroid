@@ -194,7 +194,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 个人中心
  */
 public class Fragment4 extends BaseFragment {
@@ -211,7 +211,7 @@ public class Fragment4 extends BaseFragment {
 
 
         TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-        tv.setText("挂单");
+        tv.setText("订单");
 
 
         return view;

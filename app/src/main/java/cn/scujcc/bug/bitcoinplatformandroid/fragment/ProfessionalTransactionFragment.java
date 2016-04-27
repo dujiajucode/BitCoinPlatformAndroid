@@ -205,7 +205,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
  */
 public class ProfessionalTransactionFragment extends BaseFragment {
 
-    private String mTextviewArray[] = {"综合", "买入", "卖出", "挂单"};
+    private String mTextviewArray[] = {"综合", "买入", "卖出", "订单"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

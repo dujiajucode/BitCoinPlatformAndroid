@@ -188,16 +188,17 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
- * Created by lilujia on 16/3/27.
- * <p/>
- * 个人中心
+ * 现货交易买入
  */
-public class Fragment3 extends BaseFragment {
+public class ActualTransactionSaleFragment extends BaseFragment {
+
+    SocketProtocol mProtocol;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -207,14 +208,22 @@ public class Fragment3 extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hello, container, false);
+        View view = inflater.inflate(R.layout.fragment_actualtransactionbuy, container, false);
 
 
-        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-        tv.setText("卖出");
+//        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
+//        tv.setText("买入");
 
+//        Intent intent = new Intent();
+//        intent.setClass(getActivity(), SocketService.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("SocketDataChange", this);
+//        intent.putExtras(bundle);
+//        getActivity().startService(intent);
 
         return view;
+
+
     }
 
 

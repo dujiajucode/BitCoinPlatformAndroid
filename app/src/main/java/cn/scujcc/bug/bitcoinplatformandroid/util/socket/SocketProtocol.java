@@ -260,7 +260,7 @@ public class SocketProtocol {
                     try {
                         List arg = new ArrayList();
                         arg.add(sm.get_payload());
-                        // arg.add(sm.get_sign());
+                        arg.add(sm.get_sign());
                         socket.emit("private", arg);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -351,16 +351,17 @@ public class SocketProtocol {
         Log.e("tag", "postdata is: " + postdata);
         return postdata;
     }
+
     //
-    // public String get_sign() throws Exception{
-    // String params =
-    // "tonce="+tonce.toString()+"&accesskey="+ACCESS_KEY+"&requestmethod=post&id="+tonce.toString()+"&method=subscribe&params=order_cnybtc,order_cnyltc,order_btcltc,account_info";
-    // String hash = getSignature(params, SECRET_KEY);
-    // String userpass = ACCESS_KEY + ":" + hash;
-    // String basicAuth =
-    // DatatypeConverter.printBase64Binary(userpass.getBytes());
-    // return basicAuth;
-    // }
+    public String get_sign() throws Exception {
+        String params =
+                "tonce=" + tonce.toString() + "&accesskey=" + ACCESS_KEY + "&requestmethod=post&id=" + tonce.toString() + "&method=subscribe&params=order_cnybtc,order_cnyltc,order_btcltc,account_info";
+        String hash = getSignature(params, SECRET_KEY);
+        String userpass = ACCESS_KEY + ":" + hash;
+        String basicAuth =
+                android.util.Base64.encodeToString(userpass.getBytes(), 16);
+        return basicAuth;
+    }
 
     public String getSignature(String data, String key) throws Exception {
         // get an hmac_sha1 key from the raw key bytes

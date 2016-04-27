@@ -195,7 +195,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.model.News;
@@ -203,7 +202,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
 /**
  * Created by lilujia on 16/4/13.
  */
-public class NewsDetailsFragment extends BaseFragment{
+public class NewsDetailsFragment extends BaseFragment {
 
     static final String TAG = "NewsDetailsFragment";
     private GestureDetector gesture = null;
@@ -233,24 +232,24 @@ public class NewsDetailsFragment extends BaseFragment{
 
             WebView webView = (WebView) view.findViewById(R.id.news_content_webview);
             webView.loadData(news.getHTMLContent(), "text/html; charset=UTF-8", null);
+           
 
+            //   view.setLongClickable(true);
+            gesture = new GestureDetector(this.getActivity(), new MyOnGestureListener());
+            //为fragment添加OnTouchListener监听器
+            webView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.e(TAG, "Touch");
+                    return gesture.onTouchEvent(event);//返回手势识别触发的事件
+                }
+            });
         }
-
-        view.setLongClickable(true);
-        gesture = new GestureDetector(this.getActivity(), new MyOnGestureListener());
-        //为fragment添加OnTouchListener监听器
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.e(TAG,"Touch");
-                return gesture.onTouchEvent(event);//返回手势识别触发的事件
-            }
-        });
 
         return view;
     }
-     class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener
-    {
+
+    class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override//此方法必须重写且返回真，否则onFling不起效
         public boolean onDown(MotionEvent e) {
@@ -259,11 +258,11 @@ public class NewsDetailsFragment extends BaseFragment{
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if((e1.getX()- e2.getX()>FLING_MIN_DISTANCE && Math.abs(velocityX)>FLING_MIN_VELOCITY )){
-                Log.e(TAG,"Fling to left");
+            if ((e1.getX() - e2.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) > FLING_MIN_VELOCITY)) {
+                Log.e(TAG, "Fling to left");
                 return true;
-            }else if((e2.getX()- e1.getX()>FLING_MIN_DISTANCE) && Math.abs(velocityX)>FLING_MIN_VELOCITY ){
-                Log.e(TAG,"Fling to right");
+            } else if ((e2.getX() - e1.getX() > FLING_MIN_DISTANCE) && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
+                Log.e(TAG, "Fling to right");
                 return true;
             }
             return false;

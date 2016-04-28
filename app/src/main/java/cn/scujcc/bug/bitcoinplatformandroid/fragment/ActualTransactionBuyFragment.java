@@ -188,6 +188,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
@@ -198,6 +199,8 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 public class ActualTransactionBuyFragment extends BaseFragment {
 
     SocketProtocol mProtocol;
+
+    private Button mButton;
 
 
     @Override
@@ -210,16 +213,9 @@ public class ActualTransactionBuyFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_actualtransactionbuy, container, false);
 
+        mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
+        mButton.setText(R.string.fragment_actualtransactionbuy_buy);
 
-//        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-//        tv.setText("买入");
-
-//        Intent intent = new Intent();
-//        intent.setClass(getActivity(), SocketService.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("SocketDataChange", this);
-//        intent.putExtras(bundle);
-//        getActivity().startService(intent);
 
         return view;
 

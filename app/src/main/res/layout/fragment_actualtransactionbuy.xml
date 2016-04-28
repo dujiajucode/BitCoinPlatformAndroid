@@ -339,6 +339,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/fragment_ats_buy_button"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="@string/fragment_actualtransactionbuy_buy"

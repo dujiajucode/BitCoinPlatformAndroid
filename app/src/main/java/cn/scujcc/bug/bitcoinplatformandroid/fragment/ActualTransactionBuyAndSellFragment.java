@@ -185,7 +185,6 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -250,7 +249,13 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.e(TAG, "position" + position);
+                if (position == 0) {
+                    //限价
+                    isLimit = true;
+                } else if (position == 1) {
+                    //市价模式
+                    isLimit = false;
+                }
             }
 
             @Override

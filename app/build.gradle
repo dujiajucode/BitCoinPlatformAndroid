@@ -194,6 +194,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -202,11 +203,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:cardview-v7:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.3.0'
@@ -216,14 +220,6 @@ dependencies {
     compile 'com.android.support:support-v13:23.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.nkzawa:socket.io-client:0.3.0'
+
     compile files('libs/mpandroidchartlibrary-2-2-4.jar')
-    compile files('libs/jaxen-1.1.4.jar')
-    compile files('libs/jcl-over-slf4j-1.7.12.jar')
-    compile files('libs/je-2.1.30.jar')
-    compile files('libs/mina-core-2.0.9.jar')
-    compile files('libs/proxool-0.9.1.jar')
-    compile files('libs/quickfixj-core-1.6.0.jar')
-    compile files('libs/quickfixj-messages-fix44-1.6.0.jar')
-    compile files('libs/slf4j-api-1.7.12.jar')
-    compile files('libs/slf4j-jdk14-1.7.12.jar')
 }

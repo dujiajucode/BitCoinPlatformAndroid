@@ -209,7 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_toRightOf="@id/news_imageview"
+            android:layout_toEndOf="@id/news_imageview"
             android:textColor="#000"
             android:textSize="20sp"
             android:textStyle="bold"/>

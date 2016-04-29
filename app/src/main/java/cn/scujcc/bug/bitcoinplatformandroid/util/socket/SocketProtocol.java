@@ -186,7 +186,6 @@ package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
 
 import android.util.Log;
 
-
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
@@ -321,6 +320,7 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // balance message
+                    Log.e(TAG, "balance message" + json.toString());
                     Log.e(TAG, json.toString());
 
                     if (mChange != null)

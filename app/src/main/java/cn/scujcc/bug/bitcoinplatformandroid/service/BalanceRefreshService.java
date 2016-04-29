@@ -181,108 +181,32 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.Spinner;
+package cn.scujcc.bug.bitcoinplatformandroid.service;
 
-import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
+import android.app.IntentService;
+import android.content.Intent;
 
 /**
- * 现货交易买卖
+ * Created by lilujia on 16/4/29.
  */
-public class ActualTransactionBuyAndSellFragment extends BaseFragment {
+public class BalanceRefreshService extends IntentService {
 
-    private static final String TAG = "ATBuyAndsellFragment";
-    public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_sell";
-
-    SocketProtocol mProtocol;
-
-    private Button mButton;
-
-    private Spinner mSpinner;
-
-    private TextInputEditText mCountEdit, mUnivalentEdit;
-
-    private boolean isSell;
-
-    private boolean isLimit;
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        savedInstanceState = getArguments();
-        if (savedInstanceState != null) {
-            isSell = savedInstanceState.getBoolean(ARGS_IS_Sell);
-        }
-
-
+    public BalanceRefreshService() {
+        super("BalanceRefreshService");
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsell, container, false);
-
-        mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
-        mSpinner = (Spinner) view.findViewById(R.id.fragment_actualtransactionbuy_mode);
-        mCountEdit = (TextInputEditText) view.findViewById(R.id.fragment_actualtransactionbuy_count);
-        mUnivalentEdit = (TextInputEditText)
-                view.findViewById(R.id.fragment_actualtransactionbuy_univalent);
-        //初始化
-        if (isSell) {
-            //卖出
-            mButton.setText(R.string.fragment_actualtransactionbuy_sell);
-
-        } else {
-            //买入
-            mButton.setText(R.string.fragment_actualtransactionbuy_buy);
-
-        }
-        isLimit = true;
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if (position == 0) {
-                    //限价
-                    isLimit = true;
-                    mUnivalentEdit.setText("");
-                    mUnivalentEdit.setEnabled(true);
-                } else if (position == 1) {
-                    //市价模式
-                    isLimit = false;
-                    mUnivalentEdit.setText("不用填写");
-                    mUnivalentEdit.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-
-
-        });
-
-        //获取余额
-
-        //开启Service 每3秒执行一次
-
-        return view;
-
-
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+    public BalanceRefreshService(String name) {
+        super(name);
     }
 
+    @Override
+    protected void onHandleIntent(Intent intent) {
 
+    }
 }

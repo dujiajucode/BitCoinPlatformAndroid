@@ -206,6 +206,7 @@
                 android:layout_margin="8dp">
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/fragment_actualtransactionbuy_univalent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/fragment_actualtransactionbuy_univalent"
@@ -219,6 +220,7 @@
                 android:layout_margin="8dp">
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/fragment_actualtransactionbuy_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/fragment_actualtransactionbuy_count"
@@ -231,8 +233,8 @@
                 android:id="@+id/fragment_actualtransactionbuy_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:entries="@array/fragment_actualtransactionbuy_mode"/>
 
@@ -266,7 +268,7 @@
                     android:id="@+id/fragment_ats_buy_account_cny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_below="@id/fragment_ats_buy_account_title"
                     android:layout_margin="8dp"
                     android:text="@string/fragment_actualtransactionbuy_cny"/>
@@ -284,7 +286,7 @@
                     android:id="@+id/fragment_ats_buy_account_cnysymbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_below="@id/fragment_ats_buy_account_title"
                     android:layout_margin="8dp"
                     android:text="@string/fragment_actualtransactionbuy_cnysymbol"/>
@@ -293,7 +295,7 @@
                     android:id="@+id/fragment_ats_buy_account_btc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_below="@id/fragment_ats_buy_account_cny"
                     android:layout_margin="8dp"
                     android:text="@string/fragment_actualtransactionbuy_btc"/>
@@ -311,7 +313,7 @@
                     android:id="@+id/fragment_ats_buy_account_btcsymbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_below="@id/fragment_ats_buy_account_cny"
                     android:layout_margin="8dp"
                     android:text="@string/fragment_actualtransactionbuy_btcsymbol"/>

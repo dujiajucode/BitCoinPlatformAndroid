@@ -217,7 +217,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p/>
+ * <p>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
@@ -283,8 +283,8 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         mRecyclerViewBuy = (RecyclerView) view.findViewById(R.id.recyclerViewBuy);
         mRecyclerViewSell = (RecyclerView) view.findViewById(R.id.recyclerViewSell);
-        mBuyList = new ArrayList<Trend>();
-        mSellList = new ArrayList<Trend>();
+        mBuyList = new ArrayList<>();
+        mSellList = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             Trend trend1 = new Trend();
             trend1.setCount(0);
@@ -333,12 +333,12 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
                 fragments);
         viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(viewPagerAdapter);
-        slidingTabLayout.setViewPager(viewPager, caculateScreenX());
+        slidingTabLayout.setViewPager(viewPager, calculateScreenX());
 
         return view;
     }
 
-    private int caculateScreenX() {
+    private int calculateScreenX() {
         return getResources().getDisplayMetrics().widthPixels;
     }
 
@@ -404,7 +404,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         } catch (JSONException e) {
             //e.printStackTrace();
 
-            Log.e("tag1", e.getLocalizedMessage());
+            Log.e(TAG, e.getLocalizedMessage());
             return;
         }
 
@@ -426,7 +426,8 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     @Override
     public void balanceChange(String json) {
-        Log.e(TAG, "balanceChange");
+        Log.e(TAG, "余额更新" + json);
+
     }
 
     @Override
@@ -496,9 +497,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             return mLists == null ? 0 : mLists.size();
         }
 
-        /**
-         * 采用ViewHolder可以优化性能
-         */
+
         public class ViewHolder extends RecyclerView.ViewHolder {
 
             public View mView;

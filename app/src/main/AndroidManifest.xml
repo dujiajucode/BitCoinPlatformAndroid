@@ -191,6 +191,7 @@
 
     <application
         android:allowBackup="false"
+        android:exported="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -213,6 +214,7 @@
             android:parentActivityName=".activity.MainActivity"/>
 
         <service android:name=".service.SocketService"/>
+        <service android:name=".service.BalanceRefreshService"/>
 
     </application>
 

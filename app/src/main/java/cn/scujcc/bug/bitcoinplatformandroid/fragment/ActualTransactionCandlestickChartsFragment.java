@@ -204,25 +204,13 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 现货交易K线图
  */
 public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
 
     private CandleStickChart mChart;
 
-    private static ActualTransactionCandlestickChartsFragment mFragment;
-
-    public static ActualTransactionCandlestickChartsFragment getInstance(boolean isNewCreate) {
-        if (isNewCreate) {
-            mFragment = null;
-        }
-        if (mFragment == null) {
-            mFragment = new ActualTransactionCandlestickChartsFragment();
-        }
-
-        return mFragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

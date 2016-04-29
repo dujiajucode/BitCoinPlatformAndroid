@@ -194,24 +194,31 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
- * 现货交易买入
+ * 现货交易买卖
  */
-public class ActualTransactionBuyFragment extends BaseFragment {
+public class ActualTransactionBuyAndSaleFragment extends BaseFragment {
+
+    public static final String ARGS_IS_SALE = "ActualTransactionBuyAndSaleFragment_IS_SALE";
 
     SocketProtocol mProtocol;
 
     private Button mButton;
 
+    private boolean isSale;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_actualtransactionbuy, container, false);
+        View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsale, container, false);
 
         mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
         mButton.setText(R.string.fragment_actualtransactionbuy_buy);

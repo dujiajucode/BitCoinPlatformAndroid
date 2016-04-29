@@ -185,10 +185,13 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
@@ -205,7 +208,11 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
     private Button mButton;
 
+    private Spinner mSpinner;
+
     private boolean isSell;
+
+    private boolean isLimit;
 
 
     @Override
@@ -226,7 +233,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsell, container, false);
 
         mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
-
+        mSpinner = (Spinner) view.findViewById(R.id.fragment_actualtransactionbuy_mode);
 
         //初始化
         if (isSell) {
@@ -239,6 +246,13 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
         }
         //公用的代码
+        isLimit = true;
+        mSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e(TAG, "position" + position);
+            }
+        });
 
         //获取余额
 

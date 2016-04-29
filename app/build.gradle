@@ -217,10 +217,13 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.nkzawa:socket.io-client:0.3.0'
     compile files('libs/mpandroidchartlibrary-2-2-4.jar')
-    compile 'org.slf4j:jcl-over-slf4j:1.7.12',
-            'quickfixj:quickfixj-all:1.6.1',
-            'quickfixj:quickfixj-messages-fix44:1.6.1',
-            'org.apache.mina:mina-core:2.0.9',
-            'org.slf4j:slf4j-api',
-            'ch.qos.logback:logback-classic:1.1.2'
+    compile files('libs/jaxen-1.1.4.jar')
+    compile files('libs/jcl-over-slf4j-1.7.12.jar')
+    compile files('libs/je-2.1.30.jar')
+    compile files('libs/mina-core-2.0.9.jar')
+    compile files('libs/proxool-0.9.1.jar')
+    compile files('libs/quickfixj-core-1.6.0.jar')
+    compile files('libs/quickfixj-messages-fix44-1.6.0.jar')
+    compile files('libs/slf4j-api-1.7.12.jar')
+    compile files('libs/slf4j-jdk14-1.7.12.jar')
 }

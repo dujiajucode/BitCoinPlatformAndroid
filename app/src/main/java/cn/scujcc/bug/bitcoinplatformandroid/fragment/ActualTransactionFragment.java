@@ -217,11 +217,12 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p>
+ * <p/>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
 
+    private static final String TAG = "ATFragment";
     private String mTextviewArray[] = {"综合", "买入", "卖出", "订单"};
     private SocketService mService;
     private RecyclerView mRecyclerViewBuy, mRecyclerViewSale;
@@ -319,11 +320,12 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         Fragment saleFragment = new ActualTransactionBuyAndSaleFragment();
         Bundle saleBundle = new Bundle();
-        saleBundle.putBoolean(ActualTransactionBuyAndSaleFragment.ARGS_IS_SALE, false);
+        saleBundle.putBoolean(ActualTransactionBuyAndSaleFragment.ARGS_IS_SALE, true);
         saleFragment.setArguments(saleBundle);
 
         fragments.add(buyFragment);
         fragments.add(saleFragment);
+
         fragments.add(new Fragment4());
 
 
@@ -368,12 +370,12 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     @Override
     public void tradeChange(String json) {
-        Log.e("tag", "tradeChange");
+        Log.e(TAG, "tradeChange");
     }
 
     @Override
     public void tickerChange(String json) {
-        Log.e("tag", "tickerChange");
+        Log.e(TAG, "tickerChange");
     }
 
     @Override
@@ -419,23 +421,23 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     @Override
     public void orderChange(String json) {
-        Log.e("tag", "orderChange");
+        Log.e(TAG, "orderChange");
     }
 
     @Override
     public void balanceChange(String json) {
-        Log.e("tag", "balanceChange");
+        Log.e(TAG, "balanceChange");
     }
 
     @Override
     public void socketNetworkDisconnect() {
         // mProtocol=null;
-        Log.e("tag", "socketNetworkDisconnect");
+        Log.e(TAG, "socketNetworkDisconnect");
     }
 
     @Override
     public void socketNetworkConnect() {
-        Log.e("tag", "socketNetworkConnect");
+        Log.e(TAG, "socketNetworkConnect");
     }
 
     public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {

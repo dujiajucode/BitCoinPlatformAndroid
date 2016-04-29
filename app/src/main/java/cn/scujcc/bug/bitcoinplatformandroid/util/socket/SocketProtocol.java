@@ -209,6 +209,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 public class SocketProtocol {
     public static SocketDataChange mChange;
 
+    private static final String TAG = "SocketProtocol";
     private String ACCESS_KEY = SecurityConfig.ACCESS_KEY;
     private String SECRET_KEY = SecurityConfig.SECRET_KEY;
     public static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
@@ -228,7 +229,7 @@ public class SocketProtocol {
     }
 
     public void setChange(SocketDataChange change) {
-        Log.e("tag", "setChange");
+        Log.e(TAG, "setChange");
         mChange = change;
     }
 
@@ -240,14 +241,13 @@ public class SocketProtocol {
             Logger.getLogger(SocketProtocol.class.getName()).setLevel(Level.FINE);
             final Socket socket = IO.socket("https://websocket.btcchina.com", opt);
 
-            Log.e("tag", "buybuybuy");
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 SocketProtocol sm = new SocketProtocol();
 
                 @Override
                 public void call(Object... args) {
 
-                    Log.e("tag", "Connected!");
+                    Log.e(TAG, "Connected!");
                     if (mChange != null)
                         mChange.socketNetworkConnect();
 
@@ -269,7 +269,7 @@ public class SocketProtocol {
             }).on("message", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.e("tag", args[0].toString());
+                    Log.e(TAG, args[0].toString());
                 }
             }).on("trade", new Emitter.Listener() {
                 @Override
@@ -277,7 +277,7 @@ public class SocketProtocol {
                     // 方法监听即时市场交易数据并处理接收到的实时数据
                     JSONObject json = (JSONObject) args[0]; // receive the trade
                     // message
-                    Log.e("tag", json.toString());
+                    Log.e(TAG, json.toString());
 
                     if (mChange != null)
                         mChange.tradeChange(json.toString());
@@ -288,7 +288,7 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the ticker
                     // message
-                    Log.e("tag", json.toString());
+                    Log.e(TAG, json.toString());
 
                     if (mChange != null)
                         mChange.tickerChange(json.toString());
@@ -301,7 +301,7 @@ public class SocketProtocol {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // grouporder
                     // message
-                    Log.e("tag", "mChange" + (mChange == null));
+                    Log.e(TAG, "mChange" + (mChange == null));
 
                     if (mChange != null)
                         mChange.groupOrderChange(json.toString());
@@ -311,7 +311,7 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the order
                     // message
-                    Log.e("tag", json.toString());
+                    Log.e(TAG, json.toString());
 
                     if (mChange != null)
                         mChange.orderChange(json.toString());
@@ -321,7 +321,7 @@ public class SocketProtocol {
                 public void call(Object... args) {
                     JSONObject json = (JSONObject) args[0];// receive the
                     // balance message
-                    Log.e("tag", json.toString());
+                    Log.e(TAG, json.toString());
 
                     if (mChange != null)
                         mChange.balanceChange(json.toString());
@@ -329,14 +329,14 @@ public class SocketProtocol {
             }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.e("tag", "Disconnected!");
+                    Log.e(TAG, "Disconnected!");
                     if (mChange != null)
                         mChange.socketNetworkDisconnect();
                 }
             });
             socket.connect();
         } catch (URISyntaxException ex) {
-            Log.e("tag", ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
         }
     }
 
@@ -348,7 +348,7 @@ public class SocketProtocol {
         // and
         // balance
         // feed
-        Log.e("tag", "postdata is: " + postdata);
+        Log.e(TAG, "postdata is: " + postdata);
         return postdata;
     }
 

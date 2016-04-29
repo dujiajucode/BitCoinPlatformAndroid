@@ -198,6 +198,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
  * Created by lilujia on 16/4/25.
  */
 public class SocketService extends Service {
+    private static final String TAG = "SocketService";
     private SocketProtocol mProtocol;
     private SocketDataChange mDataChange;
     private IBinder mBinder = new LocalBinder();
@@ -206,7 +207,7 @@ public class SocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e("tag", "onCreate");
+        Log.e(TAG, "onCreate");
         mProtocol = new SocketProtocol();
         mProtocol.chat();
     }
@@ -215,7 +216,7 @@ public class SocketService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e("tag", "onStartCommand");
+        Log.e(TAG, "onStartCommand");
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -225,7 +226,7 @@ public class SocketService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mProtocol = null;
-        Log.e("tag", "onDestroy");
+        Log.e(TAG, "onDestroy");
 
     }
 

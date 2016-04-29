@@ -350,7 +350,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
                     } else if ("link".equals(nodeName)) {
                         String url = xmlPullParser.nextText();
-                        //Log.e("tag", "ttt" + url);
+                        //Log.e(TAG, "ttt" + url);
                         if (url != null) {
                             //JSOUP
                             try {
@@ -517,7 +517,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
             intent.putExtra("news", news);
             startActivity(intent);
 
-            //Log.e("TAG", "POS" + news.getTitle());
+            //Log.e(TAG, "POS" + news.getTitle());
         }
 
         @Override
@@ -537,7 +537,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
             holder.mView.setTag(position);
 
-          //  Log.e("tag", mLists.get(position).getImage());
+          //  Log.e(TAG, mLists.get(position).getImage());
             //异步加载图片
             Picasso.with(getActivity()).load(mLists.get(position).getImage()).placeholder(R.drawable.loading).fit().into(holder.ivPic);
             //holder.ivPic.setImageResource();

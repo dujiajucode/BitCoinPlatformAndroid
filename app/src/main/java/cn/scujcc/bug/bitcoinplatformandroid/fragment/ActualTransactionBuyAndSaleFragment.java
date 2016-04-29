@@ -185,6 +185,7 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,6 +199,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
  */
 public class ActualTransactionBuyAndSaleFragment extends BaseFragment {
 
+    private static final String TAG = "ATBuyAndSaleFragment";
     public static final String ARGS_IS_SALE = "ActualTransactionBuyAndSaleFragment_IS_SALE";
 
     SocketProtocol mProtocol;
@@ -211,7 +213,11 @@ public class ActualTransactionBuyAndSaleFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            isSale = savedInstanceState.getBoolean("asdf");
 
+            Log.e(TAG, "run" + isSale);
+        }
 
     }
 
@@ -221,7 +227,19 @@ public class ActualTransactionBuyAndSaleFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsale, container, false);
 
         mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
-        mButton.setText(R.string.fragment_actualtransactionbuy_buy);
+
+
+        //初始化
+        if (isSale) {
+            //卖出
+            mButton.setText(R.string.fragment_actualtransactionbuy_sale);
+
+        } else {
+            //买入
+            mButton.setText(R.string.fragment_actualtransactionbuy_buy);
+
+        }
+        //公用的代码
 
 
         return view;

@@ -247,11 +247,18 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
         }
         //公用的代码
         isLimit = true;
-        mSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.e(TAG, "position" + position);
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+
+
         });
 
         //获取余额

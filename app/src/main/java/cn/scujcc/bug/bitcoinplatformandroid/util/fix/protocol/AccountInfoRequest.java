@@ -182,44 +182,51 @@
  *
  */
 
-apply plugin: 'com.android.application'
+package cn.scujcc.bug.bitcoinplatformandroid.util.fix.protocol;
 
-android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+import quickfix.FieldNotFound;
+import quickfix.fix44.Message;
 
-    defaultConfig {
-        applicationId "cn.scujcc.bug.bitcoinplatformandroid"
-        minSdkVersion 17
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+public class AccountInfoRequest extends Message {
+
+    private static final long serialVersionUID = -3033519792313574631L;
+    public static final String MSGTYPE = "U1000";
+
+    public AccountInfoRequest() {
+        super();
+        getHeader().setField(new quickfix.field.MsgType(MSGTYPE));
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-}
 
-dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:cardview-v7:23.3.0'
-    compile 'com.android.support:recyclerview-v7:23.3.0'
-    compile 'com.android.support:cardview-v7:23.3.0'
-    compile 'org.jsoup:jsoup:1.5.2'
-    compile 'com.android.support:design:23.3.0'
-    compile 'com.android.support:support-v13:23.3.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.github.nkzawa:socket.io-client:0.3.0'
-    compile files('libs/mpandroidchartlibrary-2-2-4.jar')
-    compile 'org.slf4j:jcl-over-slf4j:1.7.12',
-            'quickfixj:quickfixj-all:1.6.1',
-            'quickfixj:quickfixj-messages-fix44:1.6.1',
-            'org.apache.mina:mina-core:2.0.9',
-            'org.slf4j:slf4j-api',
-            'ch.qos.logback:logback-classic:1.1.2'
+    public void set(AccReqID value) {
+        setField(value);
+    }
+
+    public AccReqID get(AccReqID value) throws FieldNotFound {
+        getField(value);
+        return value;
+    }
+
+    public AccReqID getAccReqID() throws FieldNotFound {
+        AccReqID value = new AccReqID();
+        getField(value);
+
+        return value;
+    }
+
+    public quickfix.field.Account get(quickfix.field.Account value) throws FieldNotFound {
+        getField(value);
+
+        return value;
+    }
+
+    public quickfix.field.Account getAccount() throws FieldNotFound {
+        quickfix.field.Account value = new quickfix.field.Account();
+        getField(value);
+
+        return value;
+    }
+
+    public void set(quickfix.field.Account value) {
+        setField(value);
+    }
 }

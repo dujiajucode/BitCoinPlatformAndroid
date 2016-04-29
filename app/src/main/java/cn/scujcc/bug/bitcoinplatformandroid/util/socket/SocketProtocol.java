@@ -258,7 +258,7 @@ public class SocketProtocol {
                     // Use 'private' method to subscribe the order and balance
                     // feed
                     try {
-                        List arg = new ArrayList();
+                        List<String> arg = new ArrayList<String>();
                         arg.add(sm.get_payload());
                         arg.add(sm.get_sign());
                         socket.emit("private", arg);
@@ -355,7 +355,7 @@ public class SocketProtocol {
     //
     public String get_sign() throws Exception {
         String params =
-                "tonce=" + tonce.toString() + "&accesskey=" + ACCESS_KEY + "&requestmethod=post&id=" + tonce.toString() + "&method=subscribe&params=order_cnybtc,order_cnyltc,order_btcltc,account_info";
+                "tonce=" + tonce + "&accesskey=" + ACCESS_KEY + "&requestmethod=post&id=" + tonce.toString() + "&method=subscribe&params=order_cnybtc,order_cnyltc,order_btcltc,account_info";
         String hash = getSignature(params, SECRET_KEY);
         String userpass = ACCESS_KEY + ":" + hash;
         String basicAuth =

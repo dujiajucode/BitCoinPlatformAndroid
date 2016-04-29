@@ -207,7 +207,7 @@
             android:background="#fafafa"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewSale"
+            android:id="@+id/recyclerViewSell"
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:layout_margin="8dp"

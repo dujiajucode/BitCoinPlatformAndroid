@@ -75,7 +75,7 @@
  *       this License, each Contributor hereby grants to You a perpetual,
  *       worldwide, non-exclusive, no-charge, royalty-free, irrevocable
  *       (except as stated in this section) patent license to make, have made,
- *       use, offer to sell, sell, import, and otherwise transfer the Work,
+ *       use, offer to Sell, Sell, import, and otherwise transfer the Work,
  *       where such license applies only to those patent claims licensable
  *       by such Contributor that are necessarily infringed by their
  *       Contribution(s) alone or by combination of their Contribution(s)
@@ -225,12 +225,12 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
     private static final String TAG = "ATFragment";
     private String mTextviewArray[] = {"综合", "买入", "卖出", "订单"};
     private SocketService mService;
-    private RecyclerView mRecyclerViewBuy, mRecyclerViewSale;
+    private RecyclerView mRecyclerViewBuy, mRecyclerViewSell;
 
     private List<Trend> mBuyList;
-    private List<Trend> mSaleList;
+    private List<Trend> mSellList;
     private DataAdapter mBuyAdapter;
-    private DataAdapter mSaleAdapter;
+    private DataAdapter mSellAdapter;
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -282,9 +282,9 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
 
         mRecyclerViewBuy = (RecyclerView) view.findViewById(R.id.recyclerViewBuy);
-        mRecyclerViewSale = (RecyclerView) view.findViewById(R.id.recyclerViewSale);
+        mRecyclerViewSell = (RecyclerView) view.findViewById(R.id.recyclerViewSell);
         mBuyList = new ArrayList<Trend>();
-        mSaleList = new ArrayList<Trend>();
+        mSellList = new ArrayList<Trend>();
         for (int i = 0; i < 6; i++) {
             Trend trend1 = new Trend();
             trend1.setCount(0);
@@ -295,16 +295,16 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             trend2.setPrice(0);
 
             mBuyList.add(trend1);
-            mSaleList.add(trend2);
+            mSellList.add(trend2);
         }
         mBuyAdapter = new DataAdapter(mBuyList, false);
-        mSaleAdapter = new DataAdapter(mSaleList, true);
+        mSellAdapter = new DataAdapter(mSellList, true);
         mRecyclerViewBuy.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerViewSale.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerViewSell.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerViewBuy.setHasFixedSize(true);
-        mRecyclerViewSale.setHasFixedSize(true);
+        mRecyclerViewSell.setHasFixedSize(true);
         mRecyclerViewBuy.setAdapter(mBuyAdapter);
-        mRecyclerViewSale.setAdapter(mSaleAdapter);
+        mRecyclerViewSell.setAdapter(mSellAdapter);
 
         // 设置ViewPager
         ArrayList<Fragment> fragments = new ArrayList<Fragment>();
@@ -313,18 +313,18 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
                 ActualTransactionCandlestickChartsFragment();
         fragments.add(candlestickChartsFragment);
 
-        Fragment buyFragment = new ActualTransactionBuyAndSaleFragment();
+        Fragment buyFragment = new ActualTransactionBuyAndSellFragment();
         Bundle buyBundle = new Bundle();
-        buyBundle.putBoolean(ActualTransactionBuyAndSaleFragment.ARGS_IS_SALE, false);
+        buyBundle.putBoolean(ActualTransactionBuyAndSellFragment.ARGS_IS_Sell, false);
         buyFragment.setArguments(buyBundle);
 
-        Fragment saleFragment = new ActualTransactionBuyAndSaleFragment();
-        Bundle saleBundle = new Bundle();
-        saleBundle.putBoolean(ActualTransactionBuyAndSaleFragment.ARGS_IS_SALE, true);
-        saleFragment.setArguments(saleBundle);
+        Fragment SellFragment = new ActualTransactionBuyAndSellFragment();
+        Bundle SellBundle = new Bundle();
+        SellBundle.putBoolean(ActualTransactionBuyAndSellFragment.ARGS_IS_Sell, true);
+        SellFragment.setArguments(SellBundle);
 
         fragments.add(buyFragment);
-        fragments.add(saleFragment);
+        fragments.add(SellFragment);
 
         fragments.add(new Fragment4());
 
@@ -396,9 +396,9 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
                 mBuyList.add(trendBuy);
 
                 JSONObject bidObj = bid.getJSONObject(i);
-                Trend trendSale = new Trend(bidObj.getDouble("totalamount"), bidObj.getDouble("price"));
-                mSaleList.remove(1);
-                mSaleList.add(trendSale);
+                Trend trendSell = new Trend(bidObj.getDouble("totalamount"), bidObj.getDouble("price"));
+                mSellList.remove(1);
+                mSellList.add(trendSell);
             }
 
         } catch (JSONException e) {
@@ -413,7 +413,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             public void run() {
                 //tv.setText(json);
                 mBuyAdapter.notifyDataSetChanged();
-                mSaleAdapter.notifyDataSetChanged();
+                mSellAdapter.notifyDataSetChanged();
             }
         });
 
@@ -442,11 +442,11 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
         private List<Trend> mLists;
-        private boolean isSale;
+        private boolean isSell;
 
-        public DataAdapter(List<Trend> list, boolean isSale) {
+        public DataAdapter(List<Trend> list, boolean isSell) {
             mLists = list;
-            this.isSale = isSale;
+            this.isSell = isSell;
         }
 
 
@@ -471,7 +471,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
                 holder.mView.setTag(position);
 
-                if (isSale) {
+                if (isSell) {
                     holder.tv1.setText("卖家" + (position));
                     holder.tv1.setTextColor(getResources().getColor(R.color.green));
                     holder.tv2.setTextColor(getResources().getColor(R.color.green));

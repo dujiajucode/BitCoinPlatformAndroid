@@ -193,7 +193,7 @@
     <string name="fragment_actualtransactionbuy_count">数量</string>
     <string name="fragment_actualtransactionbuy_sum">金额</string>
     <string name="fragment_actualtransactionbuy_buy">买入</string>
-    <string name="fragment_actualtransactionbuy_sale">卖出</string>
+    <string name="fragment_actualtransactionbuy_sell">卖出</string>
     <string name="fragment_actualtransactionbuy_balance">账户余额</string>
     <string name="fragment_actualtransactionbuy_cny">人民币</string>
     <string name="fragment_actualtransactionbuy_btc">比特币</string>

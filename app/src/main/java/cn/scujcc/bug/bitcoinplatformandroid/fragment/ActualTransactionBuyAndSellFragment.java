@@ -185,7 +185,6 @@ package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -197,42 +196,42 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 /**
  * 现货交易买卖
  */
-public class ActualTransactionBuyAndSaleFragment extends BaseFragment {
+public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
-    private static final String TAG = "ATBuyAndSaleFragment";
-    public static final String ARGS_IS_SALE = "ActualTransactionBuyAndSaleFragment_IS_SALE";
+    private static final String TAG = "ATBuyAndsellFragment";
+    public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_sell";
 
     SocketProtocol mProtocol;
 
     private Button mButton;
 
-    private boolean isSale;
+    private boolean isSell;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        savedInstanceState = getArguments();
         if (savedInstanceState != null) {
-            isSale = savedInstanceState.getBoolean("asdf");
-
-            Log.e(TAG, "run" + isSale);
+            isSell = savedInstanceState.getBoolean(ARGS_IS_Sell);
         }
+
 
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsale, container, false);
+        View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsell, container, false);
 
         mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
 
 
         //初始化
-        if (isSale) {
+        if (isSell) {
             //卖出
-            mButton.setText(R.string.fragment_actualtransactionbuy_sale);
+            mButton.setText(R.string.fragment_actualtransactionbuy_sell);
 
         } else {
             //买入
@@ -240,6 +239,8 @@ public class ActualTransactionBuyAndSaleFragment extends BaseFragment {
 
         }
         //公用的代码
+
+        //获取余额
 
 
         return view;

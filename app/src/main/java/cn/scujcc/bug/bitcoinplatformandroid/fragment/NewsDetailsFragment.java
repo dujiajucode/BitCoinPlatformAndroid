@@ -188,6 +188,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -195,6 +196,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.model.News;
@@ -206,8 +212,12 @@ public class NewsDetailsFragment extends BaseFragment {
 
     static final String TAG = "NewsDetailsFragment";
     private GestureDetector gesture = null;
-    private static final int FLING_MIN_DISTANCE = 10;
-    private static final int FLING_MIN_VELOCITY = 0;
+    private static final int FLING_MIN_DISTANCE = 300;
+    private static final int FLING_MIN_VELOCITY = 50;
+    private int mPos;
+    private List<News> mLists;
+    private WebView mWebView;
+    private Toolbar mToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -219,8 +229,11 @@ public class NewsDetailsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_newsdetails, container, false);
 
+
         Intent intent = getActivity().getIntent();
         News news = (News) intent.getSerializableExtra("news");
+        mPos = intent.getIntExtra("pos", 0);
+        mLists = readNewsFromCache();
         if (news != null) {
             setHasOptionsMenu(true);
             setTitle(view, news.getTitle());
@@ -230,17 +243,17 @@ public class NewsDetailsFragment extends BaseFragment {
                 appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
-            WebView webView = (WebView) view.findViewById(R.id.news_content_webview);
-            webView.loadData(news.getHTMLContent(), "text/html; charset=UTF-8", null);
-           
+            mWebView = (WebView) view.findViewById(R.id.news_content_webview);
+            mWebView.loadData(news.getHTMLContent(), "text/html; charset=UTF-8", null);
+            mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
             //   view.setLongClickable(true);
             gesture = new GestureDetector(this.getActivity(), new MyOnGestureListener());
             //为fragment添加OnTouchListener监听器
-            webView.setOnTouchListener(new View.OnTouchListener() {
+            mWebView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    Log.e(TAG, "Touch");
+
                     return gesture.onTouchEvent(event);//返回手势识别触发的事件
                 }
             });
@@ -251,21 +264,70 @@ public class NewsDetailsFragment extends BaseFragment {
 
     class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
 
-        @Override//此方法必须重写且返回真，否则onFling不起效
+        @Override
         public boolean onDown(MotionEvent e) {
-            return true;
+            Log.e(TAG, "onDown");
+            return false;
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+
             if ((e1.getX() - e2.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) > FLING_MIN_VELOCITY)) {
-                Log.e(TAG, "Fling to left");
-                return true;
+
+                Log.e(TAG, "Left");
+                //Left
+                if (mLists == null || mPos == mLists.size() - 1) {
+                    getActivity().finish();
+                    return true;
+                } else {
+                    mPos++;
+                    News news = mLists.get(mPos);
+                    mWebView.loadData(news.getHTMLContent(), "text/html; charset=UTF-8", null);
+                    mToolbar.setTitle(news.getTitle());
+                    return true;
+                }
+
+
             } else if ((e2.getX() - e1.getX() > FLING_MIN_DISTANCE) && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
-                Log.e(TAG, "Fling to right");
-                return true;
+                //Right
+                Log.e(TAG, "Right");
+                if (mPos == 0 || mLists == null) {
+                    getActivity().finish();
+                    return true;
+                } else {
+                    mPos--;
+                    News news = mLists.get(mPos);
+                    mWebView.loadData(news.getHTMLContent(), "text/html; charset=UTF-8", null);
+                    mToolbar.setTitle(news.getTitle());
+                    return true;
+                }
             }
             return false;
         }
+    }
+
+    public List<News> readNewsFromCache() {
+        File file = new File(
+                getActivity().getFileStreamPath(QuotationInformationFragment.NEWS_CACHE_NAME).getPath());
+        if (file.exists()) {
+
+            try {
+                FileInputStream fin = getActivity().openFileInput(QuotationInformationFragment.NEWS_CACHE_NAME);
+                ObjectInputStream in = new ObjectInputStream(fin);
+                List<News> list = (List<News>) in.readObject();
+                in.close();
+
+                return list;
+            } catch (Exception e) {
+                e.printStackTrace();
+                // deleteCache();
+
+            }
+        }
+
+
+        return null;
     }
 }

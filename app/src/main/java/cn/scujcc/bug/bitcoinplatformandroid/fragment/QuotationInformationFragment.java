@@ -236,11 +236,11 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.News;
  */
 public class QuotationInformationFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private final String NEWS_RSS_URL = "http://www.bitecoin.com/feed";
+    private static final String NEWS_RSS_URL = "http://www.bitecoin.com/feed";
 
-    private final String NEWS_CACHE_NAME = "news_cache";
+    public static final String NEWS_CACHE_NAME = "news_cache";
 
-    private final String TAG = "QuotationInformation";
+    private static final String TAG = "QuotationInformation";
 
 
     private boolean isForce = false;
@@ -421,6 +421,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
         Elements image = doc.select(".entry-content img");
         news.setImage(image.attr("src"));
 
+
         Elements content = doc.select(".entry-content");
         news.setContent(content.html());
 
@@ -515,6 +516,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
             Intent intent = new Intent();
             intent.setClass(getActivity(), NewsDetailsActivity.class);
             intent.putExtra("news", news);
+            intent.putExtra("pos", pos);
             startActivity(intent);
 
             //Log.e(TAG, "POS" + news.getTitle());
@@ -537,7 +539,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
             holder.mView.setTag(position);
 
-          //  Log.e(TAG, mLists.get(position).getImage());
+            //  Log.e(TAG, mLists.get(position).getImage());
             //异步加载图片
             Picasso.with(getActivity()).load(mLists.get(position).getImage()).placeholder(R.drawable.loading).fit().into(holder.ivPic);
             //holder.ivPic.setImageResource();

@@ -203,14 +203,8 @@ public class News implements Serializable {
     }
 
     public String getHTMLContent() {
-        String content = mContent;//.replaceAll("<img\\\\s+.*\\\\s*\\\\/{0,1}>", "");
-
-        String regex = "<img\\s*([\\w]*=(\"|\')([^\"\']*)(\"|\')\\s*)*/>";//这样更简单
-        // String regex="<img\\s*src=(\"|\')([^\"\']+)(\"|\')\\s*([\\w]+=(\"|\')([^\"\']*)(\"|\')\\s*)*/>";
-        // Pattern p = Pattern.compile("<img\\s*src=(\"|\')([^\"\']+)(\"|\')\\s*([\\w]+=(\"|\')([^\"\']*)(\"|\')\\s*)*/>");
-        //Matcher m = p.matcher(content);
-        content = content.replaceAll(regex, "");
-
+        String content = mContent;
+        content = content.replaceAll("src", "style=\"width:0px;height:0px;border:0px;\" csr");
         return content;
     }
 

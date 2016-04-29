@@ -213,12 +213,18 @@ public class NewsDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MainActivity.MAIN_INDEX = 2;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                MainActivity.MAIN_INDEX = 2;
-                break;
-        }
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                MainActivity.MAIN_INDEX = 2;
+//                break;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

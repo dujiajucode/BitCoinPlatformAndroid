@@ -186,16 +186,96 @@ package cn.scujcc.bug.bitcoinplatformandroid.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import java.io.InputStream;
+
+import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.util.fix.MyApp;
+import quickfix.ConfigError;
+import quickfix.DefaultMessageFactory;
+import quickfix.FileLogFactory;
+import quickfix.FileStoreFactory;
+import quickfix.Initiator;
+import quickfix.LogFactory;
+import quickfix.MessageFactory;
+import quickfix.MessageStoreFactory;
+import quickfix.SessionSettings;
+import quickfix.SocketInitiator;
 
 /**
  * Created by lilujia on 16/4/30.
  */
 public class FIXService extends Service {
+    private static final String TAG = "FIXService";
+
+    private IBinder mBinder = new LocalBinder();
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.e(TAG, "onCreate");
+        MyApp app = new MyApp();
+        InputStream inputStream = getResources().openRawResource(R.raw.quickfix_client);//quickfix-client.properties
+        SessionSettings settings = null;
+        try {
+            settings = new SessionSettings(inputStream);
+        } catch (ConfigError configError) {
+            configError.printStackTrace();
+        }
+        MessageStoreFactory storeFactory = new FileStoreFactory(settings);
+        LogFactory logFactory = new FileLogFactory(settings);
+        MessageFactory messageFactory = new DefaultMessageFactory();
+        Initiator initiator = null;
+        try {
+            initiator = new SocketInitiator(app, storeFactory, settings, logFactory, messageFactory);
+        } catch (ConfigError configError) {
+            configError.printStackTrace();
+        }
+        try {
+            initiator.block();
+        } catch (ConfigError configError) {
+            configError.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.e(TAG, "onStartCommand");
+
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG, "onDestroy");
+
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
+
+    public class LocalBinder extends Binder {
+        public FIXService getService() {
+
+            return FIXService.this;
+        }
+    }
+
+    public void change() {
+
+    }
+
+
 }

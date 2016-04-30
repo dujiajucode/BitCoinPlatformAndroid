@@ -185,13 +185,11 @@
 package cn.scujcc.bug.bitcoinplatformandroid.util.fix;
 
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
+import android.util.Log;
 
-import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
-import cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.BTCCTradingRequest;
-import cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.UnsupportMarketException;
+import java.util.Iterator;
+import java.util.List;
+
 import quickfix.Application;
 import quickfix.DoNotSend;
 import quickfix.Field;
@@ -200,35 +198,18 @@ import quickfix.IncorrectDataFormat;
 import quickfix.IncorrectTagValue;
 import quickfix.Message;
 import quickfix.RejectLogon;
-import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.UnsupportedMessageType;
-import quickfix.field.OrdType;
-import quickfix.field.Side;
 import quickfix.fix44.MessageCracker;
 
 /**
  * Created by lilujia on 16/4/30.
  */
-//public class MyDemo {
-//
-
-//
-//    public static void main(String[] args) throws ConfigError {
-//        MyQuickFixApp app = new MyQuickFixApp();
-//        InputStream inputStream = BTCCFIXClient.class.getResourceAsStream("/quickfix-client.properties");
-//        SessionSettings settings = new SessionSettings(inputStream);
-//        MessageStoreFactory storeFactory = new FileStoreFactory(settings);
-//        LogFactory logFactory = new FileLogFactory(settings);
-//        MessageFactory messageFactory = new DefaultMessageFactory();
-//        Initiator initiator = new SocketInitiator(app, storeFactory, settings, logFactory, messageFactory);
-//        initiator.block();
-//        System.out.println("this is end");
-//    }
-//
-//}
 
 public class MyApp extends MessageCracker implements Application {
+
+    private static final String TAG = "MyApp";
+
 
     @Override
     public void fromAdmin(Message message, SessionID session)
@@ -236,12 +217,36 @@ public class MyApp extends MessageCracker implements Application {
         print("fromAdmin", message);
     }
 
+    /**
+     * 从服务器收到消息
+     *
+     * @param message
+     * @param session
+     * @throws FieldNotFound
+     * @throws IncorrectDataFormat
+     * @throws IncorrectTagValue
+     * @throws UnsupportedMessageType
+     */
     @Override
     public void fromApp(Message message, SessionID session)
             throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
         // TODO Auto-generated method stub
         print("fromApp", message);
+
+        String id = message.getString(11);
+
+        Log.e(TAG, "ID" + id);
+
+        for (FIXTask task : FIXTaskManger.getInstance().getTemporaryTaskList()) {
+            if (id.equals(task.toString())) {
+                task.getTaskCallBack().onSuccess();
+                FIXTaskManger.getInstance().getTemporaryTaskList().remove(task);
+                break;
+            }
+        }
+
     }
+
 
     @Override
     public void onCreate(SessionID arg0) {
@@ -251,21 +256,27 @@ public class MyApp extends MessageCracker implements Application {
 
     }
 
+    /**
+     * 连接成功后
+     *
+     * @param sessionID
+     */
     @Override
     public void onLogon(SessionID sessionID) {
         // TODO Auto-generated method stub
         System.out.println("onLogon");
-
-        buy(sessionID);// (sessionID);
-    }
-
-    String toGetAccountInfoParamString() {
-        String retString = "method=getAccountInfo&params=balance";
-        return retString;
-    }
-
-    public void onMessage(Message message, Session session) {
-        print("onMessage", message);
+        FIXTaskManger taskManger = FIXTaskManger.getInstance();
+        while (true) {
+            List<FIXTask> list = taskManger.getFIXTaskList();
+            for (int i = 0; i < list.size(); i++) {
+                FIXTask task = list.get(i);
+                Thread thread = list.get(i).getThread();
+                thread.start();
+                taskManger.getFIXTaskList().remove(0);
+                taskManger.getTemporaryTaskList().add(task);
+            }
+        }
+        //OnLogin
     }
 
 
@@ -282,6 +293,13 @@ public class MyApp extends MessageCracker implements Application {
         print("toAdmin", message);
     }
 
+    /**
+     * 向服务器发送消息
+     *
+     * @param message
+     * @param arg1
+     * @throws DoNotSend
+     */
     @Override
     public void toApp(Message message, SessionID arg1) throws DoNotSend {
         print("toApp", message);
@@ -299,68 +317,6 @@ public class MyApp extends MessageCracker implements Application {
 
         System.out.println("----------------" + method + "-------------------");
 
-    }
-
-
-    private void buy(final SessionID sessionId) {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                quickfix.Message message = null;
-
-                // MARKET DATA INCREMENTAL REFRESH REQUEST (V)
-                // message =
-                // BTCCMarketDataRequest.marketDataIncrementalRequest("LTCBTC");
-                // message =
-                // BTCCMarketDataRequest.marketDataIncrementalRequest("LTCCNY");
-                System.out.println("准备用市场价格购买0.1比特币");
-                // message =
-                // BTCCMarketDataRequest.marketDataIncrementalRequest("BTCCNY");
-
-                // try {
-                // Thread.sleep(5000);
-                // } catch (InterruptedException e) {
-                // // TODO Auto-generated catch block
-                // e.printStackTrace();
-                // }
-
-                // MARKET DATA SNAPSHOT FULL REFRESH REQUEST (V)
-                // message =
-                // BTCCMarketDataRequest.marketDataFullSnapRequest("LTCCNY");
-                // Session.lookupSession(sessionID).send(message);
-                // try {
-                // Thread.sleep(10000);
-                // } catch (InterruptedException e) {
-                // // TODO Auto-generated catch block
-                // e.printStackTrace();
-                // }
-
-                BTCCTradingRequest tradeRequest = new BTCCTradingRequest();
-
-                // UNSUBSCRIBE MARKET DATA INCREMENTAL REFRESH (V)
-                // message =
-                // BTCCMarketDataRequest.unsubscribeIncrementalRequest("LTCCNY");
-                try {
-                    message = tradeRequest.createNewOrderSingle(SecurityConfig.ACCESS_KEY,
-                            SecurityConfig.SECRET_KEY, Side.SELL, OrdType.MARKET, 0.01,
-                            "BTCCNY"); //
-                } catch (InvalidKeyException | NoSuchAlgorithmException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (UnsupportMarketException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                Session.lookupSession(sessionId).send(message);
-                // try {
-                // Thread.sleep(3000);
-                // } catch (InterruptedException e) {
-                // // TODO Auto-generated catch block
-                // e.printStackTrace();
-                // }
-            }
-        }).start();
     }
 
 

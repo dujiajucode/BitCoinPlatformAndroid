@@ -211,20 +211,20 @@ import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Trend;
+import cn.scujcc.bug.bitcoinplatformandroid.service.FIXService;
 import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
 import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p>
+ * <p/>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
 
     private static final String TAG = "ATFragment";
     private String mTextviewArray[] = {"综合", "买入", "卖出", "订单"};
-    private SocketService mService;
     private RecyclerView mRecyclerViewBuy, mRecyclerViewSell;
 
     private List<Trend> mBuyList;
@@ -232,15 +232,32 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
     private DataAdapter mBuyAdapter;
     private DataAdapter mSellAdapter;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private ServiceConnection mSocketServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
-            mService = binder.getService(ActualTransactionFragment.this);
-            //mService.setDataChange(ActualTransactionFragment.this);
+            binder.getService(ActualTransactionFragment.this);
+            //mSocketService.setDataChange(ActualTransactionFragment.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+
+        }
+    };
+
+    private ServiceConnection mFIXServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            FIXService.LocalBinder binder = (FIXService.LocalBinder) service;
+            // mFIXService = binder.getService();
+            //mSocketService.setDataChange(ActualTransactionFragment.this);
         }
 
         @Override
@@ -257,15 +274,20 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
     @Override
     public void onResume() {
         super.onResume();
-        Intent intent = new Intent(getActivity(), SocketService.class);
-        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        Intent socketServiceIntent = new Intent(getActivity(), SocketService.class);
+        getActivity().bindService(socketServiceIntent, mSocketServiceConnection, Context.BIND_AUTO_CREATE);
+
+        Intent FIXServiceIntent = new Intent(getActivity(), FIXService.class);
+        getActivity().bindService(FIXServiceIntent, mFIXServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        getActivity().unbindService(mConnection);
+        getActivity().unbindService(mSocketServiceConnection);
+        getActivity().unbindService(mFIXServiceConnection);
 
     }
 

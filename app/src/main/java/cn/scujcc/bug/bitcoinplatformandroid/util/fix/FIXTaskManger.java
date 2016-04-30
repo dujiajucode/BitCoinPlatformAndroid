@@ -191,7 +191,7 @@ import java.util.List;
  * Created by lilujia on 16/4/30.
  */
 public class FIXTaskManger {
-    private static FIXTaskManger mTaskManger;
+    private static FIXTaskManger sTaskManger;
 
     private List<FIXTask> mFIXTaskList;
     private List<FIXTask> mTemporaryTaskList;
@@ -201,12 +201,27 @@ public class FIXTaskManger {
         mFIXTaskList = new ArrayList<FIXTask>();
     }
 
+    public List<FIXTask> getTemporaryTaskList() {
+        return mTemporaryTaskList;
+    }
+
+    public void setTemporaryTaskList(List<FIXTask> temporaryTaskList) {
+        mTemporaryTaskList = temporaryTaskList;
+    }
+
+    public List<FIXTask> getFIXTaskList() {
+        return mFIXTaskList;
+    }
+
+    public void setFIXTaskList(List<FIXTask> FIXTaskList) {
+        mFIXTaskList = FIXTaskList;
+    }
 
     public static FIXTaskManger getInstance() {
-        if (mTaskManger == null) {
-            mTaskManger = new FIXTaskManger();
+        if (sTaskManger == null) {
+            sTaskManger = new FIXTaskManger();
         }
-        return mTaskManger;
+        return sTaskManger;
     }
 
 

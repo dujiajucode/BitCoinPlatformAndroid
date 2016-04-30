@@ -213,7 +213,7 @@ public class BTCCTradingRequest {
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
     public NewOrderSingle createNewOrderSingle(String accesskey, String secretkey, char side, char ordertype,
-                                               double price, double amount, String symbol)
+                                               double price, double amount, String symbol, String uuid)
             throws InvalidKeyException, NoSuchAlgorithmException, UnsupportMarketException {
         String methodstr = null;
         if (side == Side.BUY) {
@@ -242,7 +242,7 @@ public class BTCCTradingRequest {
     }
 
     public NewOrderSingle createNewOrderSingle(String accesskey, String secretkey, char side, char ordertype,
-                                               double amount, String symbol)
+                                               double amount, String symbol, String uuid)
             throws InvalidKeyException, NoSuchAlgorithmException, UnsupportMarketException {
         // Double price=null;
         String methodstr = null;
@@ -254,7 +254,7 @@ public class BTCCTradingRequest {
         String accountString = this.getAccountString(accesskey, secretkey, methodstr);
         NewOrderSingle newOrderSingleRequest = new NewOrderSingle();
         newOrderSingleRequest.set(new Account(accountString));
-        newOrderSingleRequest.set(new ClOrdID("ClOrdID"));
+        newOrderSingleRequest.set(new ClOrdID(uuid));
         newOrderSingleRequest.set(new OrderQty(amount));
         newOrderSingleRequest.set(new OrdType(ordertype));
         // 如果买入 ,OrdType 为1 price 意思为市价单 买30块钱的币 OrderQty无意义

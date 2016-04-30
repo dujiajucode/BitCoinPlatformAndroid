@@ -181,200 +181,88 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
+package cn.scujcc.bug.bitcoinplatformandroid.util.fix;
+
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
-import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
-import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.HttpsURLConnection;
+
+import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 
 /**
- * 现货交易买卖
+ * Created by lilujia on 16/4/30.
  */
-public class ActualTransactionBuyAndSellFragment extends BaseFragment {
+public class AccountInfo {
 
-    private static final String TAG = "ATBuyAndsellFragment";
-    public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_Sell";
-    private static final String ACCOUNT_INFO_URL = "http://api.xiongmaosoft.com/btcc/index.php";
-    SocketProtocol mProtocol;
+    private static final String ACCESS_KEY = SecurityConfig.ACCESS_KEY;
+    private static final String SECRET_KEY = SecurityConfig.SECRET_KEY;
+    private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
+    private static final String TAG = "AccountInfo";
 
-    private Button mButton;
-
-    private Spinner mSpinner;
-
-    private TextView mCNYTextView, mBTCTextView;
-
-    private TextInputEditText mCountEdit, mUnivalentEdit;
-
-    private boolean isSell;
-
-    private boolean isLimit;
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        savedInstanceState = getArguments();
-        if (savedInstanceState != null) {
-            isSell = savedInstanceState.getBoolean(ARGS_IS_Sell);
-        }
-
-
+    public static String getSignature(String data, String key) throws Exception {
+        // get an hmac_sha1 key from the raw key bytes
+        SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
+        // get an hmac_sha1 Mac instance and initialize with the signing key
+        Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
+        mac.init(signingKey);
+        // compute the hmac on input data bytes
+        byte[] rawHmac = mac.doFinal(data.getBytes());
+        return bytArrayToHex(rawHmac);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    private static String bytArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : a)
+            sb.append(String.format("%02x", b & 0xff));
+        return sb.toString();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsell, container, false);
+    public static String getAccountInfo() throws Exception {
 
-        mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
-        mSpinner = (Spinner) view.findViewById(R.id.fragment_actualtransactionbuy_mode);
-        mCountEdit = (TextInputEditText) view.findViewById(R.id.fragment_actualtransactionbuy_count);
-        mUnivalentEdit = (TextInputEditText)
-                view.findViewById(R.id.fragment_actualtransactionbuy_univalent);
-        mCNYTextView = (TextView) view.findViewById(R.id.fragment_ats_buy_account_cnycount);
-        mBTCTextView = (TextView) view.findViewById(R.id.fragment_ats_buy_account_btccount);
-        //初始化
-        if (isSell) {
-            //卖出
-            mButton.setText(R.string.fragment_actualtransactionbuy_sell);
-
-        } else {
-            //买入
-            mButton.setText(R.string.fragment_actualtransactionbuy_buy);
-
+        String tonce = "" + (System.currentTimeMillis() * 1000);
+        Log.e(TAG, tonce);
+        String params = "tonce=" + tonce.toString() + "&accesskey=" + ACCESS_KEY
+                + "&requestmethod=post&id=1&method=getAccountInfo&params=";
+        Log.e(TAG, params);
+        String hash = getSignature(params, SECRET_KEY);
+        Log.e(TAG, hash);
+        String url = "https://api.btcc.com/api_trade_v1.php";
+        URL obj = new URL(url);
+        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+        String userpass = ACCESS_KEY + ":" + hash;
+        String basicAuth = "Basic " + android.util.Base64.encodeToString(userpass.getBytes(), 16);
+        Log.e(TAG, userpass);
+        Log.e(TAG, basicAuth);
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Json-Rpc-Tonce", tonce.toString());
+        con.setRequestProperty("Authorization", basicAuth);
+        String postdata = "{\"method\": \"getAccountInfo\", \"params\": [], \"id\": 1}";
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(postdata);
+        wr.flush();
+        wr.close();
+        int responseCode = con.getResponseCode();
+        Log.e(TAG, "\nSending 'POST' request to URL : " + url);
+        Log.e(TAG, "Post parameters : " + postdata);
+        Log.e(TAG, "Response Code : " + responseCode);
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
         }
-        isLimit = true;
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if (position == 0) {
-                    //限价
-                    isLimit = true;
-                    mUnivalentEdit.setText("");
-                    mUnivalentEdit.setEnabled(true);
-                } else if (position == 1) {
-                    //市价模式
-                    isLimit = false;
-                    mUnivalentEdit.setText("不用填写");
-                    mUnivalentEdit.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-
-
-        });
-
-
-        //获取余额
-        updateBalance();
-
-        //开启线程
-        return view;
-
+        in.close();
+        // print result
+        return response.toString();
 
     }
-
-
-    public void updateBalance() {
-        BalanceAsyncTask balanceAsyncTask = new BalanceAsyncTask();
-        balanceAsyncTask.execute();
-        Log.e(TAG, "updateBalance");
-    }
-
-    public void updateBalanceUI(Balance balance) {
-        if (balance != null) {
-            mBTCTextView.setText("" + balance.getBTC());
-            mCNYTextView.setText("" + balance.getCNY());
-        }
-    }
-
-    class Balance {
-        private double mBTC;
-        private double mCNY;
-
-        public Balance() {
-
-        }
-
-        public Balance(double cny, double btc) {
-            this.mCNY = cny;
-            this.mBTC = btc;
-        }
-
-        public double getBTC() {
-            return mBTC;
-        }
-
-        public void setBTC(double BTC) {
-            mBTC = BTC;
-        }
-
-        public double getCNY() {
-            return mCNY;
-        }
-
-        public void setCNY(double CNY) {
-            mCNY = CNY;
-        }
-    }
-
-    class BalanceAsyncTask extends AsyncTask<Void, Void, Balance> {
-
-        @Override
-        protected Balance doInBackground(Void... params) {
-            Balance balance = new Balance();
-
-            try {
-                String json = NetWork.getUrlString(ACCOUNT_INFO_URL);
-                Log.e(TAG, json);
-                JSONObject balanceObject = new JSONObject(json);
-                balanceObject = balanceObject.getJSONObject("balance");
-
-                balance.setBTC(balanceObject.getJSONObject("btc").getDouble("amount"));
-                balance.setCNY(balanceObject.getJSONObject("cny").getDouble("amount"));
-
-                return balance;
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e(TAG, "Exception " + e.getLocalizedMessage());
-                return null;
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(Balance balance) {
-            super.onPostExecute(balance);
-            updateBalanceUI(balance);
-        }
-    }
-
 }

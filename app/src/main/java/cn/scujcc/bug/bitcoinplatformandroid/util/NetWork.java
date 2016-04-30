@@ -182,31 +182,62 @@
  *
  */
 
-package cn.scujcc.bug.bitcoinplatformandroid.service;
+package cn.scujcc.bug.bitcoinplatformandroid.util;
 
-import android.app.IntentService;
-import android.content.Intent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
- * Created by lilujia on 16/4/29.
+ * Created by lilujia on 16/4/30.
  */
-public class BalanceRefreshService extends IntentService {
+public class NetWork {
+    public static String getUrlString(String myurl) throws IOException {
+        InputStream is = null;
+        // Only display the first 500 characters of the retrieved
+        // web page content.
+        // int len = 500;
 
-    public BalanceRefreshService() {
-        super("BalanceRefreshService");
+        try {
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+            // Log.e(TAG, "The response is: " + response);
+            is = conn.getInputStream();
+
+            // Convert the InputStream into a string
+            return readIt(is, 10240);
+
+
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
     }
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public BalanceRefreshService(String name) {
-        super(name);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
+    public static String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+        InputStreamReader read = new InputStreamReader(
+                stream, "UTF-8");//考虑到编码格式
+        BufferedReader bufferedReader = new BufferedReader(read);
+        String lineTxt = "";
+        StringBuilder sb = new StringBuilder();
+        while ((lineTxt = bufferedReader.readLine()) != null) {
+            sb.append(lineTxt);
+        }
+        bufferedReader.close();
+        return sb.toString();
     }
 }

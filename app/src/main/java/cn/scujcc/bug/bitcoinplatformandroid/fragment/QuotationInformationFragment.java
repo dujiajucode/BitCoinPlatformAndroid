@@ -228,6 +228,7 @@ import java.util.List;
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.activity.NewsDetailsActivity;
 import cn.scujcc.bug.bitcoinplatformandroid.model.News;
+import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
 
 /**
  * Created by lilujia on 16/3/27.
@@ -382,37 +383,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
         return list;
     }
 
-    private String getUrlString(String myurl) throws IOException {
-        InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        // int len = 500;
-
-        try {
-            URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            // Starts the query
-            conn.connect();
-            int response = conn.getResponseCode();
-            // Log.e(TAG, "The response is: " + response);
-            is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            return readIt(is, 10240);
-
-
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-    }
 
     public void getImageAndContent(String url, News news) throws Exception {
 
@@ -475,18 +445,6 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
     }
 
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        InputStreamReader read = new InputStreamReader(
-                stream, "UTF-8");//考虑到编码格式
-        BufferedReader bufferedReader = new BufferedReader(read);
-        String lineTxt = "";
-        StringBuilder sb = new StringBuilder();
-        while ((lineTxt = bufferedReader.readLine()) != null) {
-            sb.append(lineTxt);
-        }
-        bufferedReader.close();
-        return sb.toString();
-    }
 
     @Override
     public void onRefresh() {
@@ -603,7 +561,7 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
             }
 
             try {
-                String xmlString = getUrlString(NEWS_RSS_URL);
+                String xmlString = NetWork.getUrlString(NEWS_RSS_URL);
 
                 list = getNews(xmlString);
                 //保存数据

@@ -276,7 +276,6 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         setHasOptionsMenu(true);
         setTitle(view, "现货交易");
-        setShowPeopleCenter();
 
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tablayout);
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);

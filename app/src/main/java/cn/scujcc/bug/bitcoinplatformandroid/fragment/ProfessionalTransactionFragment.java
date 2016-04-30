@@ -219,7 +219,6 @@ public class ProfessionalTransactionFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
         setTitle(view, "专业交易");
-        setShowPeopleCenter();
 
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tablayout);
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);

@@ -190,8 +190,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
 import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
-import cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.fix.BTCCTradingRequest;
-import cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.fix.UnsupportMarketException;
+import cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.BTCCTradingRequest;
+import cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.UnsupportMarketException;
 import quickfix.Application;
 import quickfix.DoNotSend;
 import quickfix.Field;

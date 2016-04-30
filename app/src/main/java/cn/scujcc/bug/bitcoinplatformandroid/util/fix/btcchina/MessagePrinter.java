@@ -182,7 +182,7 @@
  *
  */
 
-package cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.fix.util;
+package cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

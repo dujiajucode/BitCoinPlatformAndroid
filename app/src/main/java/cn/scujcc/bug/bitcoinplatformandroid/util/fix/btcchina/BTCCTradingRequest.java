@@ -182,7 +182,7 @@
  *
  */
 
-package cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina.fix;
+package cn.scujcc.bug.bitcoinplatformandroid.util.fix.btcchina;
 
 //import java.io.IOException;
 

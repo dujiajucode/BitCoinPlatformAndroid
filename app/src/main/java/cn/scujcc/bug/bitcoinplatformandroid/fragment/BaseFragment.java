@@ -184,7 +184,6 @@
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -193,7 +192,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 父类
  */
 public class BaseFragment extends Fragment {
@@ -210,23 +209,13 @@ public class BaseFragment extends Fragment {
 
     }
 
-    /**
-     * 显示个人中心
-     */
-    protected void setShowPeopleCenter() {
-//        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-//        ActionBar ab = appCompatActivity.getSupportActionBar();
-//        if (ab != null) {
-//            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-//            ab.setDisplayHomeAsUpEnabled(true);
-//        }
-    }
-
     protected void setTitle(View view, int title) {
         if (view != null) {
             Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
             if (toolbar != null) {
                 toolbar.setTitle(title);
+                AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+                appCompatActivity.setSupportActionBar(toolbar);
             }
         }
 

@@ -182,78 +182,8 @@
  *
  */
 
-package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
+package cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
-import cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket.WebSocketService;
-
-public class SocketProtocol implements WebSocketService {
-
-    private String apiKey = SecurityConfig.USD_ACCESS_KEY;
-    private String secretKey = SecurityConfig.USD_SECRET_KEY;
-
-    private String url = SecurityConfig.USD_URL;
-
-    private SocketDataChange mCallback;
-
-    private WebSoketClient mClient;
-
-    private static SocketProtocol sSocketProtocol;
-
-    private SocketProtocol() {
-
-        mClient = new WebSoketClient(url, this);
-
-        mClient.start();
-    }
-
-    public static SocketProtocol getInstance(SocketDataChange callback) {
-        if (sSocketProtocol == null) {
-            sSocketProtocol = new SocketProtocol();
-        }
-        sSocketProtocol.mCallback = callback;
-        return sSocketProtocol;
-    }
-
-    public void getUserinfo() {
-        mClient.getUserInfo(apiKey, secretKey);
-        mClient.subUserInfo(apiKey, secretKey);
-        //
-    }
-
-    @Override
-    public void onReceive(String data) {
-
-        if (mCallback == null || data.contains("{\"event\":\"pong\"}")) {
-            return;
-        }
-        System.out.println(data);
-        try {
-            JSONArray jsonArr = new JSONArray(data);
-            JSONObject jsonObj = jsonArr.getJSONObject(0);
-
-            String channel = jsonObj.getString("channel");
-
-            if (channel == null) {
-                //mCallback.onFail(data);
-                return;
-            }
-
-            if (channel.equals("ok_spotusd_userinfo") || channel.equals("ok_sub_spotusd_userinfo")) {
-                if (!jsonObj.has("success"))
-                    mCallback.balanceChange(data);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            // mCallback.onFail(data);
-        }
-
-        System.out.println("--------------------------");
-    }
+public interface WebSocketService {
+	public void onReceive(String msg);
 }

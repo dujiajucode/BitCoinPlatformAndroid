@@ -217,7 +217,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p>
+ * <p/>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
@@ -247,7 +247,6 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         }
     };
-
 
 
     @Override
@@ -431,7 +430,25 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     @Override
     public void balanceChange(String json) {
-        Log.e(TAG, "余额更新" + json);
+        Balance balance = new Balance();
+        try {
+            JSONArray arr = new JSONArray(json);
+            JSONObject obj = arr.getJSONObject(0);
+            if (obj.getJSONObject("data").getJSONObject("info").has("funds"))
+                obj = obj.getJSONObject("data").getJSONObject("info").getJSONObject("funds");
+            else
+                obj = obj.getJSONObject("data").getJSONObject("info");
+            JSONObject freeObj = obj.getJSONObject("free");
+            JSONObject freezedObj = obj.getJSONObject("freezed");
+            balance.setFreeBTC(freeObj.getDouble("btc"));
+            balance.setFreeUSD(freeObj.getDouble("usd"));
+            balance.setFreezedBTC(freezedObj.getDouble("btc"));
+            balance.setFreezedUSD(freezedObj.getDouble("usd"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.e(TAG, "onUserInfoUpdate" + balance);
 
     }
 
@@ -520,5 +537,49 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
             }
         }
+
+    }
+
+
+    public class Balance {
+        private double freeUSD, freeBTC, freezedUSD, freezedBTC;
+
+        @Override
+        public String toString() {
+            return "{可用比特币" + freeBTC + "，可用USD" + freeUSD + ",冻结比特币" + freezedBTC + "，冻结USD" + freezedUSD + "}";
+        }
+
+        public double getFreeUSD() {
+            return freeUSD;
+        }
+
+        public void setFreeUSD(double freeUSD) {
+            this.freeUSD = freeUSD;
+        }
+
+        public double getFreeBTC() {
+            return freeBTC;
+        }
+
+        public void setFreeBTC(double freeBTC) {
+            this.freeBTC = freeBTC;
+        }
+
+        public double getFreezedUSD() {
+            return freezedUSD;
+        }
+
+        public void setFreezedUSD(double freezedUSD) {
+            this.freezedUSD = freezedUSD;
+        }
+
+        public double getFreezedBTC() {
+            return freezedBTC;
+        }
+
+        public void setFreezedBTC(double freezedBTC) {
+            this.freezedBTC = freezedBTC;
+        }
+
     }
 }

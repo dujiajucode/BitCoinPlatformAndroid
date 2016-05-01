@@ -182,78 +182,81 @@
  *
  */
 
-package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
+package cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+public class MD5Util {
+	
+	public static String buildMysignV1(Map<String, String> sArray,
+			String secretKey) {
+		String mysign = "";
+		try {
+			String prestr = createLinkString(sArray); 
+			prestr = prestr + "&secret_key=" + secretKey; 
+			System.out.println("prestr     "+prestr);
+			mysign = getMD5String(prestr);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return mysign;
+	}
+	
+	public static String createLinkString(Map<String, String> params) {
 
-import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
-import cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket.WebSocketService;
+		List<String> keys = new ArrayList<String>(params.keySet());
+		Collections.sort(keys);
+		String prestr = "";
+		for (int i = 0; i < keys.size(); i++) {
+			String key = keys.get(i);
+			String value = params.get(key);
+			if (i == keys.size() - 1) {
+				prestr = prestr + key + "=" + value;
+			} else {
+				prestr = prestr + key + "=" + value + "&";
+			}
+		}
+		return prestr;
+	}
 
-public class SocketProtocol implements WebSocketService {
+	/**
+	 * 生成32位大写MD5值
+	 */
+	private static final char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5',
+			'6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-    private String apiKey = SecurityConfig.USD_ACCESS_KEY;
-    private String secretKey = SecurityConfig.USD_SECRET_KEY;
-
-    private String url = SecurityConfig.USD_URL;
-
-    private SocketDataChange mCallback;
-
-    private WebSoketClient mClient;
-
-    private static SocketProtocol sSocketProtocol;
-
-    private SocketProtocol() {
-
-        mClient = new WebSoketClient(url, this);
-
-        mClient.start();
-    }
-
-    public static SocketProtocol getInstance(SocketDataChange callback) {
-        if (sSocketProtocol == null) {
-            sSocketProtocol = new SocketProtocol();
-        }
-        sSocketProtocol.mCallback = callback;
-        return sSocketProtocol;
-    }
-
-    public void getUserinfo() {
-        mClient.getUserInfo(apiKey, secretKey);
-        mClient.subUserInfo(apiKey, secretKey);
-        //
-    }
-
-    @Override
-    public void onReceive(String data) {
-
-        if (mCallback == null || data.contains("{\"event\":\"pong\"}")) {
-            return;
-        }
-        System.out.println(data);
-        try {
-            JSONArray jsonArr = new JSONArray(data);
-            JSONObject jsonObj = jsonArr.getJSONObject(0);
-
-            String channel = jsonObj.getString("channel");
-
-            if (channel == null) {
-                //mCallback.onFail(data);
-                return;
-            }
-
-            if (channel.equals("ok_spotusd_userinfo") || channel.equals("ok_sub_spotusd_userinfo")) {
-                if (!jsonObj.has("success"))
-                    mCallback.balanceChange(data);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            // mCallback.onFail(data);
-        }
-
-        System.out.println("--------------------------");
-    }
+	public static String getMD5String(String str) {
+		try {
+			if (str == null || str.trim().length() == 0) {
+				return "";
+			}
+			byte[] bytes = str.getBytes();
+			MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+			messageDigest.update(bytes);
+			bytes = messageDigest.digest();
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < bytes.length; i++) {
+				sb.append(HEX_DIGITS[(bytes[i] & 0xf0) >> 4] + ""
+						+ HEX_DIGITS[bytes[i] & 0xf]);
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	public static String getParams(Map<String,String> map){
+		StringBuilder params = new StringBuilder("{");
+		for(Entry<String,String> param:map.entrySet()){
+			params.append("'").append(param.getKey()).append("':'").append(param.getValue()).append("',");
+		}
+		params.replace(params.length()-1,params.length(),"}");
+		return params.toString();
+	}
 }

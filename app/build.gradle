@@ -224,7 +224,6 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-
     compile files('libs/mpandroidchartlibrary-2-2-4.jar')
     compile files('libs/netty-all-4.0.23.Final.jar')
 }

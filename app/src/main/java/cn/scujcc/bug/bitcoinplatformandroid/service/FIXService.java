@@ -230,13 +230,8 @@ public class FIXService extends Service {
         MessageStoreFactory storeFactory = new FileStoreFactory(settings);
         LogFactory logFactory = new FileLogFactory(settings);
         MessageFactory messageFactory = new DefaultMessageFactory();
-        Initiator initiator = null;
         try {
-            initiator = new SocketInitiator(app, storeFactory, settings, logFactory, messageFactory);
-        } catch (ConfigError configError) {
-            configError.printStackTrace();
-        }
-        try {
+            Initiator initiator = new SocketInitiator(app, storeFactory, settings, logFactory, messageFactory);
             initiator.block();
         } catch (ConfigError configError) {
             configError.printStackTrace();

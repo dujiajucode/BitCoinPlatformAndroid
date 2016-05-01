@@ -278,8 +278,8 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         Intent socketServiceIntent = new Intent(getActivity(), SocketService.class);
         getActivity().bindService(socketServiceIntent, mSocketServiceConnection, Context.BIND_AUTO_CREATE);
 
-        Intent FIXServiceIntent = new Intent(getActivity(), FIXService.class);
-        getActivity().bindService(FIXServiceIntent, mFIXServiceConnection, Context.BIND_AUTO_CREATE);
+       // Intent FIXServiceIntent = new Intent(getActivity(), FIXService.class);
+       // getActivity().bindService(FIXServiceIntent, mFIXServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -287,7 +287,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         super.onPause();
 
         getActivity().unbindService(mSocketServiceConnection);
-        getActivity().unbindService(mFIXServiceConnection);
+        //getActivity().unbindService(mFIXServiceConnection);
 
     }
 

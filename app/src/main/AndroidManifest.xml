@@ -215,7 +215,6 @@
             android:parentActivityName=".activity.MainActivity"/>
 
         <service android:name=".service.SocketService"/>
-        <service android:name=".service.FIXService"/>
 
     </application>
 

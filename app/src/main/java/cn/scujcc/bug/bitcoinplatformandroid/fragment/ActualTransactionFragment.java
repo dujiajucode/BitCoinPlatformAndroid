@@ -211,7 +211,6 @@ import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Trend;
-import cn.scujcc.bug.bitcoinplatformandroid.service.FIXService;
 import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
 import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
@@ -249,22 +248,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         }
     };
 
-    private ServiceConnection mFIXServiceConnection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            FIXService.LocalBinder binder = (FIXService.LocalBinder) service;
-            // mFIXService = binder.getService();
-            //mSocketService.setDataChange(ActualTransactionFragment.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -303,9 +303,9 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
 
     public void updateBalance() {
-        BalanceAsyncTask balanceAsyncTask = new BalanceAsyncTask();
-        balanceAsyncTask.execute();
-        Log.e(TAG, "updateBalance");
+//        BalanceAsyncTask balanceAsyncTask = new BalanceAsyncTask();
+//        balanceAsyncTask.execute();
+//        Log.e(TAG, "updateBalance");
     }
 
     public void updateBalanceUI(Balance balance) {

@@ -220,10 +220,8 @@ dependencies {
 
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'org.jsoup:jsoup:1.9.1'
-    compile('io.socket:socket.io-client:0.7.0') {
-        // excluding org.json which is provided by Android
-        exclude group: 'org.json', module: 'json'
-    }
+ 
     compile files('libs/mpandroidchartlibrary-2-2-4.jar')
-    compile files('libs/netty-all-4.0.23.Final.jar')
+    compile 'io.netty:netty-all:4.0.36.Final'
+
 }

@@ -364,9 +364,10 @@ public abstract class WebSocketBase {
      */
     public void futureTrade(String apiKey, String secretKey, String symbol, String contractType, double price,
                             int amount, int type, double matchPrice, int leverRate) {
-        Log.e(TAG, "apiKey=" + apiKey + ", secretKey=" + secretKey + ", symbol=" + symbol + ", contractType="
-                + contractType + ", price=" + price + ", amount=" + amount + ", type=" + type + ", matchPrice="
-                + matchPrice + ", leverRate=" + leverRate);
+        Log.e(TAG,
+                "apiKey=" + apiKey + ", secretKey=" + secretKey + ", symbol=" + symbol + ", contractType="
+                        + contractType + ", price=" + price + ", amount=" + amount + ", type=" + type + ", matchPrice="
+                        + matchPrice + ", leverRate=" + leverRate);
         Map<String, String> preMap = new HashMap<String, String>();
         // 待签名字符串
         preMap.put("api_key", apiKey);
@@ -527,7 +528,7 @@ public abstract class WebSocketBase {
             handler.handshakeFuture().sync();
             this.setStatus(true);
         } catch (Exception e) {
-            Log.e(TAG, "WebSocketClient start error ", e);
+            Log.e(TAG, "WebSocketClient start error " + e.getLocalizedMessage());
             group.shutdownGracefully();
             this.setStatus(false);
         }
@@ -573,7 +574,6 @@ public abstract class WebSocketBase {
 }
 
 class MoniterTask extends TimerTask {
-
 
     private long startTime = System.currentTimeMillis();
     private int checkTime = 5000;

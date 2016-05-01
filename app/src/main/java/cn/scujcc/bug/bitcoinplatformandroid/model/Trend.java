@@ -195,7 +195,7 @@ public class Trend {
     public Trend() {
     }
 
-    public Trend(double mCount, double mPrice) {
+    public Trend(double mPrice, double mCount) {
         this.mCount = mCount;
         this.mPrice = mPrice;
     }

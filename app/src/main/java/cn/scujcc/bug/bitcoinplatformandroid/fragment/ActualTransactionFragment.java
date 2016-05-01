@@ -388,19 +388,19 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         //更新5栏
 
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            jsonObject = jsonObject.getJSONObject("grouporder");
-            JSONArray ask = jsonObject.getJSONArray("ask");
-            JSONArray bid = jsonObject.getJSONArray("bid");
+            JSONArray arr = new JSONArray(json);
+            JSONObject jsonObject = arr.getJSONObject(0).getJSONObject("data");
+            JSONArray ask = jsonObject.getJSONArray("asks");
+            JSONArray bid = jsonObject.getJSONArray("bids");
 
-            for (int i = 0; i < ask.length(); i++) {
-                JSONObject askObj = ask.getJSONObject(i);
-                Trend trendBuy = new Trend(askObj.getDouble("totalamount"), askObj.getDouble("price"));
+            for (int i = 0; i < 5; i++) {
+                JSONArray askObj = ask.getJSONArray(i);
+                Trend trendBuy = new Trend(askObj.getDouble(0), askObj.getDouble(1));
                 mBuyList.remove(1);
                 mBuyList.add(trendBuy);
 
-                JSONObject bidObj = bid.getJSONObject(i);
-                Trend trendSell = new Trend(bidObj.getDouble("totalamount"), bidObj.getDouble("price"));
+                JSONArray bidObj = bid.getJSONArray(i);
+                Trend trendSell = new Trend(bidObj.getDouble(0), bidObj.getDouble(1));
                 mSellList.remove(1);
                 mSellList.add(trendSell);
             }
@@ -448,7 +448,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             e.printStackTrace();
         }
 
-        Log.e(TAG, "onUserInfoUpdate" + balance);
+        Log.e(TAG, "balanceChange" + balance);
 
     }
 

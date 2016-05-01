@@ -208,8 +208,16 @@ public class SocketService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.e(TAG, "onCreate");
-        mProtocol = new SocketProtocol();
-        mProtocol.chat();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mProtocol = SocketProtocol.getInstance();
+                mProtocol.start();
+            }
+        }).start();
+
     }
 
 
@@ -238,7 +246,7 @@ public class SocketService extends Service {
 
     public class LocalBinder extends Binder {
         public SocketService getService(SocketDataChange mDataChange) {
-            mProtocol.setChange(mDataChange);
+            mProtocol.setCallback(mDataChange);
             // Return this instance of LocalService so clients can call public methods
             return SocketService.this;
         }

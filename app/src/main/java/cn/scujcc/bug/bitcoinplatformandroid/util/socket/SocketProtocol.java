@@ -185,6 +185,8 @@
 package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
 
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -192,8 +194,10 @@ import org.json.JSONObject;
 import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket.WebSocketService;
 
+
 public class SocketProtocol implements WebSocketService {
 
+    private static final String TAG = "SocketProtocol";
     private String apiKey = SecurityConfig.USD_ACCESS_KEY;
     private String secretKey = SecurityConfig.USD_SECRET_KEY;
 
@@ -209,21 +213,31 @@ public class SocketProtocol implements WebSocketService {
 
         mClient = new WebSoketClient(url, this);
 
-        mClient.start();
+
     }
 
-    public static SocketProtocol getInstance(SocketDataChange callback) {
+
+    public void start(){
+        mClient.start();
+        // 查询用户余额并订阅
+        mClient.getUserInfo(apiKey, secretKey);
+        mClient.subUserInfo(apiKey, secretKey);
+
+        // 订阅市场行情
+        mClient.addChannel("ok_sub_spotusd_btc_depth_20");
+    }
+
+
+    public static SocketProtocol getInstance() {
         if (sSocketProtocol == null) {
             sSocketProtocol = new SocketProtocol();
         }
-        sSocketProtocol.mCallback = callback;
+
         return sSocketProtocol;
     }
 
-    public void getUserinfo() {
-        mClient.getUserInfo(apiKey, secretKey);
-        mClient.subUserInfo(apiKey, secretKey);
-        //
+    public void setCallback(SocketDataChange callback) {
+        sSocketProtocol.mCallback = callback;
     }
 
     @Override
@@ -232,7 +246,7 @@ public class SocketProtocol implements WebSocketService {
         if (mCallback == null || data.contains("{\"event\":\"pong\"}")) {
             return;
         }
-        System.out.println(data);
+        Log.e(TAG, data);
         try {
             JSONArray jsonArr = new JSONArray(data);
             JSONObject jsonObj = jsonArr.getJSONObject(0);
@@ -240,13 +254,16 @@ public class SocketProtocol implements WebSocketService {
             String channel = jsonObj.getString("channel");
 
             if (channel == null) {
-                //mCallback.onFail(data);
+                // mCallback.onFail(data);
                 return;
             }
 
             if (channel.equals("ok_spotusd_userinfo") || channel.equals("ok_sub_spotusd_userinfo")) {
                 if (!jsonObj.has("success"))
                     mCallback.balanceChange(data);
+            } else if (channel.equals("ok_sub_spotusd_btc_depth_20")) {
+                if (!jsonObj.has("success"))
+                    mCallback.groupOrderChange(data);
             }
 
         } catch (JSONException e) {
@@ -254,6 +271,6 @@ public class SocketProtocol implements WebSocketService {
             // mCallback.onFail(data);
         }
 
-        System.out.println("--------------------------");
+        Log.e(TAG, "--------------------------");
     }
 }

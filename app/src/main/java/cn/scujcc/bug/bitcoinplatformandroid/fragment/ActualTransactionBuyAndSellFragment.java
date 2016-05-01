@@ -183,11 +183,9 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,10 +194,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
@@ -216,7 +211,8 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
     private Spinner mSpinner;
 
-    private TextView mCNYTextView, mBTCTextView;
+    private TextView mCNYTextView, mBTCTextView,
+            mFreezedCNYTextView, mFreezedBTCTextView;
 
     private TextInputEditText mCountEdit, mUnivalentEdit;
 
@@ -240,6 +236,12 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        //请求一次余额,解决Bug
+
+        if (mProtocol == null) {
+            mProtocol = SocketProtocol.getInstance();
+            mProtocol.getUserInfo();
+        }
 
     }
 
@@ -255,6 +257,9 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
                 view.findViewById(R.id.fragment_actualtransactionbuy_univalent);
         mCNYTextView = (TextView) view.findViewById(R.id.fragment_ats_buy_account_cnycount);
         mBTCTextView = (TextView) view.findViewById(R.id.fragment_ats_buy_account_btccount);
+        mFreezedCNYTextView = (TextView) view.findViewById(R.id.fragment_ats_buy_account_freezed_cnycount);
+        mFreezedBTCTextView = (TextView) view.findViewById(R.id.fragment_ats_buy_account_freezed_btccount);
+
         //初始化
         if (isSell) {
             //卖出
@@ -303,78 +308,22 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
 
     public void updateBalance() {
-//        BalanceAsyncTask balanceAsyncTask = new BalanceAsyncTask();
-//        balanceAsyncTask.execute();
-//        Log.e(TAG, "updateBalance");
+
     }
 
-    public void updateBalanceUI(Balance balance) {
-        if (balance != null) {
-            mBTCTextView.setText("" + balance.getBTC());
-            mCNYTextView.setText("" + balance.getCNY());
-        }
-    }
-
-    class Balance {
-        private double mBTC;
-        private double mCNY;
-
-        public Balance() {
-
-        }
-
-        public Balance(double cny, double btc) {
-            this.mCNY = cny;
-            this.mBTC = btc;
-        }
-
-        public double getBTC() {
-            return mBTC;
-        }
-
-        public void setBTC(double BTC) {
-            mBTC = BTC;
-        }
-
-        public double getCNY() {
-            return mCNY;
-        }
-
-        public void setCNY(double CNY) {
-            mCNY = CNY;
-        }
-    }
-
-    class BalanceAsyncTask extends AsyncTask<Void, Void, Balance> {
-
-        @Override
-        protected Balance doInBackground(Void... params) {
-            Balance balance = new Balance();
-
-            try {
-                String json = NetWork.getUrlString(ACCOUNT_INFO_URL);
-                Log.e(TAG, json);
-                JSONObject balanceObject = new JSONObject(json);
-                balanceObject = balanceObject.getJSONObject("balance");
-
-                balance.setBTC(balanceObject.getJSONObject("btc").getDouble("amount"));
-                balance.setCNY(balanceObject.getJSONObject("cny").getDouble("amount"));
-
-                return balance;
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e(TAG, "Exception " + e.getLocalizedMessage());
-                return null;
+    public void updateBalanceUI(final ActualTransactionFragment.Balance balance) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (balance != null) {
+                    mBTCTextView.setText("" + balance.getFreeBTC());
+                    mCNYTextView.setText("" + balance.getFreeUSD());
+                    mFreezedCNYTextView.setText("" + balance.getFreezedUSD());
+                    mFreezedBTCTextView.setText("" + balance.getFreezedBTC());
+                }
             }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(Balance balance) {
-            super.onPostExecute(balance);
-            updateBalanceUI(balance);
-        }
+        });
     }
+
 
 }

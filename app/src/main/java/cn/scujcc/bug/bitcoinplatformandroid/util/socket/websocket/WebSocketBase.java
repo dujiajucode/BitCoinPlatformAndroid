@@ -432,7 +432,9 @@ public abstract class WebSocketBase {
                 .append("'},'binary':'true'}");
         Log.e(TAG, tradeStr.toString());
         this.sendMessage(tradeStr.toString());
+        subscribChannel.add(channel);
     }
+
 
     /**
      * 现货交易数据
@@ -538,7 +540,12 @@ public abstract class WebSocketBase {
         if (!isAlive) {
             Log.e(TAG, "WebSocket is not Alive addChannel error");
         }
-        channel.writeAndFlush(new TextWebSocketFrame(message));
+        if (null == channel) {
+            Log.e(TAG, "WebSocket is channel null");
+        } else {
+            channel.writeAndFlush(new TextWebSocketFrame(message));
+        }
+
     }
 
     public void sentPing() {

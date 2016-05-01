@@ -280,6 +280,7 @@
                     android:layout_below="@id/fragment_ats_buy_account_title"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="8dp"
+                    android:paddingStart="40dp"
                     android:text="@string/fragment_actualtransactionbuy_btccount"/>
 
                 <TextView
@@ -307,6 +308,7 @@
                     android:layout_below="@id/fragment_ats_buy_account_cny"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="8dp"
+                    android:paddingStart="40dp"
                     android:text="@string/fragment_actualtransactionbuy_btccount"/>
 
                 <TextView
@@ -315,6 +317,62 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/fragment_ats_buy_account_cny"
+                    android:layout_margin="8dp"
+                    android:text="@string/fragment_actualtransactionbuy_btcsymbol"/>
+
+                <TextView
+                    android:id="@+id/fragment_ats_buy_account_freezed_cny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@id/fragment_ats_buy_account_btc"
+                    android:layout_margin="8dp"
+                    android:text="@string/fragment_actualtransactionbuy_freezed_cny"/>
+
+                <TextView
+                    android:id="@+id/fragment_ats_buy_account_freezed_cnycount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/fragment_ats_buy_account_btc"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="8dp"
+                    android:paddingStart="40dp"
+                    android:text="@string/fragment_actualtransactionbuy_btccount"/>
+
+                <TextView
+                    android:id="@+id/fragment_ats_buy_account_freezed_cnysymbol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/fragment_ats_buy_account_btc"
+                    android:layout_margin="8dp"
+                    android:text="@string/fragment_actualtransactionbuy_cnysymbol"/>
+
+                <TextView
+                    android:id="@+id/fragment_ats_buy_account_freezed_btc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@id/fragment_ats_buy_account_freezed_cny"
+                    android:layout_margin="8dp"
+                    android:text="@string/fragment_actualtransactionbuy_freezed_btc"/>
+
+                <TextView
+                    android:id="@+id/fragment_ats_buy_account_freezed_btccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/fragment_ats_buy_account_freezed_cny"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="8dp"
+                    android:paddingStart="40dp"
+                    android:text="@string/fragment_actualtransactionbuy_btccount"/>
+
+                <TextView
+                    android:id="@+id/fragment_ats_buy_account_freezed_btcsymbol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/fragment_ats_buy_account_freezed_cny"
                     android:layout_margin="8dp"
                     android:text="@string/fragment_actualtransactionbuy_btcsymbol"/>
             </RelativeLayout>

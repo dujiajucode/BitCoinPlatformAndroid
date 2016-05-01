@@ -185,8 +185,6 @@
 package cn.scujcc.bug.bitcoinplatformandroid.util.socket;
 
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -217,14 +215,17 @@ public class SocketProtocol implements WebSocketService {
     }
 
 
-    public void start(){
+    public void start() {
         mClient.start();
-        // 查询用户余额并订阅
-        mClient.getUserInfo(apiKey, secretKey);
+        // 订阅用户余额
         mClient.subUserInfo(apiKey, secretKey);
-
         // 订阅市场行情
         mClient.addChannel("ok_sub_spotusd_btc_depth_20");
+    }
+
+    public void getUserInfo() {
+
+        mClient.getUserInfo(apiKey, secretKey);
     }
 
 
@@ -246,7 +247,7 @@ public class SocketProtocol implements WebSocketService {
         if (mCallback == null || data.contains("{\"event\":\"pong\"}")) {
             return;
         }
-        Log.e(TAG, data);
+        //  Log.e(TAG, data);
         try {
             JSONArray jsonArr = new JSONArray(data);
             JSONObject jsonObj = jsonArr.getJSONObject(0);
@@ -271,6 +272,6 @@ public class SocketProtocol implements WebSocketService {
             // mCallback.onFail(data);
         }
 
-        Log.e(TAG, "--------------------------");
+        //  Log.e(TAG, "--------------------------");
     }
 }

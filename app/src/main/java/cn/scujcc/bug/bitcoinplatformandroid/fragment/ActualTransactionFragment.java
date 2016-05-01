@@ -225,7 +225,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
     private static final String TAG = "ATFragment";
     private String mTextviewArray[] = {"综合", "买入", "卖出", "订单"};
     private RecyclerView mRecyclerViewBuy, mRecyclerViewSell;
-
+    private ViewPagerAdapter mViewPagerAdapter;
     private List<Trend> mBuyList;
     private List<Trend> mSellList;
     private DataAdapter mBuyAdapter;
@@ -322,21 +322,21 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         buyBundle.putBoolean(ActualTransactionBuyAndSellFragment.ARGS_IS_Sell, false);
         buyFragment.setArguments(buyBundle);
 
-        Fragment SellFragment = new ActualTransactionBuyAndSellFragment();
+        Fragment sellFragment = new ActualTransactionBuyAndSellFragment();
         Bundle SellBundle = new Bundle();
         SellBundle.putBoolean(ActualTransactionBuyAndSellFragment.ARGS_IS_Sell, true);
-        SellFragment.setArguments(SellBundle);
+        sellFragment.setArguments(SellBundle);
 
         fragments.add(buyFragment);
-        fragments.add(SellFragment);
+        fragments.add(sellFragment);
 
         fragments.add(new Fragment4());
 
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),
+        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),
                 fragments);
         viewPager.setOffscreenPageLimit(fragments.size());
-        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setAdapter(mViewPagerAdapter);
         slidingTabLayout.setViewPager(viewPager, calculateScreenX());
 
         return view;
@@ -412,15 +412,17 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             return;
         }
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //tv.setText(json);
-                mBuyAdapter.notifyDataSetChanged();
-                mSellAdapter.notifyDataSetChanged();
-            }
-        });
+        if (getActivity() != null) {
 
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //tv.setText(json);
+                    mBuyAdapter.notifyDataSetChanged();
+                    mSellAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override
@@ -430,6 +432,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     @Override
     public void balanceChange(String json) {
+        Log.e("tag222", "rrrr");
         Balance balance = new Balance();
         try {
             JSONArray arr = new JSONArray(json);
@@ -446,9 +449,21 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             balance.setFreezedUSD(freezedObj.getDouble("usd"));
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("tag222", "balanceChange" + e.getLocalizedMessage());
         }
 
-        Log.e(TAG, "balanceChange" + balance);
+        Log.e("tag222", "balanceChange" + balance);
+        ActualTransactionBuyAndSellFragment buyFragment = (ActualTransactionBuyAndSellFragment) mViewPagerAdapter.getItem(1);
+
+        ActualTransactionBuyAndSellFragment sellFragment = (ActualTransactionBuyAndSellFragment) mViewPagerAdapter.getItem(2);
+
+        if (buyFragment != null) {
+            buyFragment.updateBalanceUI(balance);
+        }
+        if (sellFragment != null) {
+            sellFragment.updateBalanceUI(balance);
+        }
+        Log.e("tag222", "balanceChange" + balance);
 
     }
 
@@ -486,8 +501,8 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         public void onBindViewHolder(ViewHolder holder, int position) {
             if (position == 0) {
                 holder.tv1.setText("      ");
-                holder.tv2.setText("出价");
-                holder.tv3.setText("数量");
+                holder.tv2.setText("出价($)");
+                holder.tv3.setText("数量(฿)");
             } else {
                 //设置信息
                 Trend trend = mLists.get(position);

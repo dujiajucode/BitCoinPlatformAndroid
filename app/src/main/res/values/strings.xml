@@ -195,11 +195,13 @@
     <string name="fragment_actualtransactionbuy_buy">买入</string>
     <string name="fragment_actualtransactionbuy_sell">卖出</string>
     <string name="fragment_actualtransactionbuy_balance">账户余额</string>
-    <string name="fragment_actualtransactionbuy_cny">人民币</string>
+    <string name="fragment_actualtransactionbuy_cny">美元</string>
     <string name="fragment_actualtransactionbuy_btc">比特币</string>
+    <string name="fragment_actualtransactionbuy_freezed_cny">冻结美元</string>
+    <string name="fragment_actualtransactionbuy_freezed_btc">冻结比特币</string>
     <string name="fragment_actualtransactionbuy_btccount">0</string>
     <string name="fragment_actualtransactionbuy_btcsymbol">฿</string>
-    <string name="fragment_actualtransactionbuy_cnysymbol">￥</string>
+    <string name="fragment_actualtransactionbuy_cnysymbol">$</string>
 
 
 </resources>

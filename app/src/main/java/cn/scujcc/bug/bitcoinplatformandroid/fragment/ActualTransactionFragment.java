@@ -218,7 +218,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p/>
+ * <p>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
@@ -278,8 +278,8 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         Intent socketServiceIntent = new Intent(getActivity(), SocketService.class);
         getActivity().bindService(socketServiceIntent, mSocketServiceConnection, Context.BIND_AUTO_CREATE);
 
-       // Intent FIXServiceIntent = new Intent(getActivity(), FIXService.class);
-       // getActivity().bindService(FIXServiceIntent, mFIXServiceConnection, Context.BIND_AUTO_CREATE);
+        // Intent FIXServiceIntent = new Intent(getActivity(), FIXService.class);
+        // getActivity().bindService(FIXServiceIntent, mFIXServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override

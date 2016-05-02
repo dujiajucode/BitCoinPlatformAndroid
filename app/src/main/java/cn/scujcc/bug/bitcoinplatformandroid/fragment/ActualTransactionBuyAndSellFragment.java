@@ -187,6 +187,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -197,6 +199,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.json.JSONObject;
+
+import java.util.regex.Pattern;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Balance;
@@ -273,6 +277,62 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
             mButton.setText(R.string.fragment_actualtransactionbuy_buy);
 
         }
+        mUnivalentEdit.addTextChangedListener(new TextWatcher() {
+
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.e(TAG, "afterTextChanged" + s);
+                if (s.toString().length() == 0 || s.toString().equals("不用填写")) {
+                    return;
+                }
+                if (!isDecimal(s.toString())) {
+                    mUnivalentEdit.setError("只能输入两位小数");
+                } else {
+                    double d = Double.parseDouble(s.toString());
+                    if (d < 0.01) {
+                        mUnivalentEdit.setError("最小交易0.01");
+                    }
+                }
+            }
+        });
+        mCountEdit.addTextChangedListener(new TextWatcher() {
+
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (!isDecimal(s.toString())) {
+                    mCountEdit.setError("只能输入两位小数");
+                } else {
+                    double d = Double.parseDouble(s.toString());
+                    if (d < 0.01) {
+                        mCountEdit.setError("最小交易0.01");
+                    }
+                }
+            }
+        });
+
         isLimit = true;
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -309,6 +369,9 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
     }
 
+    public boolean isDecimal(String str) {
+        return Pattern.compile("^[0-9]+(.[0-9]{1,2})?$").matcher(str).matches();
+    }
 
     public void updateBalance() {
         BalanceAsyncTask balanceAsyncTask = new BalanceAsyncTask();

@@ -223,11 +223,6 @@ public class SocketProtocol implements WebSocketService {
         mClient.addChannel("ok_sub_spotusd_btc_depth_20");
     }
 
-    public void getUserInfo() {
-
-        mClient.getUserInfo(apiKey, secretKey);
-    }
-
 
     public static SocketProtocol getInstance() {
         if (sSocketProtocol == null) {

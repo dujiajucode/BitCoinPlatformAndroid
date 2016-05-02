@@ -183,9 +183,11 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -194,7 +196,13 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.model.Balance;
+import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
+import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
+import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
@@ -204,7 +212,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
     private static final String TAG = "ATBuyAndsellFragment";
     public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_Sell";
-    private static final String ACCOUNT_INFO_URL = "http://api.xiongmaosoft.com/btcc/index.php";
+    private static final String BALANCE_INFO_URL = "http://115.28.242.27:8080//balance";
     SocketProtocol mProtocol;
 
     private Button mButton;
@@ -236,12 +244,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        //请求一次余额,解决Bug
 
-        if (mProtocol == null) {
-            mProtocol = SocketProtocol.getInstance();
-            mProtocol.getUserInfo();
-        }
 
     }
 
@@ -308,21 +311,67 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
 
     public void updateBalance() {
-
+        BalanceAsyncTask balanceAsyncTask = new BalanceAsyncTask();
+        balanceAsyncTask.execute();
+        Log.e(TAG, "updateBalance");
     }
 
-    public void updateBalanceUI(final ActualTransactionFragment.Balance balance) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (balance != null) {
-                    mBTCTextView.setText("" + balance.getFreeBTC());
-                    mCNYTextView.setText("" + balance.getFreeUSD());
-                    mFreezedCNYTextView.setText("" + balance.getFreezedUSD());
-                    mFreezedBTCTextView.setText("" + balance.getFreezedBTC());
+    public void updateBalanceUI(final Balance balance) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (balance != null) {
+                        mBTCTextView.setText("" + balance.getFreeBTC());
+                        mCNYTextView.setText("" + balance.getFreeUSD());
+                        mFreezedCNYTextView.setText("" + balance.getFreezedUSD());
+                        mFreezedBTCTextView.setText("" + balance.getFreezedBTC());
+                    }
                 }
+            });
+        }
+    }
+
+    class BalanceAsyncTask extends AsyncTask<Void, Void, Balance> {
+
+        @Override
+        protected Balance doInBackground(Void... params) {
+            Balance balance = new Balance();
+
+            try {
+
+                RequestParameter parameter1 =
+                        new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
+
+                RequestParameter parameter2 =
+                        new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
+
+                String json = NetWork.requestGetUrl(BALANCE_INFO_URL, parameter1, parameter2);
+
+                JSONObject obj = new JSONObject(json);
+                obj = obj.getJSONObject("info").getJSONObject("funds");
+                JSONObject freeObj = obj.getJSONObject("free");
+                JSONObject freezedObj = obj.getJSONObject("freezed");
+                balance.setFreeBTC(freeObj.getDouble("btc"));
+                balance.setFreeUSD(freeObj.getDouble("usd"));
+                balance.setFreezedBTC(freezedObj.getDouble("btc"));
+                balance.setFreezedUSD(freezedObj.getDouble("usd"));
+
+                return balance;
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, "Exception " + e.getLocalizedMessage());
+                return null;
             }
-        });
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Balance balance) {
+            super.onPostExecute(balance);
+            updateBalanceUI(balance);
+        }
     }
 
 

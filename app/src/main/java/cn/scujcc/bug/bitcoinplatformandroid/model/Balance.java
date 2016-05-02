@@ -182,87 +182,49 @@
  *
  */
 
-package cn.scujcc.bug.bitcoinplatformandroid.util;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
+package cn.scujcc.bug.bitcoinplatformandroid.model;
 
 /**
- * Created by lilujia on 16/4/30.
+ * Created by lilujia on 16/5/1.
  */
-public class NetWork {
+public class Balance {
+    private double freeUSD, freeBTC, freezedUSD, freezedBTC;
 
-    public static String requestGetUrl(String urlString, RequestParameter... args) throws IOException {
-        for (int i = 0; i < args.length; i++) {
-            if (i == 0) {
-                urlString += "?";
-            } else {
-                urlString += "&";
-            }
-            urlString += args[i].getKey() + "=" + args[i].getValue();
-        }
-
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        //conn.setConnectTimeout(15000);
-        conn.setRequestMethod("GET");
-
-        InputStream inStream = conn.getInputStream();
-        return readIt(inStream, 10240);
-
+    @Override
+    public String toString() {
+        return "{可用比特币" + freeBTC + "，可用USD" + freeUSD + ",冻结比特币" + freezedBTC + "，冻结USD" + freezedUSD + "}";
     }
 
-
-    public static String getUrlString(String myurl) throws IOException {
-        InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        // int len = 500;
-
-
-        try {
-            URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            // Starts the query
-            conn.connect();
-            int response = conn.getResponseCode();
-            // Log.e(TAG, "The response is: " + response);
-            is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            return readIt(is, 10240);
-
-
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
+    public double getFreeUSD() {
+        return freeUSD;
     }
 
-    public static String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        InputStreamReader read = new InputStreamReader(
-                stream, "UTF-8");//考虑到编码格式
-        BufferedReader bufferedReader = new BufferedReader(read);
-        String lineTxt = "";
-        StringBuilder sb = new StringBuilder();
-        while ((lineTxt = bufferedReader.readLine()) != null) {
-            sb.append(lineTxt);
-        }
-        bufferedReader.close();
-        return sb.toString();
+    public void setFreeUSD(double freeUSD) {
+        this.freeUSD = freeUSD;
     }
+
+    public double getFreeBTC() {
+        return freeBTC;
+    }
+
+    public void setFreeBTC(double freeBTC) {
+        this.freeBTC = freeBTC;
+    }
+
+    public double getFreezedUSD() {
+        return freezedUSD;
+    }
+
+    public void setFreezedUSD(double freezedUSD) {
+        this.freezedUSD = freezedUSD;
+    }
+
+    public double getFreezedBTC() {
+        return freezedBTC;
+    }
+
+    public void setFreezedBTC(double freezedBTC) {
+        this.freezedBTC = freezedBTC;
+    }
+
 }

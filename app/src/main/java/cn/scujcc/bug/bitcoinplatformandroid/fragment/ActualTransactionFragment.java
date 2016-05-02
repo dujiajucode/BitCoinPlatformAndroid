@@ -210,6 +210,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.model.Balance;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Trend;
 import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketDataChange;
@@ -412,7 +413,15 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             return;
         }
 
+
         if (getActivity() != null) {
+
+
+
+
+
+
+
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -432,7 +441,6 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
     @Override
     public void balanceChange(String json) {
-        Log.e("tag222", "rrrr");
         Balance balance = new Balance();
         try {
             JSONArray arr = new JSONArray(json);
@@ -449,10 +457,10 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             balance.setFreezedUSD(freezedObj.getDouble("usd"));
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("tag222", "balanceChange" + e.getLocalizedMessage());
+            Log.e(TAG, "balanceChange" + e.getLocalizedMessage());
         }
 
-        Log.e("tag222", "balanceChange" + balance);
+        Log.e(TAG, "balanceChange" + balance);
         ActualTransactionBuyAndSellFragment buyFragment = (ActualTransactionBuyAndSellFragment) mViewPagerAdapter.getItem(1);
 
         ActualTransactionBuyAndSellFragment sellFragment = (ActualTransactionBuyAndSellFragment) mViewPagerAdapter.getItem(2);
@@ -463,7 +471,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         if (sellFragment != null) {
             sellFragment.updateBalanceUI(balance);
         }
-        Log.e("tag222", "balanceChange" + balance);
+        Log.e(TAG, "balanceChange" + balance);
 
     }
 
@@ -556,45 +564,4 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
     }
 
 
-    public class Balance {
-        private double freeUSD, freeBTC, freezedUSD, freezedBTC;
-
-        @Override
-        public String toString() {
-            return "{可用比特币" + freeBTC + "，可用USD" + freeUSD + ",冻结比特币" + freezedBTC + "，冻结USD" + freezedUSD + "}";
-        }
-
-        public double getFreeUSD() {
-            return freeUSD;
-        }
-
-        public void setFreeUSD(double freeUSD) {
-            this.freeUSD = freeUSD;
-        }
-
-        public double getFreeBTC() {
-            return freeBTC;
-        }
-
-        public void setFreeBTC(double freeBTC) {
-            this.freeBTC = freeBTC;
-        }
-
-        public double getFreezedUSD() {
-            return freezedUSD;
-        }
-
-        public void setFreezedUSD(double freezedUSD) {
-            this.freezedUSD = freezedUSD;
-        }
-
-        public double getFreezedBTC() {
-            return freezedBTC;
-        }
-
-        public void setFreezedBTC(double freezedBTC) {
-            this.freezedBTC = freezedBTC;
-        }
-
-    }
 }

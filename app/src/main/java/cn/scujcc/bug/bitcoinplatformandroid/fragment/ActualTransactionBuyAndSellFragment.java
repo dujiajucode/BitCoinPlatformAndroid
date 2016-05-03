@@ -216,7 +216,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
     private static final String TAG = "ATBuyAndsellFragment";
     public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_Sell";
-    private static final String BALANCE_INFO_URL = "http://115.28.242.27:8080//balance";
+    private static final String BALANCE_INFO_URL = "http://115.28.242.27:8080/balance";
     SocketProtocol mProtocol;
 
     private Button mButton;

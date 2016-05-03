@@ -181,233 +181,74 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+package cn.scujcc.bug.bitcoinplatformandroid.model;
 
-import com.github.mikephil.charting.charts.CandleStickChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.CandleData;
-import com.github.mikephil.charting.data.CandleDataSet;
-import com.github.mikephil.charting.data.CandleEntry;
-
-import org.json.JSONArray;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.model.KLine;
-import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
-import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
-import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
+import java.text.SimpleDateFormat;
 
 /**
- * Created by lilujia on 16/3/27.
- * <p/>
- * 现货交易K线图
+ * Created by lilujia on 16/5/3.
  */
-public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
+public class KLine {
+    private long mDate;
+    private double mOpen;
+    private double mHigh;
+    private double mLow;
+    private double mClose;
+    private double mVal;
 
-    private static final String TAG = "ATKLineChartsFragment";
-    private static final String KLINE_INFO_URL = "http://115.28.242.27:8080/at/kline";
-
-    private CandleStickChart mChart;
-    private ArrayList<CandleEntry> mYVals;
-    private ArrayList<String> mXVals;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public String getTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//24小时制
+        java.util.Date d = new java.util.Date(mDate);
+        return sdf.format(d);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_actualtransactioncandlestickcharts, container, false);
-
-
-        mChart = (CandleStickChart) view.findViewById(R.id.chart1);
-        mChart.setBackgroundColor(Color.WHITE);
-        mChart.setDescription("");
-        mChart.setMaxVisibleValueCount(60);
-        mChart.setPinchZoom(false);
-        mChart.setDrawGridBackground(false);
-
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setSpaceBetweenLabels(2);
-        xAxis.setDrawGridLines(false);
-
-        YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setLabelCount(7, false);
-        leftAxis.setDrawGridLines(false);
-        leftAxis.setDrawAxisLine(false);
-        YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setEnabled(false);
-        xAxis.setEnabled(false);
-        mChart.resetTracking();
-
-        mYVals = new ArrayList<CandleEntry>();
-        mXVals = new ArrayList<String>();
-
-
-        CandleDataSet set1 = new CandleDataSet(mYVals, "Data Set");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-//        set1.setColor(Color.rgb(80, 80, 80));
-        set1.setShadowColor(Color.DKGRAY);
-        set1.setShadowWidth(0.7f);
-        set1.setDecreasingColor(Color.RED);
-        set1.setDecreasingPaintStyle(Paint.Style.FILL);
-        set1.setIncreasingColor(Color.rgb(122, 242, 84));
-        set1.setIncreasingPaintStyle(Paint.Style.STROKE);
-        set1.setNeutralColor(Color.BLUE);
-        //set1.setHighlightLineWidth(1f);
-
-        CandleData data = new CandleData(mXVals, set1);
-
-        mChart.invalidate();
-        mChart.setNoDataText("正在加载数据");
-
-        mChart.getLegend().setEnabled(false);
-
-        mChart.animateX(3000);
-
-        loadInitData();
-
-        return view;
+    public double getVal() {
+        return mVal;
     }
 
-    /**
-     * 加载初始数据
-     */
-    public void loadInitData() {
-        KLineDataInitAsyncTask initAsyncTask = new KLineDataInitAsyncTask();
-        initAsyncTask.execute();
+    public void setVal(double val) {
+        mVal = val;
     }
 
-
-    public void updateKines(List<KLine> list) {
-
-        mChart.resetTracking();
-
-
-        for (int i = 0; i < list.size(); i++) {
-            KLine kLine = list.get(i);
-
-            float val = (float) kLine.getVal();
-            float high = (float) kLine.getHigh();
-            float low = (float) kLine.getLow();
-            float open = (float) kLine.getOpen();
-            float close = (float) kLine.getClose();
-
-            boolean even = i % 2 == 0;
-
-            mYVals.add(new CandleEntry(i, val + high, val - low, even ? val + open : val - open,
-                    even ? val - close : val + close));
-            mXVals.add(kLine.getTime());
-        }
-
-
-        CandleDataSet set1 = new CandleDataSet(mYVals, "Data Set");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-//        set1.setColor(Color.rgb(80, 80, 80));
-        set1.setShadowColor(Color.DKGRAY);
-        set1.setShadowWidth(0.7f);
-        set1.setDecreasingColor(Color.RED);
-        set1.setDecreasingPaintStyle(Paint.Style.FILL);
-        set1.setIncreasingColor(Color.rgb(122, 242, 84));
-        set1.setIncreasingPaintStyle(Paint.Style.STROKE);
-        set1.setNeutralColor(Color.BLUE);
-        //set1.setHighlightLineWidth(1f);
-
-        CandleData data = new CandleData(mXVals, set1);
-
-        mChart.setData(data);
-        mChart.invalidate();
-
-        mChart.animateX(3000);
+    public double getClose() {
+        return mClose;
     }
 
-    class KLineDataInitAsyncTask extends AsyncTask<Void, Void, List<KLine>> {
+    public void setClose(double close) {
+        mClose = close;
+    }
 
+    public long getDate() {
+        return mDate;
+    }
 
-        @Override
-        protected List<KLine> doInBackground(Void... params) {
+    public void setDate(long date) {
+        mDate = date;
+    }
 
-            try {
+    public double getHigh() {
+        return mHigh;
+    }
 
-                RequestParameter parameter1 =
-                        new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
+    public void setHigh(double high) {
+        mHigh = high;
+    }
 
-                RequestParameter parameter2 =
-                        new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
+    public double getLow() {
+        return mLow;
+    }
 
-                RequestParameter parameter3 =
-                        new RequestParameter("size", "" + 60);
+    public void setLow(double low) {
+        mLow = low;
+    }
 
-                Date date = new Date();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);//date 换成已经已知的Date对象
-                cal.add(Calendar.HOUR_OF_DAY, -1);// before 8 hour
+    public double getOpen() {
+        return mOpen;
+    }
 
-                long time = cal.getTimeInMillis();
-
-                RequestParameter parameter4 =
-                        new RequestParameter("since", "" + time);
-
-                Log.e(TAG, "time" + time);
-                String json = NetWork.requestGetUrl(KLINE_INFO_URL, parameter1, parameter2,
-                        parameter3, parameter4);
-
-                Log.e(TAG, "JSON " + json);
-
-                List<KLine> list = new ArrayList<>();
-
-                JSONArray arr = new JSONArray(json);
-
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONArray obj = arr.getJSONArray(i);
-                    KLine kline = new KLine();
-
-                    kline.setDate(obj.getLong(0));
-                    kline.setOpen(obj.getDouble(1));
-                    kline.setHigh(obj.getDouble(2));
-                    kline.setLow(obj.getDouble(3));
-                    kline.setClose(obj.getDouble(4));
-                    kline.setVal(obj.getDouble(5));
-
-                    list.add(kline);
-
-                }
-                Log.e(TAG, "Size " + list.size());
-
-                return list;
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e(TAG, "Exception " + e.getLocalizedMessage());
-                return null;
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(List<KLine> list) {
-            super.onPostExecute(list);
-            updateKines(list);
-        }
+    public void setOpen(double open) {
+        mOpen = open;
     }
 
 

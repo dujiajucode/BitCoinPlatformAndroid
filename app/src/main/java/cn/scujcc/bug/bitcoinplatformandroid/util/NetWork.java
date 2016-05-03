@@ -214,6 +214,7 @@ public class NetWork {
         //conn.setConnectTimeout(15000);
         conn.setRequestMethod("GET");
 
+
         InputStream inStream = conn.getInputStream();
         return readIt(inStream, 10240);
 

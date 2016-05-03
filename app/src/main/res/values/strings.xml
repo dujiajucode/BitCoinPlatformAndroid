@@ -184,7 +184,7 @@
 
 <resources>
     <string name="app_name">比特币交易平台</string>
-
+    <string name="server_error">很抱歉，服务器维护中!!</string>
     <string name="fragment_personal_center_title">个人中心</string>
     <string name="fragment_quotationinformationcenter_news_pic">新闻图片</string>
 

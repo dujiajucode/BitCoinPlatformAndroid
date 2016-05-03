@@ -183,6 +183,7 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -197,9 +198,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
@@ -217,11 +220,15 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
     private static final String TAG = "ATBuyAndsellFragment";
     public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_Sell";
     private static final String BALANCE_INFO_URL = "http://115.28.242.27:8080/balance";
+    private static final String TRADE_URL = "http://115.28.242.27:8080/at/trade";
+
     SocketProtocol mProtocol;
 
     private Button mButton;
 
     private Spinner mSpinner;
+
+    private ProgressDialog mDialog;
 
     private TextView mCNYTextView, mBTCTextView,
             mFreezedCNYTextView, mFreezedBTCTextView;
@@ -359,6 +366,36 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
         });
 
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //判断数据是否合法
+                double count;
+                double univalent = 0;
+                try {
+                    count = Double.parseDouble(mCountEdit.toString());
+                    if (isLimit)
+                        univalent = Double.parseDouble(mCountEdit.toString());
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "请按照规定填写", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (count < 0.01 || isLimit && univalent < 0.01) {
+                    Toast.makeText(getActivity(), "最小交易0.01", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //开启等待对话框
+
+                mDialog = new ProgressDialog(getActivity());
+                mDialog.show();
+
+
+                //构建URL参数
+
+                //执行任务
+
+            }
+        });
 
         //获取余额
         updateBalance();
@@ -424,6 +461,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e(TAG, "Exception " + e.getLocalizedMessage());
+                sendServerError();
                 return null;
             }
 
@@ -437,5 +475,57 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
         }
     }
 
+
+    class BuyOrSellAsyncTask extends AsyncTask<List<RequestParameter>, Void, String> {
+
+        @Override
+        protected final String doInBackground(List<RequestParameter>... args) {
+            try {
+
+                List<RequestParameter> list = args[0];
+
+                if (null == list) return null;
+
+
+                return NetWork.requestPostUrl(TRADE_URL, list);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, "Exception " + e.getLocalizedMessage());
+                return null;
+            }
+
+
+        }
+
+        @Override
+        protected void onPostExecute(String json) {
+            super.onPostExecute(json);
+            if (mDialog != null)
+                mDialog.cancel();
+        }
+    }
+
+    class Transaction {
+        private boolean mBuy;
+        private List<RequestParameter> list;
+
+        public List<RequestParameter> getList() {
+            return list;
+        }
+
+        public void setList(List<RequestParameter> list) {
+            this.list = list;
+        }
+
+        public boolean isBuy() {
+            return mBuy;
+        }
+
+        public void setBuy(boolean buy) {
+            mBuy = buy;
+        }
+    }
 
 }

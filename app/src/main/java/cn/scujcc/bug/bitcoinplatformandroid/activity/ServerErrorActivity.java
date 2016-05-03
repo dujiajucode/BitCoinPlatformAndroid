@@ -181,54 +181,42 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-import android.app.Fragment;
-import android.content.Intent;
+package cn.scujcc.bug.bitcoinplatformandroid.activity;
+
+import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.activity.ServerErrorActivity;
 
 /**
- * Created by lilujia on 16/3/27.
- * <p>
- * 父类
+ * Created by lilujia on 16/5/3.
  */
-public class BaseFragment extends Fragment {
+public class ServerErrorActivity extends AppCompatActivity {
 
-    protected void setTitle(View view, String title) {
-        if (view != null) {
-            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-            if (toolbar != null) {
-                toolbar.setTitle(title);
-                AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-                appCompatActivity.setSupportActionBar(toolbar);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_server);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle("服务器维护中");
+            setSupportActionBar(toolbar);
+        }
+        final TextView textView = (TextView) findViewById(R.id.serverError);
+        if (textView == null) return;
+
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(textView,
+                        "别点了,点也没用", Snackbar.LENGTH_SHORT).show();
             }
-        }
-
-    }
-
-    protected void sendServerError() {
-        if (getActivity() != null) {
-            Intent intent = new Intent();
-            intent.setClass(getActivity(), ServerErrorActivity.class);
-            startActivity(intent);
-            getActivity().finish();
-        }
-    }
-
-    protected void setTitle(View view, int title) {
-        if (view != null) {
-            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-            if (toolbar != null) {
-                toolbar.setTitle(title);
-                AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-                appCompatActivity.setSupportActionBar(toolbar);
-            }
-        }
-
+        });
     }
 }

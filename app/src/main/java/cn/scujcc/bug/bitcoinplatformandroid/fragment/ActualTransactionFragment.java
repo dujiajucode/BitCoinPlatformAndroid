@@ -218,7 +218,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p/>
+ * <p>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
@@ -453,6 +453,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             balance.setFreezedUSD(freezedObj.getDouble("usd"));
         } catch (JSONException e) {
             e.printStackTrace();
+            sendServerError();
             Log.e(TAG, "balanceChange" + e.getLocalizedMessage());
         }
 

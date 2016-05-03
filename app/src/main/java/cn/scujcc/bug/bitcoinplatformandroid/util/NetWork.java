@@ -191,6 +191,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
 
@@ -213,6 +214,20 @@ public class NetWork {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //conn.setConnectTimeout(15000);
         conn.setRequestMethod("GET");
+
+
+        InputStream inStream = conn.getInputStream();
+        return readIt(inStream, 10240);
+
+    }
+
+    public static String requestPostUrl(String urlString, List<RequestParameter> list) throws IOException {
+
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        //conn.setConnectTimeout(15000);
+        conn.setRequestMethod("POST");
+
 
 
         InputStream inStream = conn.getInputStream();

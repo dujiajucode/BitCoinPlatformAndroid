@@ -324,6 +324,7 @@ public class NewsDetailsFragment extends BaseFragment {
                 e.printStackTrace();
                 // deleteCache();
 
+
             }
         }
 

@@ -217,7 +217,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p/>
+ * <p>
  * 现货交易K线图
  */
 public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
@@ -423,6 +423,7 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e(TAG, "Exception " + e.getLocalizedMessage());
+                sendServerError();
                 return null;
             }
 

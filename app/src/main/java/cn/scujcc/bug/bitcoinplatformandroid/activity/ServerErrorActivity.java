@@ -198,6 +198,8 @@ import cn.scujcc.bug.bitcoinplatformandroid.R;
  */
 public class ServerErrorActivity extends AppCompatActivity {
 
+    private int click;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,12 +212,23 @@ public class ServerErrorActivity extends AppCompatActivity {
         final TextView textView = (TextView) findViewById(R.id.serverError);
         if (textView == null) return;
 
+        click = 5;
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(textView,
-                        "别点了,点也没用", Snackbar.LENGTH_SHORT).show();
+                String str = "";
+                if (click > 1) {
+                    str = "听说再点击" + click + "次，服务器就能恢复正常了!!";
+                } else if (click == 1) {
+                    str = "继续点击，会有惊喜哦!!";
+                } else {
+                    ServerErrorActivity.this.finish();
+                    return;
+                }
+                click--;
+                Snackbar.make(textView, str, Snackbar.LENGTH_SHORT).show();
+
             }
         });
     }

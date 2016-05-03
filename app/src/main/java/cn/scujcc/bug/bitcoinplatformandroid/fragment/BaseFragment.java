@@ -194,7 +194,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.activity.ServerErrorActivity;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 父类
  */
 public class BaseFragment extends Fragment {
@@ -215,6 +215,8 @@ public class BaseFragment extends Fragment {
         if (getActivity() != null) {
             Intent intent = new Intent();
             intent.setClass(getActivity(), ServerErrorActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             getActivity().finish();
         }

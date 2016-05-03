@@ -327,8 +327,6 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
             float open = (float) kLine.getOpen();
             float close = (float) kLine.getClose();
 
-            boolean even = i % 2 == 0;
-
             yVals1.add(new CandleEntry(i, high, low, open,
                     close));
             xVals.add(kLine.getTime());

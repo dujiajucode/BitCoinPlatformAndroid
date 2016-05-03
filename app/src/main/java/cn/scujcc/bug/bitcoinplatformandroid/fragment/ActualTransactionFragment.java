@@ -218,7 +218,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 
 /**
  * Created by lilujia on 16/4/27.
- * <p>
+ * <p/>
  * 现货交易
  */
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
@@ -438,6 +438,8 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
     @Override
     public void balanceChange(String json) {
         Balance balance = new Balance();
+
+        Log.e(TAG, "balanceChange" + json);
         try {
             JSONArray arr = new JSONArray(json);
             JSONObject obj = arr.getJSONObject(0);

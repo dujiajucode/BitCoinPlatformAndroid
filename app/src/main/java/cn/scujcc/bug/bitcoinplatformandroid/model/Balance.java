@@ -184,6 +184,8 @@
 
 package cn.scujcc.bug.bitcoinplatformandroid.model;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by lilujia on 16/5/1.
  */
@@ -192,7 +194,16 @@ public class Balance {
 
     @Override
     public String toString() {
-        return "{可用比特币" + freeBTC + "，可用USD" + freeUSD + ",冻结比特币" + freezedBTC + "，冻结USD" + freezedUSD + "}";
+        return "{可用比特币" + getDoubleString(freeBTC) + "，可用USD"
+                + getDoubleString(freeUSD) + ",冻结比特币" +
+                getDoubleString(freezedBTC) + "，冻结USD" + getDoubleString(freezedUSD) + "}";
+    }
+
+
+    public static String getDoubleString(double len) {
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.0000");//格式化设置
+        return decimalFormat.format(len);
     }
 
     public double getFreeUSD() {

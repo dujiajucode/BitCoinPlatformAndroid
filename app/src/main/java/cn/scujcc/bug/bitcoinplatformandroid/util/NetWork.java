@@ -184,6 +184,8 @@
 
 package cn.scujcc.bug.bitcoinplatformandroid.util;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -191,6 +193,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
@@ -226,11 +229,26 @@ public class NetWork {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //conn.setConnectTimeout(15000);
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
         conn.setRequestMethod("POST");
+        conn.setUseCaches(false);
+        conn.setInstanceFollowRedirects(true);
+        conn.setRequestProperty("Content-Type",
+                "application/x-www-form-urlencoded");
 
+        StringBuffer params = new StringBuffer();
 
-
+        for (RequestParameter parameter : list) {
+            params.append(parameter.getKey()).append("=").
+                    append(URLEncoder.encode(parameter.getValue(), "UTF-8")).append("&");
+        }
+        String param = params.toString().substring(0, params.length() - 1);
+        Log.e("TAG22", param);
+        byte[] bypes = param.getBytes();
+        conn.getOutputStream().write(bypes);// 输入参数
         InputStream inStream = conn.getInputStream();
+
         return readIt(inStream, 10240);
 
     }

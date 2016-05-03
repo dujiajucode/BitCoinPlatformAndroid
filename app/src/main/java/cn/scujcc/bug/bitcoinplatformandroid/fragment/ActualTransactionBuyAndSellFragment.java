@@ -202,6 +202,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -300,9 +301,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.e(TAG, "afterTextChanged" + s);
-                if (s.toString().length() == 0 || s.toString().equals("不用填写")) {
-                    return;
-                }
+                if (s.toString().trim().length() == 0 || s.toString().equals("不用填写")) return;
                 if (!isDecimal(s.toString())) {
                     mUnivalentEdit.setError("只能输入两位小数");
                 } else {
@@ -328,7 +327,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (s.toString().trim().length() == 0 || s.toString().equals("不用填写")) return;
                 if (!isDecimal(s.toString())) {
                     mCountEdit.setError("只能输入两位小数");
                 } else {
@@ -348,13 +347,24 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
                 if (position == 0) {
                     //限价
                     isLimit = true;
-                    mUnivalentEdit.setText("");
-                    mUnivalentEdit.setEnabled(true);
+                    if (isSell) {
+                        mUnivalentEdit.setText("");
+                        mUnivalentEdit.setEnabled(true);
+                    } else {
+                        mCountEdit.setText("");
+                        mCountEdit.setEnabled(true);
+                    }
                 } else if (position == 1) {
                     //市价模式
                     isLimit = false;
-                    mUnivalentEdit.setText("不用填写");
-                    mUnivalentEdit.setEnabled(false);
+                    if (isSell) {
+                        mUnivalentEdit.setText("不用填写");
+                        mUnivalentEdit.setEnabled(false);
+                    } else {
+                        mCountEdit.setText("不用填写");
+                        mCountEdit.setEnabled(false);
+                    }
+
                 }
             }
 
@@ -370,29 +380,78 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 //判断数据是否合法
-                double count;
+                double count = 0;
                 double univalent = 0;
+
+                /*
+                 * 3种情况,
+                 * 1限价模式 两者都得填写
+                 * 2市价买,只用填写金额
+                 * 3市价卖,只用填写数量
+                 */
+                Log.e(TAG, "isLimit" + isLimit + "isSell" + isSell);
                 try {
-                    count = Double.parseDouble(mCountEdit.toString());
-                    if (isLimit)
-                        univalent = Double.parseDouble(mCountEdit.toString());
+                    if (isLimit) {
+                        count = Double.parseDouble(mCountEdit.getText().toString());
+                        univalent = Double.parseDouble(mUnivalentEdit.getText().toString());
+                        if (count < 0.01 || univalent < 0.01) {
+                            Toast.makeText(getActivity(), "最小交易0.01", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } else if (!isSell) {
+                        univalent = Double.parseDouble(mUnivalentEdit.getText().toString());
+                        if (univalent < 0.01) {
+                            Toast.makeText(getActivity(), "最小交易0.01", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } else if (isSell) {
+                        count = Double.parseDouble(mCountEdit.getText().toString());
+                        if (count < 0.01) {
+                            Toast.makeText(getActivity(), "最小交易0.01", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "请按照规定填写", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (count < 0.01 || isLimit && univalent < 0.01) {
-                    Toast.makeText(getActivity(), "最小交易0.01", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 //开启等待对话框
-
                 mDialog = new ProgressDialog(getActivity());
+                mDialog.setMessage("正在处理,请稍后");
+                mDialog.setCanceledOnTouchOutside(false);
+                mDialog.setCancelable(false);
                 mDialog.show();
-
-
                 //构建URL参数
-
+                String type = "";
+                if (isSell && isLimit) {
+                    //卖         限价
+                    type = "sell";
+                } else if (isSell && !isLimit) {
+                    //卖         市价
+                    type = "sell_market";
+                } else if (!isSell && isLimit) {
+                    //买         限价
+                    type = "buy";
+                } else if (!isSell && !isLimit) {
+                    //买         市价
+                    type = "buy_market";
+                }
+                String price = univalent + "";
+                String amount = count + "";
+                RequestParameter parameter1 = new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
+                RequestParameter parameter2 = new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
+                RequestParameter parameter3 = new RequestParameter("type", type);
+                RequestParameter parameter4 = new RequestParameter("price", price);
+                RequestParameter parameter5 = new RequestParameter("amount", amount);
+                List<RequestParameter> list = new ArrayList<>();
+                list.add(parameter1);
+                list.add(parameter2);
+                list.add(parameter3);
+                list.add(parameter4);
+                list.add(parameter5);
                 //执行任务
+                BuyOrSellAsyncTask task = new BuyOrSellAsyncTask();
+                task.execute(list);
 
             }
         });
@@ -422,10 +481,10 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
                 @Override
                 public void run() {
                     if (balance != null) {
-                        mBTCTextView.setText("" + balance.getFreeBTC());
-                        mCNYTextView.setText("" + balance.getFreeUSD());
-                        mFreezedCNYTextView.setText("" + balance.getFreezedUSD());
-                        mFreezedBTCTextView.setText("" + balance.getFreezedBTC());
+                        mBTCTextView.setText(Balance.getDoubleString(balance.getFreeBTC()));
+                        mCNYTextView.setText(Balance.getDoubleString(balance.getFreeUSD()));
+                        mFreezedCNYTextView.setText(Balance.getDoubleString(balance.getFreezedUSD()));
+                        mFreezedBTCTextView.setText(Balance.getDoubleString(balance.getFreezedBTC()));
                     }
                 }
             });
@@ -483,16 +542,12 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
             try {
 
                 List<RequestParameter> list = args[0];
-
                 if (null == list) return null;
-
-
                 return NetWork.requestPostUrl(TRADE_URL, list);
-
-
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e(TAG, "Exception " + e.getLocalizedMessage());
+                sendServerError();
                 return null;
             }
 
@@ -507,25 +562,5 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
         }
     }
 
-    class Transaction {
-        private boolean mBuy;
-        private List<RequestParameter> list;
-
-        public List<RequestParameter> getList() {
-            return list;
-        }
-
-        public void setList(List<RequestParameter> list) {
-            this.list = list;
-        }
-
-        public boolean isBuy() {
-            return mBuy;
-        }
-
-        public void setBuy(boolean buy) {
-            mBuy = buy;
-        }
-    }
 
 }

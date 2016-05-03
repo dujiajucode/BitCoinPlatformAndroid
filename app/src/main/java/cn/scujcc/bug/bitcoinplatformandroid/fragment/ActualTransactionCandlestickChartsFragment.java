@@ -183,6 +183,7 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -208,6 +209,7 @@ import java.util.Date;
 import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.activity.ActualTransactionCandlestickChartsActivity;
 import cn.scujcc.bug.bitcoinplatformandroid.model.KLine;
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
 import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
@@ -222,14 +224,21 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
 
     private static final String TAG = "ATKLineChartsFragment";
     private static final String KLINE_INFO_URL = "http://115.28.242.27:8080/at/kline";
+    public static final String ARGS_IS_FULL = "ARGS_IS_FULL";
 
     private CandleStickChart mChart;
     private ArrayList<CandleEntry> mYVals;
     private ArrayList<String> mXVals;
+    private boolean isFull;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        savedInstanceState = getArguments();
+        if (savedInstanceState != null) {
+            isFull = savedInstanceState.getBoolean(ARGS_IS_FULL);
+        }
     }
 
     @Nullable
@@ -240,9 +249,16 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
 
         mChart = (CandleStickChart) view.findViewById(R.id.chart1);
         mChart.setBackgroundColor(Color.WHITE);
+
         mChart.setDescription("");
+
+        // if more than 60 entries are displayed in the chart, no values will be
+        // drawn
         mChart.setMaxVisibleValueCount(60);
+
+        // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(false);
+
         mChart.setDrawGridBackground(false);
 
         XAxis xAxis = mChart.getXAxis();
@@ -251,38 +267,30 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
         xAxis.setDrawGridLines(false);
 
         YAxis leftAxis = mChart.getAxisLeft();
+//        leftAxis.setEnabled(false);
         leftAxis.setLabelCount(7, false);
         leftAxis.setDrawGridLines(false);
         leftAxis.setDrawAxisLine(false);
+
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setEnabled(false);
-        xAxis.setEnabled(false);
-        mChart.resetTracking();
-
-        mYVals = new ArrayList<CandleEntry>();
-        mXVals = new ArrayList<String>();
-
-
-        CandleDataSet set1 = new CandleDataSet(mYVals, "Data Set");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-//        set1.setColor(Color.rgb(80, 80, 80));
-        set1.setShadowColor(Color.DKGRAY);
-        set1.setShadowWidth(0.7f);
-        set1.setDecreasingColor(Color.RED);
-        set1.setDecreasingPaintStyle(Paint.Style.FILL);
-        set1.setIncreasingColor(Color.rgb(122, 242, 84));
-        set1.setIncreasingPaintStyle(Paint.Style.STROKE);
-        set1.setNeutralColor(Color.BLUE);
-        //set1.setHighlightLineWidth(1f);
-
-        CandleData data = new CandleData(mXVals, set1);
-
-        mChart.invalidate();
-        mChart.setNoDataText("正在加载数据");
+//        rightAxis.setStartAtZero(false);
 
         mChart.getLegend().setEnabled(false);
 
-        mChart.animateX(3000);
+        mChart.setNoDataText("正在加载数据");
+
+
+        if (!isFull) {
+            mChart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), ActualTransactionCandlestickChartsActivity.class);
+                    getActivity().startActivity(intent);
+                }
+            });
+        }
 
         loadInitData();
 
@@ -299,28 +307,35 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
 
 
     public void updateKines(List<KLine> list) {
+        if (list == null) {
+            return;
+        }
 
         mChart.resetTracking();
 
+        ArrayList<CandleEntry> yVals1 = new ArrayList<CandleEntry>();
+        ArrayList<String> xVals = new ArrayList<String>();
 
         for (int i = 0; i < list.size(); i++) {
+            // float mult = 400;
             KLine kLine = list.get(i);
-
             float val = (float) kLine.getVal();
+
             float high = (float) kLine.getHigh();
             float low = (float) kLine.getLow();
+
             float open = (float) kLine.getOpen();
             float close = (float) kLine.getClose();
 
             boolean even = i % 2 == 0;
 
-            mYVals.add(new CandleEntry(i, val + high, val - low, even ? val + open : val - open,
-                    even ? val - close : val + close));
-            mXVals.add(kLine.getTime());
+            yVals1.add(new CandleEntry(i, high, low, open,
+                    close));
+            xVals.add(kLine.getTime());
         }
 
 
-        CandleDataSet set1 = new CandleDataSet(mYVals, "Data Set");
+        CandleDataSet set1 = new CandleDataSet(yVals1, "Data Set");
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
 //        set1.setColor(Color.rgb(80, 80, 80));
         set1.setShadowColor(Color.DKGRAY);
@@ -332,12 +347,10 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
         set1.setNeutralColor(Color.BLUE);
         //set1.setHighlightLineWidth(1f);
 
-        CandleData data = new CandleData(mXVals, set1);
+        CandleData data = new CandleData(xVals, set1);
 
         mChart.setData(data);
         mChart.invalidate();
-
-        mChart.animateX(3000);
     }
 
     class KLineDataInitAsyncTask extends AsyncTask<Void, Void, List<KLine>> {
@@ -354,20 +367,33 @@ public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
                 RequestParameter parameter2 =
                         new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
 
-                RequestParameter parameter3 =
-                        new RequestParameter("size", "" + 60);
+                RequestParameter parameter3;
+                RequestParameter parameter4;
 
-                Date date = new Date();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);//date 换成已经已知的Date对象
-                cal.add(Calendar.HOUR_OF_DAY, -1);// before 8 hour
+                if (!isFull) {
+                    parameter3 =
+                            new RequestParameter("size", "" + 30);
 
-                long time = cal.getTimeInMillis();
-
-                RequestParameter parameter4 =
-                        new RequestParameter("since", "" + time);
-
-                Log.e(TAG, "time" + time);
+                    Date date = new Date();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(date);//date 换成已经已知的Date对象
+                    cal.add(Calendar.MINUTE, -15);// before 8 hour
+                    long time = cal.getTimeInMillis();
+                    parameter4 =
+                            new RequestParameter("since", "" + time);
+                    Log.e(TAG, "time" + time);
+                } else {
+                    parameter3 =
+                            new RequestParameter("size", "" + 30);
+                    Date date = new Date();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(date);//date 换成已经已知的Date对象
+                    cal.add(Calendar.MINUTE, -30);// before 8 hour
+                    long time = cal.getTimeInMillis();
+                    parameter4 =
+                            new RequestParameter("since", "" + time);
+                    Log.e(TAG, "time" + time);
+                }
                 String json = NetWork.requestGetUrl(KLINE_INFO_URL, parameter1, parameter2,
                         parameter3, parameter4);
 

@@ -198,7 +198,7 @@ public class KLine {
     private double mVal;
 
     public String getTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//24小时制
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");//24小时制
         java.util.Date d = new java.util.Date(mDate);
         return sdf.format(d);
     }

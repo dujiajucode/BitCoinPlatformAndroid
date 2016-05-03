@@ -188,34 +188,49 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.NewsDetailsFragment;
+import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionCandlestickChartsFragment;
 
 /**
- * Created by lilujia on 16/4/13.
+ * Created by lilujia on 16/5/3.
  */
-public class NewsDetailsActivity extends AppCompatActivity {
-
+public class ActualTransactionCandlestickChartsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment);
+        setContentView(R.layout.activity_toolbar_fragment);
 
         FragmentManager fragmentManager = getFragmentManager();
 
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = new NewsDetailsFragment();
+            fragment = new
+                    ActualTransactionCandlestickChartsFragment();
+            Bundle atChartsBundle = new Bundle();
+            atChartsBundle.putBoolean(ActualTransactionCandlestickChartsFragment.ARGS_IS_FULL, true);
+            fragment.setArguments(atChartsBundle);
             fragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).commit();
+        } else {
+            Bundle atChartsBundle = new Bundle();
+            atChartsBundle.putBoolean(ActualTransactionCandlestickChartsFragment.ARGS_IS_FULL, true);
+            fragment.setArguments(atChartsBundle);
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle("K线图");
+            setSupportActionBar(toolbar);
+        }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        MainActivity.MAIN_INDEX = 2;
+        MainActivity.MAIN_INDEX = 0;
     }
-
 
 }

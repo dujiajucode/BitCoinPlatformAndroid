@@ -316,6 +316,10 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         ActualTransactionCandlestickChartsFragment candlestickChartsFragment = new
                 ActualTransactionCandlestickChartsFragment();
+        Bundle atChartsBundle = new Bundle();
+        atChartsBundle.putBoolean(ActualTransactionCandlestickChartsFragment.ARGS_IS_FULL, false);
+        candlestickChartsFragment.setArguments(atChartsBundle);
+
         fragments.add(candlestickChartsFragment);
 
         Fragment buyFragment = new ActualTransactionBuyAndSellFragment();
@@ -415,14 +419,6 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
 
         if (getActivity() != null) {
-
-
-
-
-
-
-
-
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

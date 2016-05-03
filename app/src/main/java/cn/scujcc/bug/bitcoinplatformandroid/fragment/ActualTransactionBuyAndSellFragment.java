@@ -200,6 +200,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -209,6 +210,7 @@ import java.util.regex.Pattern;
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Balance;
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
+import cn.scujcc.bug.bitcoinplatformandroid.util.Config;
 import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
 import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
@@ -535,6 +537,15 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
     }
 
 
+    /**
+     * 保存订单
+     *
+     * @param orderID
+     */
+    public void saveOrderID(String orderID) {
+        //saveOrderID ,And timestamp 的英文
+    }
+
     class BuyOrSellAsyncTask extends AsyncTask<List<RequestParameter>, Void, String> {
 
         @Override
@@ -559,6 +570,25 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
             super.onPostExecute(json);
             if (mDialog != null)
                 mDialog.cancel();
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                Log.e(TAG, "json" + json);
+                if (jsonObject.getBoolean("result")) {
+                    Toast.makeText(getActivity(), "下单成功，请到订单界面查看", Toast.LENGTH_SHORT).show();
+                    saveOrderID(jsonObject.getString("order_id"));
+                } else {
+                    String msg = Config.getErrorMsg(jsonObject.getInt("error_code"));
+                    if (msg == null) {
+                        Toast.makeText(getActivity(), "下单失败", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "下单失败，" + msg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
         }
     }
 

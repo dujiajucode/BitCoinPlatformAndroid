@@ -6,9 +6,19 @@
 
 
     public class SecurityConfig {
-         public final static String ACCESS_KEY = "BTCC的ACCESS_KEY";
-         public final static String SECRET_KEY = "BTCC的SECRET_KEY";
+    
+    
+        public final static String CNY_ACCESS_KEY = "中国站APIKEY";
+        public final static String CNY_SECRET_KEY = "中国站SECRET_KEY";
+        public final static String CNY_URL = "wss://real.okcoin.cn:10440/websocket/okcoinapi";
+    
+        public final static String USD_ACCESS_KEY = "国际站APIKEY";
+        public final static String USD_SECRET_KEY = "国际站SECRET_KEY";
+        public final static String USD_URL = "wss://real.okcoin.com:10440/websocket/okcoinapi";
+        public final static String USD_REST_URL = "https://www.okcoin.com";
+    
     }
+
 
 
 ##编译时请在`gradle.properties`设置

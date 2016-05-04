@@ -195,7 +195,7 @@ import android.widget.TextView;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionFragment;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.ProfessionalTransactionFragment;
+import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionOrderFragment;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.QuotationInformationFragment;
 import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     private LayoutInflater layoutInflater;
 
     //定义数组来存放Fragment界面
-    private Class fragmentArray[] = {ActualTransactionFragment.class, ProfessionalTransactionFragment
+    private Class fragmentArray[] = {ActualTransactionFragment.class, ActualTransactionOrderFragment
             .class, QuotationInformationFragment.class};
 
     //定义数组来存放按钮图片
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
     private int mImageViewArray2[] = {R.drawable.a1_2, R.drawable.a2_2, R.drawable.a3_2};
 
     //Tab选项卡的文字
-    private String mTextviewArray[] = {"现货交易", "专业交易", "行情资讯"};
+    private String mTextviewArray[] = {"现货交易", "交易订单", "行情资讯"};
 
 
     @Override

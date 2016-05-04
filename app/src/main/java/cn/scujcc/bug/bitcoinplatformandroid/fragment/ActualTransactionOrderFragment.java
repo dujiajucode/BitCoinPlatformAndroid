@@ -184,9 +184,6 @@
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.ProgressDialog;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -204,12 +201,12 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.database.DatabaseEntry;
-import cn.scujcc.bug.bitcoinplatformandroid.database.SQLiteDatabaseHelper;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Order;
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
 import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
@@ -229,9 +226,8 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshWidget;
-    private SQLiteOpenHelper mDbHelper;
     private ProgressDialog mDialog;
-
+    private TextView mNoneText;
 
     @Override
 
@@ -242,11 +238,14 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_actualtransactionorder, container, false);
+        View view = inflater.inflate(R.layout.fragmnet_quotationinformation, container, false);
 
-        mDbHelper = new SQLiteDatabaseHelper(getActivity());
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewOrder);
+        setTitle(view, "交易订单");
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+
+        mNoneText = (TextView) view.findViewById(R.id.none_text);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -297,67 +296,46 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
         protected List<Order> doInBackground(Void... params) {
             List<Order> list = new ArrayList<>();
 
-            //查询数据库
-
-            SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-            // Define a projection that specifies which columns from the database
-            // you will actually use after this query.
-            String[] projection = {
-                    DatabaseEntry.ATOrdersEntry._ID,
-                    DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_ID,
-                    DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_TIME
-            };
-
-            String sortOrder =
-                    DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_TIME + " DESC";
-
-
-            Cursor cursor = db.query(
-                    DatabaseEntry.ATOrdersEntry.TABLE_NAME,  // The table to query
-                    projection,                               // The columns to return
-                    null,                                // The columns for the WHERE clause
-                    null,                            // The values for the WHERE clause
-                    null,                                     // don't group the rows
-                    null,                                     // don't filter by row groups
-                    sortOrder                                 // The sort order
-            );
+            FileInputStream fin = null;
             try {
+                fin = getActivity().openFileInput("orders");
+                ObjectInputStream in = new ObjectInputStream(fin);
+                List<String> orders = (List<String>) in.readObject();
+                in.close();
 
-                if (cursor.moveToFirst()) {
-                    do {
-                        Order order = new Order();
-                        order.setOrderID(cursor.getLong(1));
 
-                        RequestParameter parameter1 =
-                                new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
+                for (String orderID : orders) {
 
-                        RequestParameter parameter2 =
-                                new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
+                    Order order = new Order();
+                    order.setOrderID(Long.parseLong(orderID));
+                    RequestParameter parameter1 =
+                            new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
 
-                        RequestParameter parameter3
-                                = new RequestParameter("order_id", "" + order.getOrderID());
+                    RequestParameter parameter2 =
+                            new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
 
-                        String json = NetWork.requestGetUrl(ORDER_INFO_URL, parameter1, parameter2,
-                                parameter3);
+                    RequestParameter parameter3
+                            = new RequestParameter("order_id", "" + order.getOrderID());
 
-                        Log.e(TAG, "JSON " + json);
+                    String json = NetWork.requestGetUrl(ORDER_INFO_URL, parameter1, parameter2,
+                            parameter3);
 
-                        JSONObject obj = new JSONObject(json);
-                        obj = obj.getJSONArray("orders").getJSONObject(0);
+                    Log.e(TAG, "JSON " + json);
 
-                        order.setAmount(obj.getDouble("amount"));
-                        order.setAvgPrice(obj.getDouble("avg_price"));
-                        order.setCreateDate(obj.getLong("create_date"));
-                        order.setDealAmount(obj.getDouble("deal_amount"));
-                        order.setPrice(obj.getDouble("price"));
-                        order.setStatus(obj.getInt("status"));
-                        order.setType(obj.getString("type"));
+                    JSONObject obj = new JSONObject(json);
+                    obj = obj.getJSONArray("orders").getJSONObject(0);
 
-                        list.add(order);
-                    } while (cursor.moveToNext());
+                    order.setAmount(obj.getDouble("amount"));
+                    order.setAvgPrice(obj.getDouble("avg_price"));
+                    order.setCreateDate(obj.getLong("create_date"));
+                    order.setDealAmount(obj.getDouble("deal_amount"));
+                    order.setPrice(obj.getDouble("price"));
+                    order.setStatus(obj.getInt("status"));
+                    order.setType(obj.getString("type"));
+
+                    list.add(order);
+
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
                 sendServerError();
@@ -375,10 +353,15 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
         @Override
         protected void onPostExecute(List<Order> list) {
             super.onPostExecute(list);
-
-            mAdapter = new OrderAdapter(list);
-            mRecyclerView.setAdapter(mAdapter);
             mSwipeRefreshWidget.setRefreshing(false);
+            if (null == list || list.size() == 0) {
+                mNoneText.setVisibility(View.VISIBLE);
+            } else {
+
+                mAdapter = new OrderAdapter(list);
+                mRecyclerView.setAdapter(mAdapter);
+                mNoneText.setVisibility(View.INVISIBLE);
+            }
         }
 
     }

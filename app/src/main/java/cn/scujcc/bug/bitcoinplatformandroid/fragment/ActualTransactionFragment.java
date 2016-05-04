@@ -224,7 +224,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.view.SlidingTabLayout;
 public class ActualTransactionFragment extends BaseFragment implements SocketDataChange {
 
     private static final String TAG = "ATFragment";
-    private String mTextviewArray[] = {"综合", "买入", "卖出", "订单"};
+    private String mTextviewArray[] = {"综合", "买入", "卖出"};
     private RecyclerView mRecyclerViewBuy, mRecyclerViewSell;
     private ViewPagerAdapter mViewPagerAdapter;
     private List<Trend> mBuyList;
@@ -334,8 +334,6 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
 
         fragments.add(buyFragment);
         fragments.add(sellFragment);
-
-        fragments.add(new ActualTransactionOrderFragment());
 
 
         mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),

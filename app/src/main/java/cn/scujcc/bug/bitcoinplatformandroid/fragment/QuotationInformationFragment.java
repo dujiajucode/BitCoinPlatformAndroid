@@ -245,6 +245,9 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshWidget;
 
+    private TextView mNoneText;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -257,6 +260,9 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
 
         setHasOptionsMenu(true);
         setTitle(view, "行情资讯");
+
+        mNoneText = (TextView) view.findViewById(R.id.none_text);
+
 
         mSwipeRefreshWidget = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
 
@@ -584,6 +590,8 @@ public class QuotationInformationFragment extends BaseFragment implements SwipeR
                 isForce = false;
             }
             if (newses != null && newses.size() > 0) {
+
+                mNoneText.setVisibility(View.INVISIBLE);
                 //Do Something
                 mAdapter = new CardAdapter(newses);
                 mRecyclerView.setAdapter(mAdapter);

@@ -213,7 +213,6 @@ import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
 import cn.scujcc.bug.bitcoinplatformandroid.util.Config;
 import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
 import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
-import cn.scujcc.bug.bitcoinplatformandroid.util.socket.SocketProtocol;
 
 /**
  * 现货交易买卖
@@ -224,8 +223,6 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
     public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_Sell";
     private static final String BALANCE_INFO_URL = "http://115.28.242.27:8080/balance";
     private static final String TRADE_URL = "http://115.28.242.27:8080/at/trade";
-
-    SocketProtocol mProtocol;
 
     private Button mButton;
 
@@ -425,21 +422,24 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
                 mDialog.show();
                 //构建URL参数
                 String type = "";
+                String price = univalent + "";
+                String amount = count + "";
                 if (isSell && isLimit) {
                     //卖         限价
                     type = "sell";
                 } else if (isSell && !isLimit) {
                     //卖         市价
                     type = "sell_market";
+                    price = "";
                 } else if (!isSell && isLimit) {
                     //买         限价
                     type = "buy";
                 } else if (!isSell && !isLimit) {
                     //买         市价
                     type = "buy_market";
+                    amount = "";
                 }
-                String price = univalent + "";
-                String amount = count + "";
+
                 RequestParameter parameter1 = new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
                 RequestParameter parameter2 = new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
                 RequestParameter parameter3 = new RequestParameter("type", type);

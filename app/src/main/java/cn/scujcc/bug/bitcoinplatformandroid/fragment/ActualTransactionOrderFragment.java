@@ -306,39 +306,38 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
                 db = database.getReadableDatabase();
                 //查询数据库
                 Cursor c = db.query("orders", null, null, null, null, null, "time desc");//查询并获得游标
-                if (c.moveToFirst()) {//判断游标是否为空
-                    for (int i = 0; i < c.getCount(); i++) {
-                        c.move(i);//移动到指定记录
-                        String orderID = c.getString(0);
-                        Order order = new Order();
-                        order.setOrderID(Long.parseLong(orderID));
-                        RequestParameter parameter1 =
-                                new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
+                while (c.moveToNext()) {
 
-                        RequestParameter parameter2 =
-                                new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
+                    String orderID = c.getString(0);
+                    Order order = new Order();
+                    order.setOrderID(Long.parseLong(orderID));
+                    RequestParameter parameter1 =
+                            new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
 
-                        RequestParameter parameter3
-                                = new RequestParameter("order_id", "" + order.getOrderID());
+                    RequestParameter parameter2 =
+                            new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
 
-                        String json = NetWork.requestGetUrl(ORDER_INFO_URL, parameter1, parameter2,
-                                parameter3);
+                    RequestParameter parameter3
+                            = new RequestParameter("order_id", "" + order.getOrderID());
 
-                        Log.e(TAG, "JSON " + json);
+                    String json = NetWork.requestGetUrl(ORDER_INFO_URL, parameter1, parameter2,
+                            parameter3);
 
-                        JSONObject obj = new JSONObject(json);
-                        obj = obj.getJSONArray("orders").getJSONObject(0);
+                    Log.e(TAG, "JSON " + json);
 
-                        order.setAmount(obj.getDouble("amount"));
-                        order.setAvgPrice(obj.getDouble("avg_price"));
-                        order.setCreateDate(obj.getLong("create_date"));
-                        order.setDealAmount(obj.getDouble("deal_amount"));
-                        order.setPrice(obj.getDouble("price"));
-                        order.setStatus(obj.getInt("status"));
-                        order.setType(obj.getString("type"));
+                    JSONObject obj = new JSONObject(json);
+                    obj = obj.getJSONArray("orders").getJSONObject(0);
 
-                        list.add(order);
-                    }
+                    order.setAmount(obj.getDouble("amount"));
+                    order.setAvgPrice(obj.getDouble("avg_price"));
+                    order.setCreateDate(obj.getLong("create_date"));
+                    order.setDealAmount(obj.getDouble("deal_amount"));
+                    order.setPrice(obj.getDouble("price"));
+                    order.setStatus(obj.getInt("status"));
+                    order.setType(obj.getString("type"));
+
+                    list.add(order);
+
                 }
 
             } catch (Exception e) {

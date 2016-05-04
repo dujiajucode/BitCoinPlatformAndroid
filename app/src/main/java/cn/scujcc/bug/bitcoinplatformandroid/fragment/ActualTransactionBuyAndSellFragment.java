@@ -550,7 +550,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
      */
     public void saveOrderID(String orderID) {
         List<String> list = readOrdersFromCache();
-        list.add(0, orderID);
+        list.add(orderID);
         writeOrderToCache(list);
     }
 

@@ -241,8 +241,6 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
         View view = inflater.inflate(R.layout.fragmnet_quotationinformation, container, false);
 
 
-        setTitle(view, "交易订单");
-
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 
         mNoneText = (TextView) view.findViewById(R.id.none_text);
@@ -259,6 +257,9 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
                         .getDisplayMetrics()));
 
+
+        setTitle(view, "交易订单");
+
         return view;
     }
 
@@ -274,11 +275,11 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            updateData();
-        }
+    public void onResume() {
+        super.onResume();
+
+        updateData();
+
     }
 
 
@@ -304,8 +305,18 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
                 in.close();
 
 
-                for (String orderID : orders) {
+                for (int i = orders.size() - 1; i <= 0; i--) {
+                    Log.e("TAG", "order   i=" + i + " id=" + orders.get(i));
+                }
 
+                for (int i = 0; i < orders.size(); i++) {
+                    Log.e("TAG", "order   i=" + i + " id=" + orders.get(i));
+                }
+                Log.e("TAG", "read" + orders.size());
+
+                //list.size() - 1; i < 0; i--
+                for (int i = orders.size() - 1; i <= 0; i--) {
+                    String orderID = orders.get(i);
                     Order order = new Order();
                     order.setOrderID(Long.parseLong(orderID));
                     RequestParameter parameter1 =

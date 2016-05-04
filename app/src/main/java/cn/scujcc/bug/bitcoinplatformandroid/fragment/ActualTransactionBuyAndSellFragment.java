@@ -184,7 +184,9 @@
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -210,10 +212,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.database.DatabaseHelper;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Balance;
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
 import cn.scujcc.bug.bitcoinplatformandroid.util.Config;
@@ -549,9 +553,13 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
      * @param orderID
      */
     public void saveOrderID(String orderID) {
-        List<String> list = readOrdersFromCache();
-        list.add(orderID);
-        writeOrderToCache(list);
+        DatabaseHelper database = new DatabaseHelper(getActivity());//这段代码放到Activity类中才用this
+        SQLiteDatabase db = null;
+        db = database.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("orderid", orderID);
+        cv.put("time", new Date().getTime());
+        db.insert("orders", null, cv);//执行插入操作
     }
 
     public List<String> readOrdersFromCache() {

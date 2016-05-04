@@ -184,6 +184,8 @@
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.ProgressDialog;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -202,11 +204,11 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.database.DatabaseHelper;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Order;
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
 import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
@@ -299,54 +301,46 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
 
             FileInputStream fin = null;
             try {
-                fin = getActivity().openFileInput("orders");
-                ObjectInputStream in = new ObjectInputStream(fin);
-                List<String> orders = (List<String>) in.readObject();
-                in.close();
+                DatabaseHelper database = new DatabaseHelper(getActivity());//这段代码放到Activity类中才用this
+                SQLiteDatabase db = null;
+                db = database.getReadableDatabase();
+                //查询数据库
+                Cursor c = db.query("orders", null, null, null, null, null, "time desc");//查询并获得游标
+                if (c.moveToFirst()) {//判断游标是否为空
+                    for (int i = 0; i < c.getCount(); i++) {
+                        c.move(i);//移动到指定记录
+                        String orderID = c.getString(0);
+                        Order order = new Order();
+                        order.setOrderID(Long.parseLong(orderID));
+                        RequestParameter parameter1 =
+                                new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
 
+                        RequestParameter parameter2 =
+                                new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
 
-                for (int i = orders.size() - 1; i <= 0; i--) {
-                    Log.e("TAG", "order   i=" + i + " id=" + orders.get(i));
+                        RequestParameter parameter3
+                                = new RequestParameter("order_id", "" + order.getOrderID());
+
+                        String json = NetWork.requestGetUrl(ORDER_INFO_URL, parameter1, parameter2,
+                                parameter3);
+
+                        Log.e(TAG, "JSON " + json);
+
+                        JSONObject obj = new JSONObject(json);
+                        obj = obj.getJSONArray("orders").getJSONObject(0);
+
+                        order.setAmount(obj.getDouble("amount"));
+                        order.setAvgPrice(obj.getDouble("avg_price"));
+                        order.setCreateDate(obj.getLong("create_date"));
+                        order.setDealAmount(obj.getDouble("deal_amount"));
+                        order.setPrice(obj.getDouble("price"));
+                        order.setStatus(obj.getInt("status"));
+                        order.setType(obj.getString("type"));
+
+                        list.add(order);
+                    }
                 }
 
-                for (int i = 0; i < orders.size(); i++) {
-                    Log.e("TAG", "order   i=" + i + " id=" + orders.get(i));
-                }
-                Log.e("TAG", "read" + orders.size());
-
-                //list.size() - 1; i < 0; i--
-                for (int i = orders.size() - 1; i <= 0; i--) {
-                    String orderID = orders.get(i);
-                    Order order = new Order();
-                    order.setOrderID(Long.parseLong(orderID));
-                    RequestParameter parameter1 =
-                            new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
-
-                    RequestParameter parameter2 =
-                            new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
-
-                    RequestParameter parameter3
-                            = new RequestParameter("order_id", "" + order.getOrderID());
-
-                    String json = NetWork.requestGetUrl(ORDER_INFO_URL, parameter1, parameter2,
-                            parameter3);
-
-                    Log.e(TAG, "JSON " + json);
-
-                    JSONObject obj = new JSONObject(json);
-                    obj = obj.getJSONArray("orders").getJSONObject(0);
-
-                    order.setAmount(obj.getDouble("amount"));
-                    order.setAvgPrice(obj.getDouble("avg_price"));
-                    order.setCreateDate(obj.getLong("create_date"));
-                    order.setDealAmount(obj.getDouble("deal_amount"));
-                    order.setPrice(obj.getDouble("price"));
-                    order.setStatus(obj.getInt("status"));
-                    order.setType(obj.getString("type"));
-
-                    list.add(order);
-
-                }
             } catch (Exception e) {
                 e.printStackTrace();
                 sendServerError();

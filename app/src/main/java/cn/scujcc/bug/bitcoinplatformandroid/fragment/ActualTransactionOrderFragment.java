@@ -183,6 +183,7 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -199,6 +200,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -218,17 +220,21 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
  * <p/>
  * 个人中心
  */
-public class ActualTransactionOrder extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ActualTransactionOrderFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "ATOrder";
     private static final String ORDER_INFO_URL = "http://115.28.242.27:8080/at/order";
+    private static final String CANCEL_URL = "http://115.28.242.27:8080/at/order/cancel";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshWidget;
     private SQLiteOpenHelper mDbHelper;
+    private ProgressDialog mDialog;
+
 
     @Override
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -317,12 +323,9 @@ public class ActualTransactionOrder extends BaseFragment implements SwipeRefresh
                     sortOrder                                 // The sort order
             );
             try {
-                //判断游标是否为空
-                if (cursor.moveToFirst()) {
-                    //遍历游标
-                    for (int i = 0; i < cursor.getCount(); i++) {
-                        cursor.move(i);
 
+                if (cursor.moveToFirst()) {
+                    do {
                         Order order = new Order();
                         order.setOrderID(cursor.getLong(1));
 
@@ -352,14 +355,13 @@ public class ActualTransactionOrder extends BaseFragment implements SwipeRefresh
                         order.setType(obj.getString("type"));
 
                         list.add(order);
-
-                    }
+                    } while (cursor.moveToNext());
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 sendServerError();
             }
-
 
             return list;
         }
@@ -406,7 +408,7 @@ public class ActualTransactionOrder extends BaseFragment implements SwipeRefresh
         public void onBindViewHolder(ViewHolder holder, int position) {
 
             //设置信息
-            Order order = mLists.get(position);
+            final Order order = mLists.get(position);
             holder.mView.setTag(position);
             holder.tvType.setText(order.getTypeString());
             holder.tvTime.setText(order.getCreateDateToString());
@@ -417,6 +419,15 @@ public class ActualTransactionOrder extends BaseFragment implements SwipeRefresh
                     @Override
                     public void onClick(View v) {
                         //发送取消订单,请求
+                        //开启等待对话框
+                        mDialog = new ProgressDialog(getActivity());
+                        mDialog.setMessage("正在处理,请稍后");
+                        mDialog.setCanceledOnTouchOutside(false);
+                        mDialog.setCancelable(false);
+                        mDialog.show();
+
+                        CancelOrderTask task = new CancelOrderTask();
+                        task.execute("" + order.getOrderID());
                     }
                 });
             } else {
@@ -461,4 +472,60 @@ public class ActualTransactionOrder extends BaseFragment implements SwipeRefresh
             }
         }
     }
+
+    class CancelOrderTask extends AsyncTask<String, Void, Boolean> {
+
+
+        @Override
+        protected final Boolean doInBackground(String... args) {
+            try {
+                String orderID = args[0];
+                if (null == orderID) return null;
+
+                RequestParameter parameter1 =
+                        new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
+
+                RequestParameter parameter2 =
+                        new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
+
+                RequestParameter parameter3 =
+                        new RequestParameter("order_id", orderID);
+                List<RequestParameter> req = new ArrayList<>();
+                req.add(parameter1);
+                req.add(parameter2);
+                req.add(parameter3);
+                String json = NetWork.requestPostUrl(CANCEL_URL, req);
+
+                JSONObject obj = new JSONObject(json);
+                Log.e("TAG", "json" + json);
+
+                return obj.getBoolean("result");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, "Exception " + e.getLocalizedMessage());
+                sendServerError();
+                return false;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            updateData();
+            if (mDialog != null)
+                mDialog.cancel();
+            if (result) {
+                Toast.makeText(getActivity(), "撤单成功", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), "撤单失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+    }
+
+
 }
+

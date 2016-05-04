@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~                                  Apache License
   ~                            Version 2.0, January 2004
@@ -182,30 +184,135 @@
   ~
   -->
 
-<resources>
-    <string name="app_name">比特币交易平台</string>
-    <string name="server_error">很抱歉，服务器维护中!!</string>
-    <string name="fragment_personal_center_title">个人中心</string>
-    <string name="fragment_quotationinformationcenter_news_pic">新闻图片</string>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    card_view:cardCornerRadius="2dp"
+                                    card_view:cardElevation="2dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
 
-    <string name="fragment_actualtransactionbuy_univalent">单价</string>
-    <string name="fragment_actualtransactionbuy_count">数量</string>
-    <string name="fragment_actualtransactionbuy_sum">金额</string>
-    <string name="fragment_actualtransactionbuy_buy">买入</string>
-    <string name="fragment_actualtransactionbuy_sell">卖出</string>
-    <string name="fragment_actualtransactionbuy_balance">账户余额</string>
-    <string name="fragment_actualtransactionbuy_cny">美元</string>
-    <string name="fragment_actualtransactionbuy_btc">比特币</string>
-    <string name="fragment_actualtransactionbuy_freezed_cny">冻结美元</string>
-    <string name="fragment_actualtransactionbuy_freezed_btc">冻结比特币</string>
-    <string name="fragment_actualtransactionbuy_btccount">0</string>
-    <string name="fragment_actualtransactionbuy_btcsymbol">฿</string>
-    <string name="fragment_actualtransactionbuy_cnysymbol">$</string>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
 
-    <string name="order_cancel_button">撤单</string>
-    <string name="order_entrust_price">委托价格($)</string>
-    <string name="order_deal_price">成交价格($)</string>
-    <string name="order_entrust_count">委托数量(฿)</string>
-    <string name="order_deal_count">成交数量(฿)</string>
-</resources>
+            <TextView
+                android:id="@+id/order_type_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                />
+
+            <TextView
+                android:id="@+id/order_time_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/order_type_textview"
+                android:textColor="#000"
+                />
+
+            <TextView
+                android:id="@+id/order_status_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="#000"
+                />
+
+            <Button
+                android:id="@+id/order_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:text="@string/order_cancel_button"
+                android:textColor="#000"
+                />
+        </RelativeLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/order_entrust_price"
+                    android:textColor="#000"
+                    />
+
+                <TextView
+                    android:id="@+id/order_entrust_price_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/order_deal_price"
+                    android:textColor="#000"
+                    />
+
+                <TextView
+                    android:id="@+id/order_deal_price_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000"
+                    />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/order_entrust_count"
+                    android:textColor="#000"
+                    />
+
+                <TextView
+                    android:id="@+id/order_entrust_count_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/order_deal_count"
+                    android:textColor="#000"
+                    />
+
+                <TextView
+                    android:id="@+id/order_deal_count_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000"
+                    />
+            </TableRow>
+        </TableLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

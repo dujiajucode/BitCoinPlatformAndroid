@@ -181,40 +181,123 @@
  *
  *
  */
-package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+package cn.scujcc.bug.bitcoinplatformandroid.model;
 
-import cn.scujcc.bug.bitcoinplatformandroid.R;
+import java.text.SimpleDateFormat;
 
 /**
- * Created by lilujia on 16/3/27.
- * <p/>
- * 个人中心
+ * Created by lilujia on 16/5/4.
  */
-public class Fragment4 extends BaseFragment {
+public class Order {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private double mAmount, mAvgPrice, mDealAmount, mPrice;
+    private long mOrderID, mCreateDate;
+    private int mStatus;
+    private String mType;
+
+    public String getTypeString() {
+
+        switch (mType) {
+            case "buy":
+                return "限价买入";
+            case "sell":
+                return "限价卖出";
+            case "buy_market":
+                return "市价买入";
+            case "sell_market":
+                return "市价卖出";
+            default:
+                return mType;
+        }
+
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hello, container, false);
+    public String getType() {
+        return mType;
+    }
 
+    public void setType(String type) {
+        mType = type;
+    }
 
-        TextView tv = (TextView) view.findViewById(R.id.fragment_hello_textview);
-        tv.setText("订单");
+    public double getAmount() {
+        return mAmount;
+    }
 
+    public void setAmount(double amount) {
+        mAmount = amount;
+    }
 
-        return view;
+    public double getAvgPrice() {
+        return mAvgPrice;
+    }
+
+    public void setAvgPrice(double avgPrice) {
+        mAvgPrice = avgPrice;
+    }
+
+    public long getCreateDate() {
+        return mCreateDate;
+    }
+
+    public String getCreateDateToString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//24小时制
+        java.util.Date d = new java.util.Date(mCreateDate);
+        return sdf.format(d);
+    }
+
+    public void setCreateDate(long createDate) {
+        mCreateDate = createDate;
+    }
+
+    public double getDealAmount() {
+        return mDealAmount;
+    }
+
+    public void setDealAmount(double dealAmount) {
+        mDealAmount = dealAmount;
+    }
+
+    public long getOrderID() {
+        return mOrderID;
+    }
+
+    public void setOrderID(long orderID) {
+        mOrderID = orderID;
+    }
+
+    public double getPrice() {
+        return mPrice;
+    }
+
+    public void setPrice(double price) {
+        mPrice = price;
+    }
+
+    public String getStatusToString() {
+        switch (mStatus) {
+            case -1:
+                return "已撤销";
+            case 0:
+                return "未成交";
+            case 1:
+                return "部分成交";
+            case 2:
+                return "完全成交";
+            case 4:
+                return "撤单处理中";
+            default:
+                return "";
+        }
+    }
+
+    public int getStatus() {
+        return mStatus;
+    }
+
+    public void setStatus(int status) {
+        mStatus = status;
     }
 
 

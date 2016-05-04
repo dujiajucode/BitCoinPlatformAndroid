@@ -335,7 +335,7 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         fragments.add(buyFragment);
         fragments.add(sellFragment);
 
-        fragments.add(new Fragment4());
+        fragments.add(new ActualTransactionOrder());
 
 
         mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(),

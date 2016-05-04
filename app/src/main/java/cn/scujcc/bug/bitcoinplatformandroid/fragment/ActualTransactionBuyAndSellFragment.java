@@ -184,6 +184,8 @@
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -204,10 +206,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.database.DatabaseEntry;
+import cn.scujcc.bug.bitcoinplatformandroid.database.SQLiteDatabaseHelper;
 import cn.scujcc.bug.bitcoinplatformandroid.model.Balance;
 import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
 import cn.scujcc.bug.bitcoinplatformandroid.util.Config;
@@ -227,6 +232,8 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
     private Button mButton;
 
     private Spinner mSpinner;
+
+    private SQLiteDatabaseHelper mDbHelper;
 
     private ProgressDialog mDialog;
 
@@ -264,6 +271,7 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_actualtransactionbuyandsell, container, false);
 
+        mDbHelper = new SQLiteDatabaseHelper(getActivity());
         mButton = (Button) view.findViewById(R.id.fragment_ats_buy_button);
         mSpinner = (Spinner) view.findViewById(R.id.fragment_actualtransactionbuy_mode);
         mCountEdit = (TextInputEditText) view.findViewById(R.id.fragment_actualtransactionbuy_count);
@@ -544,6 +552,20 @@ public class ActualTransactionBuyAndSellFragment extends BaseFragment {
      */
     public void saveOrderID(String orderID) {
         //saveOrderID ,And timestamp 的英文
+        // Gets the data repository in write mode
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_ID, orderID);
+        values.put(DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_TIME, new Date().getTime());
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId;
+        newRowId = db.insert(
+                DatabaseEntry.ATOrdersEntry.TABLE_NAME,
+                DatabaseEntry.ATOrdersEntry.COLUMN_NAME_NULLABLE,
+                values);
     }
 
     class BuyOrSellAsyncTask extends AsyncTask<List<RequestParameter>, Void, String> {

@@ -181,21 +181,284 @@
  *
  *
  */
+package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
-package cn.scujcc.bug.bitcoinplatformandroid.database;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
-import android.provider.BaseColumns;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.scujcc.bug.bitcoinplatformandroid.R;
+import cn.scujcc.bug.bitcoinplatformandroid.database.DatabaseEntry;
+import cn.scujcc.bug.bitcoinplatformandroid.database.SQLiteDatabaseHelper;
+import cn.scujcc.bug.bitcoinplatformandroid.model.Order;
+import cn.scujcc.bug.bitcoinplatformandroid.model.RequestParameter;
+import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
+import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 
 /**
- * Created by lilujia on 16/5/3.
+ * Created by lilujia on 16/3/27.
+ * <p/>
+ * 个人中心
  */
-public class DatabaseEntry {
-    /* Inner class that defines the table contents */
-    public static abstract class ATOrdersEntry implements BaseColumns {
-        public static final String TABLE_NAME = "at_orders_entry";
-        public static final String COLUMN_NAME_ORDER_ID = "order_id";
-        public static final String COLUMN_NAME_ORDER_TIME = "order_time";
+public class ActualTransactionOrder extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
-        public static final String COLUMN_NAME_NULLABLE="null";
+    private static final String TAG = "ATOrder";
+    private static final String ORDER_INFO_URL = "http://115.28.242.27:8080/at/order";
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout mSwipeRefreshWidget;
+    private SQLiteOpenHelper mDbHelper;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_actualtransactionorder, container, false);
+
+        mDbHelper = new SQLiteDatabaseHelper(getActivity());
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewOrder);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mSwipeRefreshWidget = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
+
+        mSwipeRefreshWidget.setOnRefreshListener(this);
+
+        mSwipeRefreshWidget.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
+
+        mSwipeRefreshWidget.setProgressViewOffset(false, 0, (int) TypedValue
+                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
+                        .getDisplayMetrics()));
+
+        return view;
+    }
+
+    public void updateData() {
+        mSwipeRefreshWidget.setRefreshing(true);
+        LoadDataAsyncTask task = new LoadDataAsyncTask();
+        task.execute();
+    }
+
+    @Override
+    public void onRefresh() {
+        updateData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            updateData();
+        }
+    }
+
+
+    class LoadDataAsyncTask extends AsyncTask<Void, Void, List<Order>> {
+
+        /**
+         * 在开始线程前,做些事情,请注意是工作在主线程上
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<Order> doInBackground(Void... params) {
+            List<Order> list = new ArrayList<>();
+
+            //查询数据库
+
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+            // Define a projection that specifies which columns from the database
+            // you will actually use after this query.
+            String[] projection = {
+                    DatabaseEntry.ATOrdersEntry._ID,
+                    DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_ID,
+                    DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_TIME
+            };
+
+            String sortOrder =
+                    DatabaseEntry.ATOrdersEntry.COLUMN_NAME_ORDER_TIME + " DESC";
+
+
+            Cursor cursor = db.query(
+                    DatabaseEntry.ATOrdersEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,                                // The columns for the WHERE clause
+                    null,                            // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order
+            );
+            try {
+                //判断游标是否为空
+                if (cursor.moveToFirst()) {
+                    //遍历游标
+                    for (int i = 0; i < cursor.getCount(); i++) {
+                        cursor.move(i);
+
+                        Order order = new Order();
+                        order.setOrderID(cursor.getLong(1));
+
+                        RequestParameter parameter1 =
+                                new RequestParameter("api_key", SecurityConfig.USD_ACCESS_KEY);
+
+                        RequestParameter parameter2 =
+                                new RequestParameter("secret_key", SecurityConfig.USD_SECRET_KEY);
+
+                        RequestParameter parameter3
+                                = new RequestParameter("order_id", "" + order.getOrderID());
+
+                        String json = NetWork.requestGetUrl(ORDER_INFO_URL, parameter1, parameter2,
+                                parameter3);
+
+                        Log.e(TAG, "JSON " + json);
+
+                        JSONObject obj = new JSONObject(json);
+                        obj = obj.getJSONArray("orders").getJSONObject(0);
+
+                        order.setAmount(obj.getDouble("amount"));
+                        order.setAvgPrice(obj.getDouble("avg_price"));
+                        order.setCreateDate(obj.getLong("create_date"));
+                        order.setDealAmount(obj.getDouble("deal_amount"));
+                        order.setPrice(obj.getDouble("price"));
+                        order.setStatus(obj.getInt("status"));
+                        order.setType(obj.getString("type"));
+
+                        list.add(order);
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                sendServerError();
+            }
+
+
+            return list;
+        }
+
+
+        /**
+         * 拿到数据后,加载数据
+         *
+         * @param list
+         */
+        @Override
+        protected void onPostExecute(List<Order> list) {
+            super.onPostExecute(list);
+
+            mAdapter = new OrderAdapter(list);
+            mRecyclerView.setAdapter(mAdapter);
+            mSwipeRefreshWidget.setRefreshing(false);
+        }
+
+    }
+
+    public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
+        private List<Order> mLists;
+
+        public OrderAdapter() {
+            mLists = null;
+        }
+
+        public OrderAdapter(List<Order> list) {
+            mLists = list;
+        }
+
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent,
+                                             int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.order_cardview, parent, false);
+
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+            //设置信息
+            Order order = mLists.get(position);
+            holder.mView.setTag(position);
+            holder.tvType.setText(order.getTypeString());
+            holder.tvTime.setText(order.getCreateDateToString());
+            if (order.getStatus() == 0) {
+                //未成交
+                holder.btnCancel.setVisibility(View.VISIBLE);
+                holder.btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //发送取消订单,请求
+                    }
+                });
+            } else {
+                holder.btnCancel.setVisibility(View.INVISIBLE);
+            }
+            holder.tvStatus.setText(order.getStatusToString());
+            holder.tvPrice.setText("" + order.getPrice());
+            holder.tvDealPrice.setText("" + order.getAvgPrice());
+            holder.tvCount.setText("" + order.getAmount());
+            holder.tvDealCount.setText("" + order.getDealAmount());
+
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mLists == null ? 0 : mLists.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            public View mView;
+
+
+            public TextView tvType, tvTime, tvStatus, tvPrice, tvDealPrice, tvCount, tvDealCount;
+
+            public Button btnCancel;
+
+            public ViewHolder(View v) {
+                super(v);
+                mView = v;
+
+                tvType = (TextView) mView.findViewById(R.id.order_type_textview);
+                tvTime = (TextView) mView.findViewById(R.id.order_time_textview);
+                tvStatus = (TextView) mView.findViewById(R.id.order_status_textview);
+                btnCancel = (Button) mView.findViewById(R.id.order_cancel_button);
+                tvPrice = (TextView) mView.findViewById(R.id.order_entrust_price_textview);
+                tvDealPrice = (TextView) mView.findViewById(R.id.order_deal_price_textview);
+                tvCount = (TextView) mView.findViewById(R.id.order_entrust_count_textview);
+                tvDealCount = (TextView) mView.findViewById(R.id.order_deal_count_textview);
+
+            }
+        }
     }
 }

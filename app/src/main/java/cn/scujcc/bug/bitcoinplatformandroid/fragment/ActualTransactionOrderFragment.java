@@ -326,8 +326,12 @@ public class ActualTransactionOrderFragment extends BaseFragment implements Swip
                     Log.e(TAG, "JSON " + json);
 
                     JSONObject obj = new JSONObject(json);
-                    obj = obj.getJSONArray("orders").getJSONObject(0);
-
+                    try {
+                        obj = obj.getJSONArray("orders").getJSONObject(0);
+                    } catch (Exception e) {
+                       // list.add(order);
+                        continue;
+                    }
                     order.setAmount(obj.getDouble("amount"));
                     order.setAvgPrice(obj.getDouble("avg_price"));
                     order.setCreateDate(obj.getLong("create_date"));

@@ -183,6 +183,7 @@
  */
 package cn.scujcc.bug.bitcoinplatformandroid.fragment;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -248,6 +249,7 @@ public class BuyAndSellFragment extends BaseFragment {
     private boolean isSell;
 
     private boolean isLimit;
+    private Activity mActivity;
 
 
     @Override
@@ -268,6 +270,13 @@ public class BuyAndSellFragment extends BaseFragment {
 
 
     }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+    }
+
 
     @Nullable
     @Override
@@ -500,6 +509,20 @@ public class BuyAndSellFragment extends BaseFragment {
                     }
                 }
             });
+        } else if (mActivity != null) {
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (balance != null) {
+                        mBTCTextView.setText(Balance.getDoubleString(balance.getFreeBTC()));
+                        mCNYTextView.setText(Balance.getDoubleString(balance.getFreeUSD()));
+                        mFreezedCNYTextView.setText(Balance.getDoubleString(balance.getFreezedUSD()));
+                        mFreezedBTCTextView.setText(Balance.getDoubleString(balance.getFreezedBTC()));
+                    }
+                }
+            });
+        } else {
+            Log.e(TAG, "getActivity ==null");
         }
     }
 

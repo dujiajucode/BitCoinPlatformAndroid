@@ -457,16 +457,18 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
             Log.e(TAG, "balanceChange" + e.getLocalizedMessage());
         }
 
-        Log.e(TAG, "balanceChange" + balance);
         BuyAndSellFragment buyFragment = (BuyAndSellFragment) mViewPagerAdapter.getItem(1);
-
         BuyAndSellFragment sellFragment = (BuyAndSellFragment) mViewPagerAdapter.getItem(2);
 
         if (buyFragment != null) {
             buyFragment.updateBalanceUI(balance);
+        } else {
+            Log.e(TAG, "buyFragment==null");
         }
         if (sellFragment != null) {
             sellFragment.updateBalanceUI(balance);
+        } else {
+            Log.e(TAG, "sellFragment==null");
         }
         Log.e(TAG, "balanceChange" + balance);
 

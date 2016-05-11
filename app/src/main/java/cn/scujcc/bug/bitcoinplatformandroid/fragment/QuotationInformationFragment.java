@@ -226,7 +226,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.NetWork;
 
 /**
  * Created by lilujia on 16/3/27.
- * <p>
+ * <p/>
  * 行情资讯
  */
 public class QuotationInformationFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {

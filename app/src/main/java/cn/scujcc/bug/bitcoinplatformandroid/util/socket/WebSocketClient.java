@@ -192,8 +192,8 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket.WebSocketServi
  *
  * @author okcoin
  */
-public class WebSoketClient extends WebSocketBase {
-    public WebSoketClient(String url, WebSocketService service) {
+public class WebSocketClient extends WebSocketBase {
+    public WebSocketClient(String url, WebSocketService service) {
         super(url, service);
     }
 }

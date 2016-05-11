@@ -183,6 +183,7 @@
  */
 
 package cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket;
+
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -208,8 +209,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
     private MoniterTask moniter;
-    private WebSocketService service ;
-    public WebSocketClientHandler(WebSocketClientHandshaker handshaker,WebSocketService service,MoniterTask moniter) {
+    private WebSocketService service;
+
+    public WebSocketClientHandler(WebSocketClientHandshaker handshaker, WebSocketService service, MoniterTask moniter) {
         this.handshaker = handshaker;
         this.service = service;
         this.moniter = moniter;
@@ -254,12 +256,12 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
         WebSocketFrame frame = (WebSocketFrame) msg;
         if (frame instanceof TextWebSocketFrame) {
-        	 TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
-        	 service.onReceive(textFrame.text());
+            TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
+            service.onReceive(textFrame.text());
         } else if (frame instanceof BinaryWebSocketFrame) {
-        	BinaryWebSocketFrame binaryFrame=(BinaryWebSocketFrame)frame;
-        	service.onReceive(decodeByteBuff(binaryFrame.content()));
-        }else if (frame instanceof PongWebSocketFrame) {
+            BinaryWebSocketFrame binaryFrame = (BinaryWebSocketFrame) frame;
+            service.onReceive(decodeByteBuff(binaryFrame.content()));
+        } else if (frame instanceof PongWebSocketFrame) {
             System.out.println("WebSocket Client received pong");
         } else if (frame instanceof CloseWebSocketFrame) {
             System.out.println("WebSocket Client received closing");
@@ -275,21 +277,22 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         }
         ctx.close();
     }
-    public  String decodeByteBuff(ByteBuf buf) throws IOException, DataFormatException {
-    
-    	   byte[] temp = new byte[buf.readableBytes()];
-    	   ByteBufInputStream bis = new ByteBufInputStream(buf);
-		   bis.read(temp);
-		   bis.close();
-		   Inflater decompresser = new Inflater(true);
-		   decompresser.setInput(temp, 0, temp.length);
-		   StringBuilder sb = new StringBuilder();
-		   byte[] result = new byte[1024];
-		   while (!decompresser.finished()) {
-				int resultLength = decompresser.inflate(result);
-				sb.append(new String(result, 0, resultLength, "UTF-8"));
-		   }
-		   decompresser.end();
-           return sb.toString();
-	}
+
+    public String decodeByteBuff(ByteBuf buf) throws IOException, DataFormatException {
+
+        byte[] temp = new byte[buf.readableBytes()];
+        ByteBufInputStream bis = new ByteBufInputStream(buf);
+        bis.read(temp);
+        bis.close();
+        Inflater decompresser = new Inflater(true);
+        decompresser.setInput(temp, 0, temp.length);
+        StringBuilder sb = new StringBuilder();
+        byte[] result = new byte[1024];
+        while (!decompresser.finished()) {
+            int resultLength = decompresser.inflate(result);
+            sb.append(new String(result, 0, resultLength, "UTF-8"));
+        }
+        decompresser.end();
+        return sb.toString();
+    }
 }

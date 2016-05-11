@@ -185,5 +185,5 @@
 package cn.scujcc.bug.bitcoinplatformandroid.util.socket.websocket;
 
 public interface WebSocketService {
-	public void onReceive(String msg);
+    public void onReceive(String msg);
 }

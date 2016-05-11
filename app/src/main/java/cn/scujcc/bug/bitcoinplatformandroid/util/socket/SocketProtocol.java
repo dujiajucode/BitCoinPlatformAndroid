@@ -203,13 +203,13 @@ public class SocketProtocol implements WebSocketService {
 
     private SocketDataChange mCallback;
 
-    private WebSoketClient mClient;
+    private WebSocketClient mClient;
 
     private static SocketProtocol sSocketProtocol;
 
     private SocketProtocol() {
 
-        mClient = new WebSoketClient(url, this);
+        mClient = new WebSocketClient(url, this);
 
 
     }

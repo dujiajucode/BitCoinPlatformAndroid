@@ -329,7 +329,7 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
                     try {
                         obj = obj.getJSONArray("orders").getJSONObject(0);
                     } catch (Exception e) {
-                       // list.add(order);
+                        // list.add(order);
                         continue;
                     }
                     order.setAmount(obj.getDouble("amount"));

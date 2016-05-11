@@ -314,22 +314,22 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         // 设置ViewPager
         ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
-        ActualTransactionCandlestickChartsFragment candlestickChartsFragment = new
-                ActualTransactionCandlestickChartsFragment();
+        CandlestickChartsFragment candlestickChartsFragment = new
+                CandlestickChartsFragment();
         Bundle atChartsBundle = new Bundle();
-        atChartsBundle.putBoolean(ActualTransactionCandlestickChartsFragment.ARGS_IS_FULL, false);
+        atChartsBundle.putBoolean(CandlestickChartsFragment.ARGS_IS_FULL, false);
         candlestickChartsFragment.setArguments(atChartsBundle);
 
         fragments.add(candlestickChartsFragment);
 
-        Fragment buyFragment = new ActualTransactionBuyAndSellFragment();
+        Fragment buyFragment = new BuyAndSellFragment();
         Bundle buyBundle = new Bundle();
-        buyBundle.putBoolean(ActualTransactionBuyAndSellFragment.ARGS_IS_Sell, false);
+        buyBundle.putBoolean(BuyAndSellFragment.ARGS_IS_Sell, false);
         buyFragment.setArguments(buyBundle);
 
-        Fragment sellFragment = new ActualTransactionBuyAndSellFragment();
+        Fragment sellFragment = new BuyAndSellFragment();
         Bundle SellBundle = new Bundle();
-        SellBundle.putBoolean(ActualTransactionBuyAndSellFragment.ARGS_IS_Sell, true);
+        SellBundle.putBoolean(BuyAndSellFragment.ARGS_IS_Sell, true);
         sellFragment.setArguments(SellBundle);
 
         fragments.add(buyFragment);
@@ -458,9 +458,9 @@ public class ActualTransactionFragment extends BaseFragment implements SocketDat
         }
 
         Log.e(TAG, "balanceChange" + balance);
-        ActualTransactionBuyAndSellFragment buyFragment = (ActualTransactionBuyAndSellFragment) mViewPagerAdapter.getItem(1);
+        BuyAndSellFragment buyFragment = (BuyAndSellFragment) mViewPagerAdapter.getItem(1);
 
-        ActualTransactionBuyAndSellFragment sellFragment = (ActualTransactionBuyAndSellFragment) mViewPagerAdapter.getItem(2);
+        BuyAndSellFragment sellFragment = (BuyAndSellFragment) mViewPagerAdapter.getItem(2);
 
         if (buyFragment != null) {
             buyFragment.updateBalanceUI(balance);

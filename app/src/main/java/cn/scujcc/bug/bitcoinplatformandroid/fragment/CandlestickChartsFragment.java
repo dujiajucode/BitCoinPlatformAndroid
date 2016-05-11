@@ -220,7 +220,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
  * <p/>
  * 现货交易K线图
  */
-public class ActualTransactionCandlestickChartsFragment extends BaseFragment {
+public class CandlestickChartsFragment extends BaseFragment {
 
     private static final String TAG = "ATKLineChartsFragment";
     private static final String KLINE_INFO_URL = "http://115.28.242.27:8080/at/kline";

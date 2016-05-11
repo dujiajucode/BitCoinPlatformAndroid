@@ -219,7 +219,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
  * <p/>
  * 个人中心
  */
-public class ActualTransactionOrderFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "ATOrder";
     private static final String ORDER_INFO_URL = "http://115.28.242.27:8080/at/order";

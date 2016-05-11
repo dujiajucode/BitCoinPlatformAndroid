@@ -191,7 +191,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionCandlestickChartsFragment;
+import cn.scujcc.bug.bitcoinplatformandroid.fragment.CandlestickChartsFragment;
 
 /**
  * Created by lilujia on 16/5/3.
@@ -207,14 +207,14 @@ public class ActualTransactionCandlestickChartsActivity extends AppCompatActivit
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
             fragment = new
-                    ActualTransactionCandlestickChartsFragment();
+                    CandlestickChartsFragment();
             Bundle atChartsBundle = new Bundle();
-            atChartsBundle.putBoolean(ActualTransactionCandlestickChartsFragment.ARGS_IS_FULL, true);
+            atChartsBundle.putBoolean(CandlestickChartsFragment.ARGS_IS_FULL, true);
             fragment.setArguments(atChartsBundle);
             fragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).commit();
         } else {
             Bundle atChartsBundle = new Bundle();
-            atChartsBundle.putBoolean(ActualTransactionCandlestickChartsFragment.ARGS_IS_FULL, true);
+            atChartsBundle.putBoolean(CandlestickChartsFragment.ARGS_IS_FULL, true);
             fragment.setArguments(atChartsBundle);
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

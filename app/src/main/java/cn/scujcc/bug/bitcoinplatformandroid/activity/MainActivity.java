@@ -195,7 +195,7 @@ import android.widget.TextView;
 
 import cn.scujcc.bug.bitcoinplatformandroid.R;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionFragment;
-import cn.scujcc.bug.bitcoinplatformandroid.fragment.ActualTransactionOrderFragment;
+import cn.scujcc.bug.bitcoinplatformandroid.fragment.OrderFragment;
 import cn.scujcc.bug.bitcoinplatformandroid.fragment.QuotationInformationFragment;
 import cn.scujcc.bug.bitcoinplatformandroid.service.SocketService;
 
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     private LayoutInflater layoutInflater;
 
     //定义数组来存放Fragment界面
-    private Class fragmentArray[] = {ActualTransactionFragment.class, ActualTransactionOrderFragment
+    private Class fragmentArray[] = {ActualTransactionFragment.class, OrderFragment
             .class, QuotationInformationFragment.class};
 
     //定义数组来存放按钮图片

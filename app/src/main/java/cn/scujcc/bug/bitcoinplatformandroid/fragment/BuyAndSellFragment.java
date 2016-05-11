@@ -227,7 +227,7 @@ import cn.scujcc.bug.bitcoinplatformandroid.util.SecurityConfig;
 /**
  * 现货交易买卖
  */
-public class ActualTransactionBuyAndSellFragment extends BaseFragment {
+public class BuyAndSellFragment extends BaseFragment {
 
     private static final String TAG = "ATBuyAndsellFragment";
     public static final String ARGS_IS_Sell = "ActualTransactionBuyAndsellFragment_IS_Sell";
